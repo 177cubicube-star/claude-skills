@@ -1,0 +1,143 @@
+# Proposition technique — La maison des skills et sa distribution
+
+**Date :** 2026-07-23 · **Version 2 le 2026-07-24** (revue Claude Code : F8, option D, Android au périmètre) · **Version 3 le 2026-07-24** — la mesure du canal claude.ai est faite : les plugins ne l'atteignent PAS, les deux circuits sont séparés par conception (F9). · **Version 4 le 2026-07-24** — prérequis du canal claude.ai intégré : plan payant avec exécution de code activée, mesuré à la même source que F9.
+**Statut :** VALIDÉ par Mathieu le 2026-07-24 (v4). Les décisions du § 4 (option D barrée par V0, A en repli, C à terme côté Claude Code) et la règle du rayon d'impact du § 5 sont actées ; les mesures V restent à exécuter avant tout engagement irréversible.
+**Objet :** faire du dépôt GitHub « maison des skills » la source d'autorité unique, définir comment les skills atteignent chaque projet, comment gérer les variantes par projet, et comment prouver que tout fonctionne.
+**Contexte :** poste Windows (PowerShell) · projets multiples (App-Handyman, suspension-intelligence, vault Obsidian…) · développeur unique · philosophie établie : aucune dépendance sans besoin démontré, une source d'autorité par information, tout se prouve par mesure.
+
+---
+
+## 1. Les faits — mesurés dans la documentation officielle et les retours d'expérience
+
+Ces faits contraignent la conception. Sources en fin de document.
+
+**F1 — Deux emplacements de découverte.** Claude Code charge les skills depuis `~/.claude/skills/` (personnel — toutes les sessions, tous les projets) et `.claude/skills/` à la racine du projet courant (projet — cette session seulement, voyage avec le dépôt). Un dépôt GitHub n'est ni l'un ni l'autre : c'est un entrepôt, pas un canal.
+
+**F2 — La priorité en cas d'homonymie est contre-intuitive : le PERSONNEL gagne sur le PROJET.** La documentation officielle : « enterprise overrides personal, and personal overrides project ». Conséquence directe : on ne peut PAS « spécialiser » un skill générique en posant une variante homonyme dans un projet — c'est la version personnelle qui s'exécuterait. Toute stratégie fondée sur l'ombrage projet-sur-personnel est morte-née. *(Fait surprenant → à re-mesurer au protocole § 6, jamais présumé.)* **Confirmé verbatim le 2026-07-24** (mesure Claude Code sur la doc à la source). Leçon au passage : la citation d'origine de ce document tronquait la phrase source — sa suite nommait `--add-dir` (F8), le mécanisme qui change la recommandation. Une citation partielle peut cacher précisément ce qui compte (maladie de l'obs 14, version documentaire).
+
+**F3 — Les liens symboliques PAR SKILL sont supportés ; le lien du DOSSIER ENTIER est cassé.** Officiellement (v2.1.203+), une entrée `<nom-du-skill>` dans un emplacement de découverte peut être un lien vers ailleurs sur le disque — suivi et chargé. Mais un bug confirmé (issue #38051, régression ~v2.1.69, liée à un correctif de sécurité) fait que si `~/.claude/skills/` est LUI-MÊME un lien symbolique, les skills personnels ne sont plus découverts du tout. C'est l'expérience « testé et jeté » la plus précieuse trouvée : le motif dotfiles classique « tout le dossier est un lien vers le clone » ne marche plus.
+
+**F4 — Les dossiers de skills sont surveillés.** Ajouter, modifier ou retirer un skill sous `~/.claude/skills/` ou `.claude/skills/` prend effet en cours de session, sans redémarrage. **Limite (mesurée le 2026-07-24) :** créer un dossier de skills DE PREMIER NIVEAU qui n'existait pas au démarrage exige un redémarrage — le rechargement à chaud ne vaut que dans un dossier déjà surveillé. La toute première installation sur une machine vierge est donc le cas qui échappe (→ V2-bis).
+
+**F8 — `--add-dir` charge les skills d'un répertoire ajouté (mesuré le 2026-07-24, doc officielle).** Le `.claude/skills/` d'un répertoire ajouté par `--add-dir` est chargé automatiquement. Conséquence : pointer `--add-dir` sur le clone de la maison lit les skills À LA SOURCE — aucune copie, aucun lien symbolique, `git pull` suffit. C'est l'option D du § 4, absente de la version 1 de ce document parce que sa citation de F2 tronquait la phrase qui la nommait.
+
+**F9 — Les skills ne se synchronisent PAS entre surfaces, et les plugins n'atteignent pas claude.ai (mesuré le 2026-07-24, doc officielle).** Un skill installé côté Claude Code (fichiers) et un skill du compte claude.ai sont deux mondes sans aucun pont automatique — la doc l'exclut explicitement. Le seul canal documenté vers claude.ai est le téléversement manuel d'un zip par skill, via Settings > Features, individuel à chaque utilisateur (aucune distribution centralisée) — **et sous prérequis mesuré (v4) : plan Pro, Max, Team ou Enterprise AVEC exécution de code activée.** Sans ce prérequis au compte, le canal n'existe pas du tout : la porte est fermée avant même d'être testée. Les plugins déclarés au dépôt ne concernent que les sessions Claude Code (y compris cloud), jamais le compte claude.ai. Conséquence : le circuit Android (§ 7.4) est manuel PAR CONCEPTION de l'outil — pas par manque d'un tuyau qu'on pourrait poser. *(Note : la v2 de ce document demandait de mesurer avant d'affirmer que l'option C couvre Android — la mesure est faite, et elle tranche NON.)*
+
+**F5 — Les plugins sont le mécanisme de distribution structuré.** Un dossier de skill portant un manifeste `.claude-plugin/plugin.json` se charge comme plugin ; un dépôt peut servir de place de marché (`/plugin`) ; les skills de plugin sont espacés de noms (`plugin:skill`), donc immunisés aux collisions de F2. Plus de cérémonie, mise à jour par commande.
+
+**F6 — Windows change la donne des liens.** Les liens symboliques exigent le mode développeur ou des droits administrateur ; les jonctions de répertoires (`mklink /J` ou `New-Item -ItemType Junction`) fonctionnent sans droits particuliers. Tout mécanisme fondé sur des liens doit être écrit pour Windows, pas transposé d'un billet macOS.
+
+**F7 — Des outils communautaires existent (skillshare, dot-claude-sync)** pour synchroniser une source vers plusieurs cibles. Ils marchent, mais chacun est une dépendance de plus dans la chaîne de confiance — contraire à la règle « aucune dépendance sans besoin démontré » tant qu'un script de dix lignes suffit.
+
+## 2. Ce que d'autres ont essayé — et jeté
+
+| Approche | Verdict du terrain | Pourquoi |
+|---|---|---|
+| Lien symbolique du dossier `~/.claude/skills/` entier vers le clone | **JETÉ** | Régression confirmée : plus aucun skill personnel découvert (F3). Le contournement documenté est le lien par skill. |
+| Fork du skill dans chaque projet qui le modifie | **JETÉ** | Dérive silencieuse : trois copies divergent, personne ne sait laquelle est vraie. C'est le problème actuel, pas sa solution. |
+| Variante projet homonyme pour « surcharger » le générique | **MORT-NÉ** | F2 : le personnel gagne. La surcharge attendue ne se produit pas — pire, elle échoue en silence. |
+| Sous-module git de la maison dans chaque `.claude/skills/` de projet | **DÉCONSEILLÉ** | Douleur connue des sous-modules (oublis de `--recurse`, états détachés), et marie la maison à chaque dépôt. Personne ne le recommande dans les retours lus. |
+| Liens PAR SKILL gérés par un installateur (motif dotfiles) | **ÉPROUVÉ** | Exactement le contournement de F3 ; permet de mélanger skills partagés et expériences locales. Retenu comme variante (§ 4, option B). |
+| Copie synchronisée par script depuis un clone unique | **ÉPROUVÉ** | Le plus simple qui marche ; c'est ce que font les outils de F7 sous le capot en mode « merge ». |
+
+## 3. Le principe de conception — moteur générique + paramètres projet
+
+Avant tout mécanisme de distribution, la règle qui rend la distribution possible :
+
+> **Un skill ne se fork jamais par projet — il se paramètre.** Le skill est un moteur générique qui vit dans la maison. Ce qui est propre à un projet (gabarits, chemins, conventions) vit dans les fichiers du projet, où le moteur va le lire.
+
+Ce motif existe déjà dans la maison : `recap` et `session-prep` se déclarent « génériques, chemins configurables, seul le template est propre au projet ». La proposition l'érige en règle pour tous les skills, avec son corollaire de tri :
+
+| Famille | Où vit la source | Où elle s'exécute | Exemples actuels |
+|---|---|---|---|
+| **Générique** | Maison (GitHub) | `~/.claude/skills/` via distribution (§ 4) | recap, session-prep, prompt-forge (une fois généralisé), task-observer |
+| **Irréductiblement projet** | `.claude/skills/` du projet, commité avec lui | Le projet seulement | tri-inbox (vault), tdd-enforcer / architecture-guard (liés à un projet par nature) |
+| **Paramètres projet d'un générique** | Fichiers du projet (jamais un skill) | Lus par le moteur | `docs/CONTINUITE-SESSION-TEMPLATE.md` pour recap |
+
+**Règle de nommage (conséquence de F2) :** aucun skill de projet ne porte le nom d'un skill de la maison. En cas de doute, préfixer le skill de projet (`ah-`, `si-`…). L'homonymie n'est pas une fonctionnalité, c'est un piège.
+
+**Test du tri :** si la tentation de modifier un skill pour un projet apparaît, la première question est « quelle partie est projet ? » — cette partie s'extrait en paramètre dans le dépôt du projet, le moteur reste un.
+
+## 4. Les options de distribution, comparées
+
+### Option A — Copie synchronisée par script (recommandée pour démarrer)
+
+Un clone unique de la maison à un chemin fixe (ex. `C:\Users\mat_g\Documents\Claude\maison-skills`). Un script PowerShell `sync-skills.ps1` dans la maison elle-même : `git pull`, puis pour chaque skill listé dans un manifeste (`skills-distribues.txt`), copie miroir vers `~/.claude/skills/<nom>/` (`robocopy /MIR` par skill), et en fin de course un rapport : skills synchronisés, skills locaux non gérés (laissés intacts), divergences détectées avant écrasement.
+
+*Pour :* zéro dépendance, zéro lien symbolique (immunisé à F3 et F6), fonctionnement trivial à comprendre et à déboguer, le manifeste rend explicite ce qui est distribué, les copies sont des vrais dossiers (aucun cas limite de découverte).
+*Contre :* la fraîcheur dépend de lancer le script — une modification dans la maison n'arrive pas seule. Mitigation : le script s'invoque en une commande, et une vérification de fraîcheur peut s'ajouter aux rituels de démarrage de session.
+*Risque propre :* une modification faite directement dans `~/.claude/skills/` (au lieu de la maison) serait écrasée au prochain sync — c'est voulu (la maison est la source d'autorité), mais le script doit le DÉTECTER et demander avant d'écraser, jamais écraser en silence.
+
+### Option B — Jonctions par skill (variante sans copie)
+
+Même clone unique ; au lieu de copier, chaque skill distribué devient une jonction : `~/.claude/skills/recap` → `maison-skills/skills/recap`. Le lien par skill est officiellement supporté (F3), les jonctions passent sans droits sur Windows (F6), et `git pull` dans la maison met tout à jour instantanément (F4).
+
+*Pour :* jamais de copie périmée, une seule vérité physique sur le disque.
+*Contre :* repose sur un comportement qui vient de subir une régression pour le cas voisin (F3) — le lien par skill marche aujourd'hui, mais la zone est visiblement sensible aux correctifs de sécurité de l'outil ; et toute modification accidentelle « locale » modifie en réalité la maison. À n'adopter que si la friction du sync de l'option A devient réelle.
+
+### Option C — La maison devient une place de marché de plugins (cible à terme)
+
+Structurer la maison en plugins (`.claude-plugin/plugin.json` + manifeste de marketplace), installer par `/plugin`, mettre à jour par commande. Espace de noms `maison:recap` → collisions impossibles (F2 neutralisé).
+
+*Pour :* le mécanisme prévu par l'outil pour exactement ce besoin ; versionnage, activation/désactivation propres ; c'est la sortie naturelle si un jour ces skills se partagent au-delà d'une machine.
+*Contre :* cérémonie de structuration réelle (manifestes, éventuel renommage des invocations en `plugin:skill`), et l'écosystème plugin est plus jeune que le mécanisme skills. Prématuré tant que la maison bouge encore chaque semaine.
+
+### Option D — `--add-dir` sur le clone de la maison (ajoutée en v2, découverte par la revue)
+
+Le clone unique de la maison porte ses skills sous `<clone>/.claude/skills/`. Chaque session se lance avec `--add-dir <clone>` (ou l'équivalent en réglage), et les skills sont lus à la source (F8).
+
+*Pour :* tous les avantages de A sans son défaut — aucune copie donc aucune péremption, aucun sync à ne pas oublier, aucun lien symbolique donc immunisé à F3, `git pull` = à jour partout, zéro dépendance.
+*Contre — la ligne que le comparatif de la revue omettait :* **chaque session a accès direct à la maison.** Une modification accidentelle touche la source de vérité, pas une copie jetable — le même défaut que l'option B. Mitigation élégante : la maison est un dépôt git, donc `git -C <clone> status` rend toute dérive visible ; cette vérification entre au rituel (→ V5 adapté). Autres inconnues à mesurer : le rang des skills `--add-dir` dans la chaîne de priorité de F2, et la persistance du réglage sans le retaper à chaque lancement.
+
+### Recommandation explicite (v3)
+
+**Option D, précédée d'une mesure V0 — A en repli documenté.** Le comportement F8 est documenté mais pas encore prouvé sur la machine de Mathieu : V0 (charger un skill de la maison via `--add-dir`, verdict binaire) est le premier geste exécutable du plan de migration — pas avant, car il exige que le clone et au moins un skill existent. V0 vert → D est le mécanisme du poste Windows. V0 rouge ou friction réelle du lancement → A, qui reste entièrement valable. **Option C : redevient « à terme », et pour le monde Claude Code seulement** — la mesure F9 a tranché : les plugins n'atteignent pas claude.ai, donc C n'a aucun rapport avec Android ; sa valeur réelle est le multi-poste Claude Code et la stabilité, quand la maison aura cessé de bouger. **Le circuit Android est un chantier séparé** (§ 7.4), manuel par conception, dont la maison est la source mais pas le tuyau. Le séquencement reste le même raisonnement que le remède B du réalignement : minimal d'abord, escalade sur preuve.
+
+## 5. Plan de migration — l'état actuel vers l'état cible
+
+**Règle du rayon d'impact (v3, exigence de Mathieu) — elle prime sur toutes les étapes ci-dessous.** Ce chantier ne doit casser aucun autre projet. Quatre gardes, chacun vérifiable :
+- **Un seul projet pilote à la fois.** App-Handyman est le pilote (c'est lui qui porte le bloquant). Aucun autre projet n'est touché tant que les mesures V ne sont pas vertes sur le pilote — les autres rejoignent un par un, chacun sur GO explicite.
+- **L'inventaire (étape 1) liste les DÉPENDANTS de chaque skill** : quels projets l'utilisent aujourd'hui. Tout skill ayant un dépendant hors du pilote est **GELÉ** — ni déplacé, ni renommé, ni modifié — jusqu'à ce que ce projet entre dans la migration.
+- **Sauvegarde avant tout premier geste d'écriture** dans `~/.claude/skills/` : copie datée du dossier entier (`robocopy` vers `skills-sauvegarde-AAAAMMJJ/`). Le retour arrière de tout le chantier tient en une restauration.
+- **Aucune suppression pendant la migration.** La consolidation copie et ajoute ; les anciens emplacements ne se retirent qu'après les mesures V vertes ET le GO final — jamais dans le même geste que l'ajout. Corollaire F2 : avant de poser tout skill générique dans `~/.claude/skills/`, mesurer qu'aucun projet ne porte un skill homonyme (`ls` des `.claude/skills/` de chaque dépôt) — l'homonymie ferait gagner le générique en silence dans ce projet.
+
+1. **Inventaire** (mesure, pas mémoire) : lister tous les skills existants — maison GitHub, `~/.claude/skills/` de la machine, `.claude/skills/` de chaque projet — avec pour chacun : où il vit, s'il existe en plusieurs copies, lesquelles divergent (`git diff` ou comparaison de fichiers), et **quels projets en dépendent**.
+2. **Tri** selon le § 3 : générique / projet / à généraliser. Les divergences détectées à l'étape 1 sont chacune une décision : quelle copie est la vraie, et la partie projet s'extrait en paramètre.
+3. **Consolidation** : la maison reçoit la version canonique de chaque générique ; les skills de projet restent (ou déménagent) dans le `.claude/skills/` de leur projet, commités.
+4. **Distribution** : manifeste + `sync-skills.ps1` dans la maison, premier sync exécuté.
+5. **Traitement des trois éléments en attente** — enfin débloqués : corrections de prompt-forge issues du jugement, observation 11 → task-observer, observation 12 → prompt-forge. Chacune se fait DANS la maison, puis descend par sync — premier aller-retour réel du circuit.
+6. **Consignation** : un `README.md` de la maison décrit la règle du § 3, le manifeste, le script, et le verdict du protocole § 6. La maison devient sa propre source d'autorité documentée. Côté App-Handyman, le bloquant « rien dans `.claude/skills/` » est remplacé par la règle du § 3.
+
+## 6. Protocole de validation — à exécuter par Claude Code, verdicts observables
+
+Aucune de ces mesures ne se présume ; chacune produit un verdict binaire.
+
+| # | Mesure | Verdict attendu |
+|---|---|---|
+| V0 | Lancer une session avec `--add-dir <clone maison>`, vérifier qu'un skill de la maison est vu et invocable | Skill chargé (F8 prouvé sur cette machine). Rouge → repli option A, consigner |
+| V1 | Dans deux projets différents, lister les skills vus par la session | Un skill de la maison visible dans les deux ; un skill de projet visible dans un seul |
+| V2 | Modifier une ligne anodine d'un skill EXISTANT dans la maison, `git pull`, relire depuis une session | La session voit la nouvelle version (F4 : sans redémarrage) |
+| V2-bis | Installer un skill ENTIÈREMENT NOUVEAU et vérifier son apparition sans redémarrage | Vert si le dossier de premier niveau existait déjà ; le cas « machine vierge » exige un redémarrage (limite F4) — les deux verdicts se consignent |
+| V3 | Poser volontairement un skill de projet homonyme d'un personnel, invoquer, mesurer lequel répond, puis retirer | Le PERSONNEL répond (F2, confirmé le 2026-07-24). Si l'inverse : F2 a changé — consigner, la règle de nommage du § 3 reste valable dans les deux cas |
+| V4 | Aller-retour complet : corriger un skill depuis un projet → commit/push maison → `git pull` → vérifier dans un AUTRE projet | La correction arrive dans le second projet ; aucune copie orpheline ne subsiste |
+| V5 | (Option A) Modifier directement `~/.claude/skills/<skill>`, relancer le sync — (Option D) modifier un skill via une session, puis `git -C <clone> status` | A : le script DÉTECTE et demande, n'écrase pas en silence — D : la dérive est VISIBLE dans git avant tout `pull/push` |
+| V6 | Après chaque mise à jour majeure de Claude Code : rejouer V0, V2-bis et V3 | Mêmes verdicts qu'à l'origine ; tout écart se consigne avec la version de l'outil — F2/F3/F8/F9 sont des comportements, pas des lois |
+| V7-pre | Vérifier au compte claude.ai : plan éligible (Pro/Max/Team/Enterprise) ET exécution de code activée | Oui → V7 s'exécute. Non → le canal Android est INCONSTRUCTIBLE en l'état ; consigner daté, V7 sans objet jusqu'à changement de plan |
+| V7 | (Circuit Android, si V7-pre vert) Depuis l'app Android, chercher le téléversement de skill dans Settings > Features ; sinon, téléverser depuis le web et vérifier que le skill apparaît sur mobile | L'un des deux chemins fonctionne — consigner LEQUEL, avec la date : c'est lui qui devient le geste de la routine du § 7.4 |
+
+## 7. Risques et limites — nommés d'avance
+
+1. **Le sync est un geste humain** (option A). Oublié, les machines divergent de la maison sans bruit. Mitigation : V5 + rapport de sync + éventuel contrôle de fraîcheur en démarrage de session. Si la friction se mesure, l'option B existe.
+2. **F2 et F3 sont des comportements de l'outil, pas des lois.** Ils ont déjà changé une fois (la régression de F3 en est la preuve). Le protocole § 6 se rejoue après toute mise à jour majeure de Claude Code — c'est le prix d'appuyer une architecture sur un outil vivant.
+3. **Les skills liés à deux projets à la fois** (tdd-enforcer sert suspension-intelligence aujourd'hui, App-Handyman en vague 2) forceront la question du § 3 plus tôt que prévu : généraliser le moteur, ou deux skills de projet distincts. À trancher au cas par cas, pas d'avance.
+4. **Deux circuits de distribution irréductiblement séparés — mesuré, plus une hypothèse** (F9, 2026-07-24). La maison reste la source d'autorité unique des FICHIERS, mais elle alimente deux canaux sans aucun pont : le poste Windows (Claude Code — option D ou A, automatisable, `git pull` suffit) et le compte claude.ai qui sert l'Android (téléversement manuel d'un zip par skill, par utilisateur, via Settings > Features — manuel par conception de l'outil). Conséquences pratiques : la maison gagne une **routine d'empaquetage** (un petit script `Compress-Archive` produisant un zip par skill distribué, prêt à téléverser) et une **liste de contrôle** de ce qui est monté au compte, datée — car aucune mesure automatique ne détectera la dérive entre la maison et le compte. **TO VALIDATE avant de graver le geste — deux portes dans l'ordre :** (1) le compte claude.ai de Mathieu porte-t-il un plan éligible AVEC exécution de code activée ? Non → le circuit est **inconstructible en l'état** ; la limite se consigne datée et V7 est sans objet jusqu'à changement de plan. Oui → (2) la doc dit « Settings > Features » sans préciser la surface — l'app Android expose-t-elle le téléversement, ou faut-il téléverser depuis le web/desktop pour que ça descende sur mobile ? Mesurer (→ V7), ne pas supposer. Tant que ce circuit n'est pas construit, les sessions Android vivent sans les skills de la maison — limite assumée et datée.
+5. **Ce document ne couvre toujours pas** : le partage au-delà d'une machine côté Claude Code (multi-poste → option C d'office), et les hooks et agents (mêmes principes, emplacements voisins, à traiter quand le besoin naît).
+
+## Sources
+
+- Documentation officielle skills (emplacements, priorité, liens par skill, surveillance) : https://code.claude.com/docs/en/skills
+- Vue d'ensemble Agent Skills (emplacements par produit) : https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+- Régression du lien de dossier entier : https://github.com/anthropics/claude-code/issues/38051
+- Référence plugins et places de marché : https://code.claude.com/docs/en/plugins-reference
+- Motif dotfiles à liens par élément (partagé + local) : https://dylanbochman.com/blog/2026-01-25-dotfiles-for-ai-assisted-development
+- Outils de sync communautaires (état de l'art, non retenus) : https://dev.to/runkids/how-to-sync-ai-skills-across-claude-code-openclaw-and-codex-in-2-minutes-226e
