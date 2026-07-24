@@ -46,7 +46,8 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
 2. **Vérifier les correctifs en attente** (log d'observations task-observer) — toute correction notée « à appliquer à la ré-émission » s'applique maintenant.
 3. **Monter `version:`** — toujours, même pour une ligne. Deux contenus différents ne portent jamais le même numéro. Retouche : +0.0.1 · ajout : +0.1.0 · refonte : +1.0.0.
 4. **Contraintes d'upload claude.ai** (mesurées 2026-07-22) : `description` ≤ 1024 caractères · nom du dossier = `name` du frontmatter · `SKILL.md` requis.
-5. **Commit + push** ce repo.
+5. **Commit + push** ce repo — **par `git add` nommé, jamais `git add -A` ni `git add .`, tant qu'une sonde de mesure vit dans `.claude/skills/`** (règle du 2026-07-24). Une sonde est un skill jetable, non suivi par conception ; un staging global l'embarquerait dans l'historique de la maison, où elle n'a rien à faire.
+   **Règle plus forte, à préférer chaque fois qu'elle est applicable : poser la sonde APRÈS le push, jamais avant.** Le séquencement rend l'erreur impossible au lieu de la surveiller ; le `git add` nommé n'est que le repli pour le cas où une sonde doit coexister avec un commit. Vérification en une commande : `git status --short` doit montrer la sonde en `??` avant ET après le commit.
 6. **Déployer vers chaque cible** où le skill doit tourner :
    - Compte claude.ai (Cowork/Chat) : zipper le dossier du skill → Personnaliser → Compétences → supprimer l'ancien → téléverser → relancer l'app desktop au complet.
    - Disque (Claude Code local) : copier `.claude/skills/<nom>/` → `~/.claude/SKILLS/<nom>/` (remplacer). Cible transitoire : si `--add-dir <clone>` est validé (mesure V0 du § 6 de la proposition), la session lit la maison à la source et cette copie n'a plus lieu d'être.
