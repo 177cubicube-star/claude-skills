@@ -21,10 +21,17 @@ date, elle ne se supprime pas).
       staging **nommé**, jamais `-A` (règle d'ordre du README).
       **Fait le 2026-07-24, commit `0a84d6a`** (vérifié le 2026-07-26 :
       les 3 fichiers sont suivis).
-- [ ] **Révoquer l'accès GitHub de ChatGPT/Codex** — décidé le 2026-07-26
+- [x] **Révoquer l'accès GitHub de ChatGPT/Codex** — décidé le 2026-07-26
       après l'incident d'import. Geste de la main de Mathieu.
-      Vérification : l'entrée ne doit plus figurer dans les applications
-      autorisées du compte GitHub.
+      **Fait le 2026-07-27, déclaré par Mathieu** (l'état des applications
+      autorisées d'un compte GitHub n'est pas mesurable depuis une session :
+      c'est une déclaration consignée, pas une mesure).
+      **Ce qui a été mesuré, en revanche :** l'accès git propre de Mathieu
+      reste intact après la révocation — `ls-remote` répond sur les trois
+      dépôts (`claude-skills`, `App-Handyman`, `suspension-intelligente`).
+      C'était le risque annoncé au moment de la décision, il ne s'est pas
+      réalisé : la révocation coupe l'application OpenAI, pas les identifiants
+      du compte.
 - [x] Supprimer les doublons périmés dans `Projects\`
       (`carte-skills.md`, `skills-maisons-et-acces.md`) — maison unique
       décidée le 2026-07-24 : le repo. Geste de la main de Mathieu
