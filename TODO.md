@@ -47,8 +47,21 @@ date, elle ne se supprime pas).
 
 ## À faire — chantiers, dans l'ordre hérité (feuille de route, passation 3 § 8)
 
-1. [ ] **Sauvegarde datée** de `~\.claude\skills\` (robocopy vers
+1. [x] **Sauvegarde datée** de `~\.claude\skills\` (robocopy vers
        `skills-sauvegarde-AAAAMMJJ\`) — préalable à toute écriture là-bas.
+       **Faite le 2026-07-26** →
+       `Documents\Claude\sauvegardes\skills-sauvegarde-20260726\`.
+       15 fichiers, 128 Ko, vérifiés identiques octet pour octet, horodatages
+       préservés (`robocopy /E /COPY:DAT` — l'horodatage est le discriminant
+       qui a démasqué l'import Codex, il doit survivre à la copie).
+       **Deux écarts délibérés à la consigne**, à connaître avant de rejouer
+       le geste : (a) la sauvegarde est posée HORS de `~\.claude\` — une
+       sauvegarde qui vit dans le dossier qu'elle protège disparaît avec lui,
+       et rien ne garantit qu'un dossier voisin de `SKILLS\` ne soit jamais
+       scanné ; (b) le dossier s'appelle `SKILLS` en majuscules sur le disque
+       (le README l'écrit ainsi, ce TODO l'écrivait en minuscules). Windows
+       ne fait pas la différence, un système sensible à la casse si.
+       Le dossier de sauvegarde n'est dans aucun dépôt git — vérifié.
 2. [ ] **Mesure du rang `--add-dir` vs personnel homonyme** dans la chaîne
        F2 — marqueur délibéré + sonde posée après push (forme forte).
        C'est LA mesure qui débloque la généralisation de prompt-forge.
