@@ -62,9 +62,16 @@ date, elle ne se supprime pas).
        (le README l'écrit ainsi, ce TODO l'écrivait en minuscules). Windows
        ne fait pas la différence, un système sensible à la casse si.
        Le dossier de sauvegarde n'est dans aucun dépôt git — vérifié.
-2. [ ] **Mesure du rang `--add-dir` vs personnel homonyme** dans la chaîne
+2. [x] **Mesure du rang `--add-dir` vs personnel homonyme** dans la chaîne
        F2 — marqueur délibéré + sonde posée après push (forme forte).
        C'est LA mesure qui débloque la généralisation de prompt-forge.
+       **Faite le 2026-07-26 — verdict `PERSONNEL`** (Claude Code 2.1.220,
+       Windows). Le personnel l'emporte sur `--add-dir` ET sur le
+       `.claude/skills/` du projet courant. Protocole et points de mesure :
+       `2026-07-23-proposition-maison-skills.md` § 6, « Résultat consigné ».
+       La décision qui en découle n'est PAS tranchée : `ISSUES-LOG.md`,
+       ISSUE-001. **Réplication Linux en cours** — jusqu'à son verdict, le
+       rang reste une observation locale à Windows.
 3. [ ] **Étape 3 du § 5** (consolidation — presque vide, copies identiques
        mesurées) — conditions : sauvegarde faite + GO explicite.
 4. [ ] **Traitement des observations** — file : obs 8, 11-18 (App-Handyman)
@@ -81,7 +88,7 @@ date, elle ne se supprime pas).
 
 | Sujet | Condition de réouverture |
 |---|---|
-| Copie `~\.claude\skills\` (redondante pour `claude-ah`, utile à `claude` nu) | décision à froid de Mathieu — rien ne se supprime avant |
+| ~~Copie `~\.claude\skills\` (redondante pour `claude-ah`, utile à `claude` nu)~~ — **condition de réouverture CADUQUE le 2026-07-26** | **Réouvert de force par V3-bis.** La prémisse du garage était fausse : la copie n'est pas redondante pour `claude-ah`, elle est **prioritaire** — les 10 skills sont servis par elle, jamais par la maison. Un sujet garé sous une prémisse fausse dormirait éternellement. Ne plus attendre « la décision à froid » : le sujet est instruit avec son fait mesuré et ses deux options dans `ISSUES-LOG.md` ISSUE-001, en attente du décideur. |
 | Lanceur `claude-ah` mono-projet | entrée du 2ᵉ projet (un `claude-si`, ou généralisation du lanceur) |
 | Option C (plugins/marketplace) | multi-poste Claude Code, ou stabilité de la maison (1 mois sans changement de structure) |
 | Divergences héritées de l'audit Cowork (tdd-enforcer périmé au compte ; skill-creator repo < Anthropic) | décision de Mathieu — hors périmètre du chantier maison |

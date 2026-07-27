@@ -148,6 +148,61 @@ Aucune de ces mesures ne se présume ; chacune produit un verdict binaire.
 | V7-pre | Vérifier au compte claude.ai : plan éligible (Pro/Max/Team/Enterprise) ET exécution de code activée | Oui → V7 s'exécute. Non → le canal Android est INCONSTRUCTIBLE en l'état ; consigner daté, V7 sans objet jusqu'à changement de plan |
 | V7 | (Circuit Android, si V7-pre vert) Depuis l'app Android, chercher le téléversement de skill dans Settings > Features ; sinon, téléverser depuis le web et vérifier que le skill apparaît sur mobile | L'un des deux chemins fonctionne — consigner LEQUEL, avec la date : c'est lui qui devient le geste de la routine du § 7.4 |
 
+### Résultat consigné — V3-bis, exécutée le 2026-07-26
+
+**Verdict : `MARQUEUR-V3BIS-PERSONNEL`. Le personnel l'emporte.** Un skill
+atteint par `--add-dir` **ne prime pas** sur son homonyme de `~/.claude/SKILLS/`.
+
+**Conditions de la mesure — à citer avec le verdict, car F2 est un comportement
+et non une loi :** Claude Code **2.1.220**, plateforme **Windows 11**
+(`windows-x86_64`). Prérequis remplis dans l'ordre exigé : sauvegarde datée du
+2026-07-26 faite et vérifiée ; marqueurs posés APRÈS le push (arbre à 0
+modification, `local == origin`) ; sujet `json-canvas`, marqueur ajouté à la
+`description` du frontmatter de chaque copie.
+
+**Points de mesure** (sonde `v3bis-sonde-maison` = skill à nom unique présent
+uniquement dans la maison, donc sans homonyme possible) :
+
+| Lancement | cwd | `--add-dir` | `json-canvas` | sonde maison |
+|---|---|---|---|---|
+| T ×3 | App-Handyman | non | `PERSONNEL` | `ABSENT` |
+| M ×3 | App-Handyman | **oui** | `PERSONNEL` | **`VISIBLE`** |
+| C ×1 | maison | non | `PERSONNEL` | `VISIBLE` |
+| **L ×3** | App-Handyman | **oui**, homonyme personnel **renommé hors jeu** | **`MAISON`** | — |
+
+**La ligne L est ce qui rend le verdict opposable**, et elle a été ajoutée sur
+objection de Mathieu — la première série ne la comportait pas. Sans elle, un
+frontmatter cassé par la pose du marqueur (YAML invalide, `description` > 1024
+caractères) aurait rendu le fichier maison silencieusement inchargeable et
+produit **exactement** la même sortie que le rang conclu. La sonde prouve que le
+*dossier* de la maison est scanné ; elle ne prouve rien sur la *chargeabilité
+d'un fichier donné*. En L, l'homonyme personnel écarté, la maison rend son
+marqueur — le fichier était donc chargeable, et le `PERSONNEL` de M est bien un
+rang, pas un échec de chargement. Contrôles statiques concordants : YAML valide,
+`description` à 249 caractères.
+
+**Portée du verdict, plus large que la question posée :** la ligne C montre que
+le personnel l'emporte aussi sur le `.claude/skills/` du projet courant, pas
+seulement sur celui atteint par le drapeau.
+
+**Conséquence directe :** les 10 skills de la maison ayant tous un homonyme
+personnel, ils sont **tous servis par la copie**, jamais par la source ; un
+`git pull` sur la maison ne change rien pour eux. `--add-dir` fonctionne
+(prouvé par la sonde et par L), mais sa portée utile se limite aux skills
+**sans homonyme personnel**. La décision qui en découle n'est pas tranchée ici :
+voir `ISSUES-LOG.md`, ISSUE-001.
+
+**Réplication en cours (Linux, hors de ce poste).** Tant qu'elle n'a pas rendu,
+ce verdict est une observation **locale à Windows**. Si les deux bancs
+concordent, le rang cesse d'être local et devient un fait de l'outil — à
+consigner ici avec les deux plateformes.
+
+**État restauré après mesure, vérifié :** marqueurs retirés, sonde supprimée,
+arbre maison à 0 modification, copie personnelle identique octet pour octet à
+la sauvegarde du jour. Écart connu et normal après `git checkout` : le fichier
+maison est en CRLF (normalisation `.gitattributes`), la copie personnelle en LF
+— contenu identique, comparer le contenu et non les octets.
+
 ## 7. Risques et limites — nommés d'avance
 
 1. **Le sync est un geste humain** (option A). Oublié, les machines divergent de la maison sans bruit. Mitigation : V5 + rapport de sync + éventuel contrôle de fraîcheur en démarrage de session. Si la friction se mesure, l'option B existe.
