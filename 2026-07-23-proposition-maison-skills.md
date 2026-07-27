@@ -192,10 +192,54 @@ personnel, ils sont **tous servis par la copie**, jamais par la source ; un
 **sans homonyme personnel**. La décision qui en découle n'est pas tranchée ici :
 voir `ISSUES-LOG.md`, ISSUE-001.
 
-**Réplication en cours (Linux, hors de ce poste).** Tant qu'elle n'a pas rendu,
-ce verdict est une observation **locale à Windows**. Si les deux bancs
-concordent, le rang cesse d'être local et devient un fait de l'outil — à
-consigner ici avec les deux plateformes.
+**Réplication Linux — rendue le 2026-07-27, CONCORDANTE. Le verdict n'est plus
+une observation locale : il est prouvé sur deux plateformes.** Banc indépendant
+(bac à sable Cowork, conteneur éphémère, `HOME` isolé, aucun effet de bord),
+**même version de CLI 2.1.220**, montage refait de zéro : **15 runs, 15/15
+conformes, aucun raté du modèle**. Verdict identique — personnel > projet et
+personnel > `--add-dir`. Fiche complète annexée en **v1.1** :
+`fiche-mesure-rang-skills-20260727-linux.md` (protocole, 15 sorties brutes,
+limites, conditions de révision).
+
+Le banc Linux porte l'équivalent de la ligne L **dès sa conception** (run D,
+passé en premier par choix délibéré : s'il échoue, l'instrument est aveugle et
+les autres runs ne valent rien). Il en tire l'appui que la série Windows n'a
+obtenu qu'après objection : **la paire D/M** — configuration et drapeau
+identiques, seule la présence de l'homonyme change, et le résultat bascule de
+`MAISON` à `PERSONNEL`. C'est cette paire, et non la sonde, qui exclut
+l'hypothèse du fichier maison invalide.
+
+Deux précisions que le banc Linux apporte et que Windows n'avait pas établies.
+La première est le **masquage** : le personnel ne fait pas que gagner
+l'arbitrage, il **efface** l'homonyme de la liste des skills — celui-ci
+n'apparaît sous aucune forme dérivée ni sous aucun nom qualifié. C'est cette
+propriété, et non le rang seul, qui rend le doublon dangereux : une copie maison
+périmée ne laisse **aucune trace observable en session**. Elle repose sur un
+cinquième run, **E**, ajouté à la relecture (fiche v1.1) : une énumération
+explicitement ouverte à tout préfixe ou suffixe, qui ne remonte qu'une seule
+entrée `probe-rang`, celle du personnel, alors même que la maison est montée.
+La seconde est le contrôle interne du run T (`SONDE=ABSENT` **et**
+`PROBE=PERSONNEL` dans la même réponse prouvent que la maison personnelle était
+lue alors que la maison montée ne l'était pas).
+
+**Une leçon de forme, vue deux fois en deux jours et consignée comme telle.**
+La v1.0 de la fiche affirmait déjà le masquage alors que D/T/M/C n'interrogeaient
+qu'un **nom exact** — ils établissent qui répond à `probe-rang`, pas l'absence de
+toute variante ailleurs dans la liste. L'affirmation dépassait sa mesure, et le
+run E l'a mise à niveau. C'est exactement la faute que la ligne L avait corrigée
+côté Windows : dans les deux cas un énoncé plus large que l'instrument, dans les
+deux cas réparé par un run supplémentaire plutôt que par une réécriture
+silencieuse. Les deux bancs l'ont commise indépendamment — ce n'est donc pas un
+accident d'opérateur mais une pente du protocole lui-même, à contrer par une
+question posée avant d'écrire : *de quel run cette phrase tient-elle sa portée ?*
+
+**Ce que la concordance ne couvre pas** (repris de la fiche v1.1 § 6, à ne pas
+sur-lire) : un seul nom de skill éprouvé ; la maison **plugin** hors périmètre,
+comme la précédence à l'intérieur d'une même maison ; le run E énumère ce que le
+modèle **déclare** voir — il exclut une variante qualifiée visible, non une
+entrée que le modèle omettrait de rapporter ; verdict lié à **2.1.220** — le rang
+est un comportement d'implémentation, pas un contrat documenté, donc toute montée
+de version rouvre la question (→ V6, à rejouer avec **D, T, M et E**).
 
 **État restauré après mesure, vérifié :** marqueurs retirés, sonde supprimée,
 arbre maison à 0 modification, copie personnelle identique octet pour octet à

@@ -70,8 +70,15 @@ date, elle ne se supprime pas).
        `.claude/skills/` du projet courant. Protocole et points de mesure :
        `2026-07-23-proposition-maison-skills.md` § 6, « Résultat consigné ».
        La décision qui en découle n'est PAS tranchée : `ISSUES-LOG.md`,
-       ISSUE-001. **Réplication Linux en cours** — jusqu'à son verdict, le
-       rang reste une observation locale à Windows.
+       ISSUE-001. **Réplication Linux rendue le 2026-07-27 — CONCORDANTE**
+       (banc Cowork indépendant, même CLI 2.1.220, 15 runs 15/15) : le rang
+       est prouvé sur deux plateformes, ce n'est plus une observation locale.
+       Fiche annexée en v1.1 :
+       `fiche-mesure-rang-skills-20260727-linux.md`. Son run E établit que le
+       masquage est **total** — le perdant est effacé de la liste, donc une
+       copie périmée ne laisse aucune trace observable en session.
+       Le chantier est clos ; ce qui reste ouvert est une décision de
+       structure, pas une mesure.
 3. [ ] **Étape 3 du § 5** (consolidation — presque vide, copies identiques
        mesurées) — conditions : sauvegarde faite + GO explicite.
 4. [ ] **Traitement des observations** — file : obs 8, 11-18 (App-Handyman)
@@ -89,7 +96,7 @@ date, elle ne se supprime pas).
 | Sujet | Condition de réouverture |
 |---|---|
 | ~~Copie `~\.claude\skills\` (redondante pour `claude-ah`, utile à `claude` nu)~~ — **condition de réouverture CADUQUE le 2026-07-26** | **Réouvert de force par V3-bis.** La prémisse du garage était fausse : la copie n'est pas redondante pour `claude-ah`, elle est **prioritaire** — les 10 skills sont servis par elle, jamais par la maison. Un sujet garé sous une prémisse fausse dormirait éternellement. Ne plus attendre « la décision à froid » : le sujet est instruit avec son fait mesuré et ses deux options dans `ISSUES-LOG.md` ISSUE-001, en attente du décideur. |
-| Lanceur `claude-ah` mono-projet | entrée du 2ᵉ projet (un `claude-si`, ou généralisation du lanceur) |
+| Lanceur `claude-ah` mono-projet | entrée du 2ᵉ projet (un `claude-si`, ou généralisation du lanceur) — **condition élargie le 2026-07-27** : ce sujet est devenu le **dernier bloquant d'ISSUE-001**, l'option 1 en dépendant directement. Il se rouvre donc aussi sur « décision prise sur ISSUE-001 », sans attendre un 2ᵉ projet. |
 | Option C (plugins/marketplace) | multi-poste Claude Code, ou stabilité de la maison (1 mois sans changement de structure) |
 | Divergences héritées de l'audit Cowork (tdd-enforcer périmé au compte ; skill-creator repo < Anthropic) | décision de Mathieu — hors périmètre du chantier maison |
 
