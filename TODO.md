@@ -156,6 +156,78 @@ Rappel d'ouverture de session Cowork : rebrancher les dossiers
 
 ## Journal de sessions (le plus récent en haut)
 
+### 2026-07-27 — Session Code : le rang cesse d'être local, et trois dossiers se ferment
+
+Suite directe de la session du 26 (elle a franchi minuit : commits de 21h34 le
+26 à 07h13 le 27). Cinq commits, tous vérifiés après `fetch` plutôt que déduits
+du rapport de push.
+
+**Le verdict du rang devient un fait de l'outil.** La réplication Linux est
+rendue et **concorde** : banc indépendant (bac à sable Cowork, conteneur
+éphémère, `HOME` isolé), **même CLI 2.1.220**, montage refait de zéro,
+**15 runs 15/15**. Verdict identique — personnel > projet et personnel >
+`--add-dir`. Le rang n'est donc plus une particularité de poste. Fiche annexée
+en **v1.1** : `fiche-mesure-rang-skills-20260727-linux.md`. Son **run E**
+(énumération ouverte à tout préfixe ou suffixe) établit une propriété que
+Windows n'avait pas vue : le masquage est **total** — le perdant est effacé de
+la liste, pas seulement dépriorisé. Une copie maison périmée ne laisse **aucune
+trace observable en session**. C'est cela, et non le rang seul, qui rend le
+doublon dangereux.
+
+**Chantier 3 (étape 3 du § 5) — clos, acquis et non exécuté.** La mesure a
+remplacé le travail : la maison portait déjà la version canonique des 10
+génériques, les skills de projet étaient déjà commités dans leur dépôt. Ce qui
+restait d'elle était son **garde du corollaire F2**, et il passe — aucun skill
+de projet n'est masqué, dans aucun dépôt. Ce garde a changé de nature entre son
+écriture et son application : il redoutait qu'un générique « gagne en silence » ;
+le run E établit pire.
+
+**L'étape 4 du § 5 ne démarre pas.** Elle attend ISSUE-001, et ce blocage
+n'était pas visible avant V3-bis — la nature même du `sync-skills.ps1` dépend de
+l'option retenue. Consigné en ISSUE-001 § 5.
+
+**Boucle Codex fermée sur ses trois plans** : fichiers (383 supprimés le 26),
+configuration (lecture seule, liens coupés le 26), **accès** (révocation GitHub
+déclarée par Mathieu le 27). L'accès git propre reste intact — mesuré par
+`ls-remote` sur les trois dépôts. Distinction gardée nette : la révocation est
+une **déclaration** consignée, l'accès git une **mesure**.
+
+**`App-Handyman/.claude/settings.json` rangé.** Il portait un chemin absolu de
+ce poste dans la config *partagée*, alors que le `.gitignore` du dépôt désigne
+`settings.local.json` pour ça. Clé fusionnée dans le fichier local (JSON validé,
+79 entrées `allow` préservées), `settings.json` supprimé, sauvegarde sortie du
+dépôt. Piège relevé au passage : ce `.gitignore` ignore le nom **exact** — toute
+sauvegarde suffixée posée là réapparaît en `??`.
+
+**ISSUE-002 ouverte et close le même jour.** Deux commits portent un message
+identique (`e7adc71`, `081857b`) : un appel git **rapporté comme refusé s'était
+en réalité exécuté**, et l'agent a rejoué la séquence en tenant le rapport
+d'échec pour un fait. Conséquence réelle : deux vérifications demandées *avant*
+commit ont eu lieu après. Historique publié, donc non réécrit — traçabilité
+fermée par une **note git** sur `081857b` et par ISSUE-002. La redondance est
+voulue : la note sert qui lit `git log`, l'ISSUE sert qui clone (les notes ne
+sont ni poussées ni récupérées par défaut).
+
+**État de sortie, mesuré :** trois dépôts propres et alignés sur leur `origin`
+(`claude-skills ede62ce` · `App-Handyman 0e4c146` · `suspension-intelligente
+5e75ca9`), ref de notes poussée, **aucun geste court restant**, chantiers 3/6.
+
+**Ce qui attend une décision — une seule :** ISSUE-001. Ses deux options ont
+désormais chacune un défaut **mesuré** plutôt qu'argumenté — la stabilité de
+l'option 1 adossée au manifeste de synchronisation, l'invisibilité totale de
+l'option 2 établie par le run E. Dernier bloquant : la généralisation de
+`claude-ah`, dont la condition de réouverture a été élargie pour qu'il cesse
+d'attendre un 2ᵉ projet.
+
+**Observations 7 à 10 loggées** (hors dépôt, `~/.claude/skill-observations/`).
+Elles forment une seule discipline : ce qu'une mesure discrimine, ce qu'un
+contrôle présuppose, ce qu'une phrase peut porter, ce qu'un rapport prouve.
+**Réserve à lire avant d'en graver quoi que ce soit :** trois d'entre elles sont
+nées d'une relecture de Mathieu, jamais du protocole. La contre-mesure qu'elles
+proposent — « de quel run cette phrase tient-elle sa portée ? » — n'a donc
+jamais fonctionné sans relecteur extérieur. Le prochain protocole exécuté seul
+sera son premier test.
+
 ### 2026-07-26 — Session Code : un autre agent avait écrit dans la maison
 
 **Découverte.** 15 fichiers non suivis dans ce dépôt, d'origine inconnue.
@@ -221,6 +293,21 @@ de retour. Le réglage global reste `read-only` ; l'écriture s'ouvre au
 lancement par geste explicite (`codex --sandbox workspace-write -C <copie>`),
 jamais par modification du défaut. Rien ne remonte du bac à sable par copie
 de fichier : ce que Codex touche revient avec `~/.Codex/` gravé dedans.
+
+**Complément ajouté le 2026-07-27** — l'entrée ci-dessus ne couvrait que
+l'incident Codex, alors que la même session a enchaîné, le 26 au soir, sur
+**deux chantiers de la feuille de route**. Consigné ici pour que le journal
+cesse de les taire, sans toucher au récit d'origine :
+
+- **Chantier 1 — sauvegarde datée** de `~\.claude\SKILLS\` faite et vérifiée
+  (`b7c5949`), préalable exigé par le § 5 avant toute écriture là-bas.
+- **Chantier 2 — mesure V3-bis exécutée** (`bfe6729`), verdict **`PERSONNEL`**.
+  Le protocole, les points de mesure et les conditions vivent au § 6 de
+  `2026-07-23-proposition-maison-skills.md`, « Résultat consigné » — pas ici.
+  La première série a conclu **avant** d'avoir écarté l'hypothèse d'un fichier
+  maison inchargeable ; c'est une objection de Mathieu qui a imposé la ligne L,
+  seule mesure rendant le verdict opposable. À retenir de la soirée : le
+  protocole n'a pas trouvé sa propre lacune.
 
 ### 2026-07-24 — Session Cowork (projet Skills) + sessions Code (maison / App-Handyman)
 
