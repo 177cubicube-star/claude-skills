@@ -52,8 +52,23 @@ date, elle ne se supprime pas).
       exemplaire en vol. L'historique git du fichier ne suit pas : `git mv` ne
       traverse pas les dépôts (perte assumée, un seul commit d'origine).
 
-- [ ] **Supprimer `tdd-enforcer` du compte claude.ai** — geste de la main de
-      Mathieu (interface web, aucun pont automatique).
+- [x] **Supprimer `tdd-enforcer` du compte claude.ai** — **FAIT le 2026-07-27**,
+      par pilotage Chrome sur GO explicite de Mathieu.
+      **Constaté avant de supprimer** (personne ne l'avait mesuré depuis le
+      24 juillet) : il était bien au compte, **dernière mise à jour 26/05/2026**
+      — deux mois de retard sur le dépôt. L'affirmation « périmé au compte »
+      héritée de l'audit Cowork est donc vérifiée, plus seulement rapportée.
+      **Vérifié APRÈS suppression** : une session Claude Code ouverte dans
+      `suspension-intelligente` répond toujours `SKILL=present` (2 runs). La
+      suppression du compte ne retire rien au projet — c'est la preuve la plus
+      forte disponible, puisque la source du compte n'existe plus.
+      Réversible : le dialogue de confirmation l'annonce, et la source est sur
+      GitHub (`c892491`).
+      Note de méthode : le champ `version` **n'est pas exposé de façon fiable**
+      dans la liste des skills d'une session (`VERSION=inconnue` en 2 runs sur
+      3). Il sert au versionnement des fichiers, pas à vérifier un déploiement.
+      Pour vérifier qu'un déploiement a pris, mesurer un **marqueur de contenu**,
+      pas le numéro de version.
       **Décidé le 2026-07-27 :** `tdd-enforcer` est un skill **de projet**,
       adapté à `suspension-intelligente`, utilisé en Claude Code uniquement.
       Il ne va **jamais** au compte — même statut d'exclusion que
