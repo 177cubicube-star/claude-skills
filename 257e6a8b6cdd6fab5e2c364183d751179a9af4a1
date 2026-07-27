@@ -1,0 +1,1 @@
+Ce commit ne contient QUE les deux renommages vers archives/. Son message annonce aussi ISSUE-001, le script et CLAUDE.md : c est faux. Un git add a echoue (pathspec deja deplace par git mv) et la chaine non conditionnelle a laisse le commit et le push suivre. Le contenu annonce est dans le commit suivant. Meme classe de defaut qu ISSUE-002.
