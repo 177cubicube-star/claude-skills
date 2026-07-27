@@ -34,9 +34,16 @@ date, elle ne se supprime pas).
       stricts (+2 lignes chacune, zéro ligne présente uniquement dans les
       copies) — aucune perte. `Projects\` n'est pas un dépôt git, donc pas de
       filet local ; le contenu survit dans la maison et sur `origin/main`.
-- [ ] Ranger `audit_suspension_intelligente_detaille (1).md` (71 Ko, racine
+- [x] Ranger `audit_suspension_intelligente_detaille (1).md` (71 Ko, racine
       du repo) vers le dépôt qu'il concerne — obs 15 : « le dépôt ouvert
       n'est pas le propriétaire d'un fait ».
+      **Fait le 2026-07-26.** Déposé en `docs/audits/audit-depot-20260723.md`
+      dans `suspension-intelligente` (commit `5e75ca9`, poussé), au nom de la
+      convention locale `audit-<sujet>-AAAAMMJJ.md` ; le suffixe « (1) » de
+      téléchargement est tombé. Copie vérifiée identique octet pour octet
+      (71 685 o) AVANT retrait de la source — la cible d'abord, jamais zéro
+      exemplaire en vol. L'historique git du fichier ne suit pas : `git mv` ne
+      traverse pas les dépôts (perte assumée, un seul commit d'origine).
 
 ## À faire — chantiers, dans l'ordre hérité (feuille de route, passation 3 § 8)
 
