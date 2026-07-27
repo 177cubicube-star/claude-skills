@@ -218,6 +218,9 @@ périmée ne laisse **aucune trace observable en session**. Elle repose sur un
 cinquième run, **E**, ajouté à la relecture (fiche v1.1) : une énumération
 explicitement ouverte à tout préfixe ou suffixe, qui ne remonte qu'une seule
 entrée `probe-rang`, celle du personnel, alors même que la maison est montée.
+**Ne pas lire cette phrase sans sa réserve**, deux paragraphes plus bas : E
+énumère ce que le modèle *déclare* voir, ce qui exclut une variante qualifiée
+visible mais non une entrée qu'il omettrait de rapporter.
 La seconde est le contrôle interne du run T (`SONDE=ABSENT` **et**
 `PROBE=PERSONNEL` dans la même réponse prouvent que la maison personnelle était
 lue alors que la maison montée ne l'était pas).
