@@ -52,6 +52,22 @@ date, elle ne se supprime pas).
       exemplaire en vol. L'historique git du fichier ne suit pas : `git mv` ne
       traverse pas les dépôts (perte assumée, un seul commit d'origine).
 
+- [ ] **Supprimer `tdd-enforcer` du compte claude.ai** — geste de la main de
+      Mathieu (interface web, aucun pont automatique).
+      **Décidé le 2026-07-27 :** `tdd-enforcer` est un skill **de projet**,
+      adapté à `suspension-intelligente`, utilisé en Claude Code uniquement.
+      Il ne va **jamais** au compte — même statut d'exclusion que
+      `prompt-forge`. Sa version `1.0.0` a été gravée le même jour
+      (`suspension-intelligente`, commit `c892491`) : elle sert de référence
+      de départ pour ce dépôt, pas de préparatif de téléversement.
+      **Pourquoi ce n'est pas optionnel :** une copie périmée dort encore au
+      compte. Tant qu'elle y est, une session Cowork peut la déclencher et
+      exécuter des instructions TDD obsolètes — sans aucun signal. C'est le
+      défaut d'ADR-028 vu depuis le compte : deux jeux d'instructions sous un
+      même nom.
+      Vérification : le skill ne doit plus figurer dans Personnaliser →
+      Compétences, et une session Cowork relancée ne doit plus le proposer.
+
 ## À faire — chantiers, dans l'ordre hérité (feuille de route, passation 3 § 8)
 
 1. [x] **Sauvegarde datée** de `~\.claude\skills\` (robocopy vers
@@ -138,7 +154,7 @@ date, elle ne se supprime pas).
 | ~~Copie `~\.claude\skills\` (redondante pour `claude-ah`, utile à `claude` nu)~~ — **condition de réouverture CADUQUE le 2026-07-26** | **Réouvert de force par V3-bis.** La prémisse du garage était fausse : la copie n'est pas redondante pour `claude-ah`, elle est **prioritaire** — les 10 skills sont servis par elle, jamais par la maison. Un sujet garé sous une prémisse fausse dormirait éternellement. Ne plus attendre « la décision à froid » : le sujet est instruit avec son fait mesuré et ses deux options dans `ISSUES-LOG.md` ISSUE-001, en attente du décideur. |
 | Lanceur `claude-ah` mono-projet | entrée du 2ᵉ projet (un `claude-si`, ou généralisation du lanceur) — **condition élargie le 2026-07-27** : ce sujet est devenu le **dernier bloquant d'ISSUE-001**, l'option 1 en dépendant directement. Il se rouvre donc aussi sur « décision prise sur ISSUE-001 », sans attendre un 2ᵉ projet. |
 | Option C (plugins/marketplace) | multi-poste Claude Code, ou stabilité de la maison (1 mois sans changement de structure) |
-| Divergences héritées de l'audit Cowork (tdd-enforcer périmé au compte ; skill-creator repo < Anthropic) | décision de Mathieu — hors périmètre du chantier maison |
+| Divergences héritées de l'audit Cowork — **moitié levée le 2026-07-27** : `tdd-enforcer` est **tranché** (voir gestes courts) ; reste `skill-creator` repo < Anthropic | décision de Mathieu — hors périmètre du chantier maison. Ne subsiste que pour `skill-creator`. |
 
 ## Prochaine session — mandat enregistré (2026-07-24)
 
