@@ -25,10 +25,15 @@ date, elle ne se supprime pas).
       après l'incident d'import. Geste de la main de Mathieu.
       Vérification : l'entrée ne doit plus figurer dans les applications
       autorisées du compte GitHub.
-- [ ] Supprimer les doublons périmés dans `Projects\`
+- [x] Supprimer les doublons périmés dans `Projects\`
       (`carte-skills.md`, `skills-maisons-et-acces.md`) — maison unique
       décidée le 2026-07-24 : le repo. Geste de la main de Mathieu
       (le pont ne supprime pas).
+      **Fait le 2026-07-26**, en session Code sur demande de Mathieu.
+      Mesuré avant suppression : les versions du dépôt sont des sur-ensembles
+      stricts (+2 lignes chacune, zéro ligne présente uniquement dans les
+      copies) — aucune perte. `Projects\` n'est pas un dépôt git, donc pas de
+      filet local ; le contenu survit dans la maison et sur `origin/main`.
 - [ ] Ranger `audit_suspension_intelligente_detaille (1).md` (71 Ko, racine
       du repo) vers le dépôt qu'il concerne — obs 15 : « le dépôt ouvert
       n'est pas le propriétaire d'un fait ».
