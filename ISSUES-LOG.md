@@ -14,6 +14,46 @@ série de `suspension-intelligente`.
 
 ---
 
+## ISSUE-002 — Deux commits au message identique : un seul changement logique, scindé par un rapport d'échec faux
+
+**Date :** 2026-07-27
+**Statut :** Résolu — traçabilité fermée, historique non réécrit
+**Contexte :** commits `e7adc71` et `081857b`
+**Type :** Git
+**Sévérité :** Mineure — aucun effet sur le contenu, effet réel sur la lisibilité
+de l'historique
+
+**En une ligne :** `e7adc71` et `081857b` sont **un seul changement logique**,
+scindé par un rapport d'échec faux ; `081857b` n'ajoute que le renvoi inline
+(3 lignes).
+
+**Ce qui s'est passé :** l'appel d'outil portant `git add` + `commit` + `push` a
+été rapporté à l'agent comme **refusé**, alors qu'il s'était exécuté —
+l'interruption est arrivée après l'exécution. L'agent a tenu le rapport d'échec
+pour un fait, supposé l'arbre inchangé, et rejoué la séquence. D'où deux commits
+au message identique. Détecté en lisant une plage de push incohérente avec le
+dernier état connu (`e7adc71..081857b` au lieu de `bfe6729..`).
+
+**Pourquoi cette entrée existe :** `git log` seul raconterait à une session
+future une histoire fausse — doublon accidentel, ou revert manqué. Le récit
+complet vit dans le log d'observations (obs 10), **hors du dépôt**, à un endroit
+qu'aucun rituel de session ne lit. Une note git est également attachée à
+`081857b` ; elle porte le même texte, mais les notes ne sont ni poussées ni
+récupérées par défaut — un clone frais ne les verrait pas. D'où la redondance
+délibérée : la note pour qui lit `git log`, cette entrée pour qui clone.
+
+**Effet secondaire à assumer :** Mathieu avait demandé deux vérifications
+**avant** commit ; le commit avait déjà eu lieu. Le contenu final est conforme —
+la 4ᵉ limite figurait déjà dans `e7adc71` — mais la séquence exigée ne l'a pas
+été. Historique publié, donc non réécrit.
+
+**Réflexe :** un rapport d'échec est une affirmation sur le monde, pas le monde.
+Après tout appel rapporté refusé, interrompu ou en échec, mesurer l'état réel
+avant l'action suivante — surtout quand l'action rapportée en échec était
+irréversible.
+
+---
+
 ## ISSUE-001 — Les 10 skills de la maison sont servis par leur copie personnelle, jamais par la source
 
 **Date :** 2026-07-26
