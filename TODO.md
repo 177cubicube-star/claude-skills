@@ -79,11 +79,44 @@ date, elle ne se supprime pas).
        copie périmée ne laisse aucune trace observable en session.
        Le chantier est clos ; ce qui reste ouvert est une décision de
        structure, pas une mesure.
-3. [ ] **Étape 3 du § 5** (consolidation — presque vide, copies identiques
+3. [x] **Étape 3 du § 5** (consolidation — presque vide, copies identiques
        mesurées) — conditions : sauvegarde faite + GO explicite.
+       **Close le 2026-07-27 — acquise, non exécutée.** La mesure a montré
+       qu'il n'y avait rien à consolider : la maison porte déjà la version
+       canonique des 10 génériques (suivis, 0 non commité), et les skills de
+       projet vivent déjà dans le `.claude/skills/` de leur projet, commités
+       (App-Handyman 1/1 · Suspension-intelligente 340/340).
+       **Ce qui restait d'elle était son garde**, et il passe : le corollaire
+       F2 de la ligne 119 du § 5 exige qu'aucun skill de projet ne porte le
+       nom d'un générique personnel. **Aucun, dans aucun dépôt.** Les 10
+       homonymes de `claude-skills` ne comptent pas : ce dépôt EST la maison,
+       ses skills sont les 10 personnels — c'est ISSUE-001, pas un défaut
+       nouveau. `prompt-forge` (10 283 o vs 9 993 o dans deux projets)
+       confirme le requalifié du 2026-07-24 : deux skills distincts sous un
+       nom commun, jamais vus par la même session.
+       **Ce garde a changé de nature entre son écriture et son application** :
+       il anticipait qu'un générique « gagnerait en silence » ; le run E du
+       2026-07-27 établit pire — le perdant est **effacé de la liste**, sans
+       doublon ni avertissement. À rejouer avant toute pose d'un nouveau
+       générique dans `~/.claude/SKILLS/`, c'est une commande :
+       comparer `ls ~/.claude/SKILLS/` aux `ls .claude/skills/` de chaque dépôt.
+
+   **L'étape 4 du § 5 ne démarre pas derrière celle-ci — elle attend
+   ISSUE-001.** Voir « ce que cette décision débloque » dans `ISSUES-LOG.md`.
 4. [ ] **Traitement des observations** — file : obs 8, 11-18 (App-Handyman)
-       + obs 1-5 (claude-skills). Chaque correction se fait DANS la maison
-       puis redescend par le circuit — premier aller-retour réel.
+       + **obs 1-10 (claude-skills)**, la file ayant doublé les 26 et 27
+       juillet. Chaque correction se fait DANS la maison puis redescend par le
+       circuit — premier aller-retour réel.
+       **Deux blocs distincts, à ne pas traiter ensemble.** Obs 1-6 sont des
+       corrections de skills nommés (obs 6 → `skill-intake`). **Obs 7, 8, 9 et
+       10 forment une seule discipline** — ce qu'une mesure discrimine, ce
+       qu'un contrôle présuppose, ce qu'une phrase peut porter, ce qu'un
+       rapport prouve — et sont toutes candidates cross-cutting : elles se
+       lisent ensemble ou pas du tout.
+       **Réserve à lire avant d'en graver quoi que ce soit** (complément à
+       l'obs 9) : la contre-mesure qu'elles proposent n'a jamais fonctionné
+       sans relecteur extérieur. L'écrire dans un skill sans cette réserve
+       commettrait sur elle la faute qu'elle prétend corriger.
 5. [ ] **Entrée de Suspension-intelligente** dans la migration — sur GO
        distinct, avec son propre inventaire ; dégèle recap/session-prep,
        ferme l'obs 8.

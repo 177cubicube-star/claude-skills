@@ -157,7 +157,34 @@ prix. L'option 1 cesse d'être « un geste et c'est réglé » pour devenir « u
 plus une surveillance ». À peser contre l'option 2, dont le défaut symétrique est
 qu'une copie périmée est invisible.
 
-### 5. Conditions de révision
+### 5. Ce que cette décision débloque — ajouté le 2026-07-27
+
+**L'étape 4 du § 5 du plan de migration** (« Distribution : manifeste +
+`sync-skills.ps1` dans la maison, premier sync exécuté ») **est à l'arrêt
+derrière cette ISSUE**, et ce blocage n'était pas visible avant V3-bis.
+
+La raison : la nature même de cette étape change selon l'option retenue.
+
+- **Option 1 retenue** (retirer les copies personnelles) → le script de sync
+  **n'a plus d'objet**. `--add-dir` sert la maison directement, `git pull`
+  suffit, et l'étape 4 se réduit à supprimer un besoin plutôt qu'à construire
+  un outil.
+- **Option 2 retenue** (garder les copies) → le script cesse d'être un confort
+  et devient l'**infrastructure critique** : c'est lui, et lui seul, qui décide
+  de ce que les sessions exécutent réellement. Il lui faut alors ce qu'un
+  simple script de copie n'a pas — détection de dérive, rapport de fraîcheur,
+  et un garde contre la copie périmée silencieuse.
+
+**Conséquence opérationnelle :** ne pas construire `sync-skills.ps1` avant que
+cette ISSUE soit tranchée. Le bâtir maintenant, c'est produire l'outil d'une des
+deux options en pariant sur laquelle sera choisie — et, si le pari est perdu, un
+outil qu'il faudra jeter ou, pire, qu'on gardera par inertie en laissant la
+décision se prendre toute seule.
+
+L'étape 3, elle, est close (2026-07-27) : la mesure a montré qu'il n'y avait
+rien à consolider, et son garde du corollaire F2 passe dans tous les dépôts.
+
+### 6. Conditions de révision
 
 Reprises de la fiche Linux § 7, plus la troisième que son annexe 5 impose.
 
@@ -190,7 +217,7 @@ Reprises de la fiche Linux § 7, plus la troisième que son annexe 5 impose.
    ce serait le signal que le canal s'est ouvert, et l'option 1 changerait de
    prix sur ce poste comme elle en change sur Cowork.
 
-### 6. Réflexe réutilisable
+### 7. Réflexe réutilisable
 
 Une sonde qui prouve qu'un **dossier** est scanné ne prouve pas qu'un **fichier**
 donné y est chargeable. Les deux échecs rendent la même sortie. Tout protocole
