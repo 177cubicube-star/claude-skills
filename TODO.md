@@ -16,9 +16,15 @@ date, elle ne se supprime pas).
 
 ## À faire — gestes courts (prochaine occasion)
 
-- [ ] Committer les 3 documents déposés à la racine du repo le 2026-07-24
+- [x] Committer les 3 documents déposés à la racine du repo le 2026-07-24
       (`carte-skills.md`, `skills-maisons-et-acces.md`, `TODO.md`) —
       staging **nommé**, jamais `-A` (règle d'ordre du README).
+      **Fait le 2026-07-24, commit `0a84d6a`** (vérifié le 2026-07-26 :
+      les 3 fichiers sont suivis).
+- [ ] **Révoquer l'accès GitHub de ChatGPT/Codex** — décidé le 2026-07-26
+      après l'incident d'import. Geste de la main de Mathieu.
+      Vérification : l'entrée ne doit plus figurer dans les applications
+      autorisées du compte GitHub.
 - [ ] Supprimer les doublons périmés dans `Projects\`
       (`carte-skills.md`, `skills-maisons-et-acces.md`) — maison unique
       décidée le 2026-07-24 : le repo. Geste de la main de Mathieu
@@ -70,6 +76,72 @@ Rappel d'ouverture de session Cowork : rebrancher les dossiers
 ---
 
 ## Journal de sessions (le plus récent en haut)
+
+### 2026-07-26 — Session Code : un autre agent avait écrit dans la maison
+
+**Découverte.** 15 fichiers non suivis dans ce dépôt, d'origine inconnue.
+Traqués jusqu'à leur cause : la **routine d'import au premier lancement de
+Codex** (installé le 2026-07-24), qui a écrit à `21:42:43` sans qu'aucun agent
+soit invoqué. Elle a converti les maisons Claude en format Codex par
+substitution textuelle aveugle — `Claude`→`Codex`, `CLAUDE.md`→`AGENTS.md`,
+et surtout `~/.claude/`→`~/.Codex/`, des chemins qui n'existent pour personne.
+
+**Portée mesurée — 383 fichiers, 3 dépôts + le profil :**
+
+| Emplacement | Écrit par l'import |
+|---|---|
+| `claude-skills` | `.agents/` (15) |
+| `App-Handyman` | `.agents/` (1) + `AGENTS.md` |
+| `Suspension-intelligente` | `.agents/` (342) + `AGENTS.md` + `.codex/` |
+| `~/.agents/skills/` | 15 |
+| `~/.codex/AGENTS.md` | la constitution globale, portée et corrompue |
+
+**Aucune source n'a été touchée.** `git diff --name-only` = 0 dans les trois
+dépôts ; les `AGENTS.md` se sont posés en `??` à côté des `CLAUDE.md`, sans
+les écraser. Ce n'est pas une règle de Codex qui a protégé la maison : c'est
+le **suivi git**. Un artefact non suivi reste visible dans `git status` —
+d'où la règle qui en découle : ne jamais `.gitignore` ce qu'on veut voir
+revenir. Corollaire du même incident : la règle « `git add` nommé, jamais
+`-A` » a fait son office — un staging global du 26 au matin embarquait les
+15 fichiers dans l'historique de la maison.
+
+**Traité le jour même** (décision Mathieu : « enlève tout lien avec un autre
+agent ») : les 383 fichiers supprimés, archive de sécurité détruite sur
+demande — rien n'est récupérable. `~/.codex/config.toml` porté à
+`sandbox_mode = "read-only"` + `approval_policy = "untrusted"` ; marketplaces
+`gitkraken` (sa source pointait sur `~/.claude/plugins/`) et
+`claude-plugins-official` retirés avec leurs 5 plugins ; les 3 MCP importés
+retirés, seul `node_repl` (runtime OpenAI) conservé. Sauvegarde :
+`~/.codex/config.toml.bak-2026-07-26`.
+
+**Conservés délibérément**, et c'est le seul endroit où « enlever le lien »
+produirait l'inverse du but : les registres `.sandbox_migration`,
+`claude-cowork-import-history.json`, `external_agent_session_imports.json` —
+ce sont eux qui marquent l'import comme fait. Les effacer risquerait de le
+rejouer. Conservés aussi : `~/.codex/skills/.system/` (54 fichiers, mtime
+`21:33:59`, soit 9 minutes AVANT l'import) — skills natifs de Codex, pas un
+import. Leur contenu mentionne « Codex » de plein droit : **l'horodatage est
+le seul discriminant fiable**, pas le contenu.
+
+**Vérification — VERTE, sur l'effet.** Codex `0.146.0-alpha.3.1`.
+`codex debug prompt-input` rend le texte réellement envoyé au modèle : il dit
+« `sandbox_mode` is `read-only` », et le témoin forcé en `workspace-write`
+diverge. Deux fausses pistes traversées, à ne pas refaire : `codex doctor`
+affiche « restricted » pour `read-only` **et** pour `workspace-write` — sa
+sortie seule ne prouve rien ; `codex sandbox` teste des profils nommés, pas
+la clé ambiante.
+
+**Observations loggées :** obs 6 (un outil devient dangereux quand on
+l'installe, pas quand on l'invoque → cible `skill-intake`) et obs 7 (un
+témoin qui ne diverge pas n'est pas un verdict mais une panne de mesure ;
+insérer un troisième point extrême → candidat cross-cutting).
+
+**Décidé pour la suite.** Si Codex doit lire ce dépôt, ce sera une **copie
+jetable sur disque local, sans `.git`** — pas de remote, donc pas de chemin
+de retour. Le réglage global reste `read-only` ; l'écriture s'ouvre au
+lancement par geste explicite (`codex --sandbox workspace-write -C <copie>`),
+jamais par modification du défaut. Rien ne remonte du bac à sable par copie
+de fichier : ce que Codex touche revient avec `~/.Codex/` gravé dedans.
 
 ### 2026-07-24 — Session Cowork (projet Skills) + sessions Code (maison / App-Handyman)
 
