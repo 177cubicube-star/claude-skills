@@ -1,0 +1,1 @@
+e7adc71 et 081857b sont un seul changement logique, scinde par un rapport d echec faux : l appel git rapporte comme refuse s etait execute. 081857b n ajoute que le renvoi inline (3 lignes). Ce n est ni un doublon accidentel ni un revert manque. Recit complet : ISSUES-LOG.md, ISSUE-002 (2026-07-27).
