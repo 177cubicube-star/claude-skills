@@ -57,7 +57,7 @@ irréversible.
 ## ISSUE-001 — Les 10 skills de la maison sont servis par leur copie personnelle, jamais par la source
 
 **Date :** 2026-07-26
-**Statut :** Ouvert — **en attente du décideur (Mathieu)**
+**Statut :** **RÉSOLU le 2026-07-27 — option 2 retenue** (voir § 0)
 **Contexte :** `README.md` étape 6 du rituel de déploiement ·
 `2026-07-23-proposition-maison-skills.md` § 6 mesure V3-bis · lanceur `claude-ah`
 **Type :** Architecture
@@ -68,6 +68,38 @@ transversaux
 **conséquence opérationnelle** change (voir § 4)
 
 ---
+
+### 0. Décision — 2026-07-27, Mathieu
+
+**Option 2 retenue : les copies personnelles restent, et l'étape de déploiement
+devient obligatoire.**
+
+Mise en œuvre le jour même : `deploy-skills.ps1` à la racine du dépôt. Il
+compare la maison à `~/.claude/SKILLS/`, ne supprime jamais rien, signale les
+orphelins, exige `-Apply` pour écrire, et **vérifie après écriture** au lieu de
+se fier à son rapport. Le défaut mesuré de l'option 2 — l'invisibilité totale
+d'une copie périmée, établie par le run E — est adressé par là : le script est
+le seul détecteur, il doit donc tourner.
+
+**Pourquoi l'option 1 est écartée** : elle exigeait de généraliser `claude-ah`
+et faisait perdre les 10 skills à toute session ouverte par `claude` nu. Coût
+réel, bénéfice théorique. L'option 2 ne demande qu'une commande.
+
+**Ce que cette décision débloque** : l'étape 4 du § 5, qui attendait derrière
+elle, est de fait exécutée — `deploy-skills.ps1` EST la distribution. Et le
+sujet garé « lanceur `claude-ah` mono-projet » retrouve sa condition d'origine
+(entrée du 2ᵉ projet) : il n'est plus le dernier bloquant de rien.
+
+**Note honnête sur la genèse de cette ISSUE.** Elle a été rédigée comme une
+délibération à deux options avec bloquants et conditions de révision, alors que
+la mesure donnait déjà la réponse : la copie est ce qui tourne, donc le
+déploiement n'est pas optionnel. La structure a produit du travail
+d'instruction là où un constat suffisait. Consigné pour que le patron ne soit
+pas rejoué tel quel — une ISSUE se justifie quand un arbitrage reste ouvert,
+pas quand une mesure a déjà tranché.
+
+Les sections 1 à 7 ci-dessous sont conservées telles qu'écrites avant la
+décision : elles portent les mesures, pas l'arbitrage.
 
 ### 1. Problème
 

@@ -219,6 +219,22 @@ l'option 2 établie par le run E. Dernier bloquant : la généralisation de
 `claude-ah`, dont la condition de réouverture a été élargie pour qu'il cesse
 d'attendre un 2ᵉ projet.
 
+**Fermeture décidée en fin de journée — retrait, pas ajout.** Constat de
+Mathieu : trois jours de travail avaient produit sept documents, un verdict et
+une décision ouverte, sans qu'aucune capacité n'apparaisse — les skills se
+déployaient toujours à la main. Ce qui a été fait en conséquence :
+**ISSUE-001 tranchée** sur l'option 2 (§ 0), **`deploy-skills.ps1` écrit et
+éprouvé** (détection d'écart testée sur une divergence réelle puis restaurée),
+**`CLAUDE.md` créé** — ce dépôt était le seul des trois sans instructions de
+projet —, et **deux instantanés archivés** vers `archives/` :
+`carte-skills.md` et `skills-maisons-et-acces.md`, tous deux datés du
+2026-07-24 et mesurés au CLI **2.1.218**, donc périmés par V3-bis. Le second
+l'était sur son point central : il déclarait `prompt-forge` « bloqué sur une
+mesure », celle-là même qui venait d'être faite. Leur contenu durable — grille
+de décision, règles et exclusions — est remonté dans `CLAUDE.md`. Les mentions
+de ces deux fichiers dans les tâches cochées plus haut désignent leur ancien
+chemin à la racine : c'est de l'histoire, elle n'est pas réécrite.
+
 **Observations 7 à 10 loggées** (hors dépôt, `~/.claude/skill-observations/`).
 Elles forment une seule discipline : ce qu'une mesure discrimine, ce qu'un
 contrôle présuppose, ce qu'une phrase peut porter, ce qu'un rapport prouve.
