@@ -205,10 +205,28 @@ sauvegarde, pas avant :**
 
    **L'étape 4 du § 5 ne démarre pas derrière celle-ci — elle attend
    ISSUE-001.** Voir « ce que cette décision débloque » dans `ISSUES-LOG.md`.
-4. [ ] **Traitement des observations** — file : obs 8, 11-18 (App-Handyman)
-       + **obs 1-10 (claude-skills)**, la file ayant doublé les 26 et 27
-       juillet. Chaque correction se fait DANS la maison puis redescend par le
-       circuit — premier aller-retour réel.
+4. [ ] **Traitement des observations** — **premier aller-retour réel fait le
+       2026-07-27** (obs 18 du store `Suspension-intelligence` + obs 1 du store
+       `cerveau-suspension` → `task-observer-perso` v1.3.0, commit `0dd5496`,
+       déployé et vérifié par marqueur de contenu). Le circuit
+       maison → commit → `deploy-skills.ps1` → preuve fonctionne de bout en
+       bout ; ce n'est plus une hypothèse. Chaque correction suivante emprunte
+       le même chemin.
+       **File recomptée le 2026-07-27** — elle porte sur **quatre** stores, pas
+       deux ; les deux manquants sont ceux des dépôts découverts après
+       l'écriture de cette ligne (même lacune d'inventaire que le 4ᵉ dépôt) :
+
+       | Store | OPEN |
+       |---|---|
+       | `App-Handyman` | 18 |
+       | `claude-skills` | 11 (pas 10) |
+       | `Suspension-intelligence` | 8 (9 moins l'obs 18 close) |
+       | `cerveau-suspension` | 0 (l'unique obs est close) |
+       | **Total** | **37** |
+
+       Les compteurs ci-dessus sont datés du 2026-07-27 : les relire par
+       `grep -c '^\*\*Status:\*\* OPEN' ~/.claude/skill-observations/*/log.md`,
+       jamais les recopier.
        **Deux blocs distincts, à ne pas traiter ensemble.** Obs 1-6 sont des
        corrections de skills nommés (obs 6 → `skill-intake`). **Obs 7, 8, 9 et
        10 forment une seule discipline** — ce qu'une mesure discrimine, ce
@@ -250,6 +268,51 @@ Rappel d'ouverture de session Cowork : rebrancher les dossiers
 ---
 
 ## Journal de sessions (le plus récent en haut)
+
+### 2026-07-27 (soir) — Session Code : le circuit fait son premier aller-retour, et un code de sortie ment
+
+**Le chantier 4 démarre, et le circuit tient.** Première correction descendue de
+bout en bout : obs 18 (store `Suspension-intelligence`) + obs 1 (store
+`cerveau-suspension`) → `task-observer-perso` **v1.3.0** (`0dd5496`) → push
+vérifié par `fetch` → `deploy-skills.ps1 -Apply -Backup` → **preuve par marqueur
+de contenu**, pas par le numéro de version (constat du matin : `VERSION=inconnue`
+en 2 runs sur 3). Ce que trois jours de documentation n'avaient pas produit —
+une capacité — s'observe ici : éditer la maison change ce qui tourne.
+
+**Le défaut corrigé, en une phrase.** Le `<project-slug>` du store était dérivé
+du basename du dépôt ; celui de `suspension-intelligente` ne correspondait plus
+au dossier `Suspension-intelligence`. Une application littérale de la convention
+créait un store **vide** à côté de 9 observations réelles — sans erreur, sans
+message, **indistinguable d'un premier usage légitime**. La garde ajoutée résout
+avant de créer : exacte → candidat unique annoncé → ambiguïté = STOP → rien =
+création. Critère mesuré avant d'être gravé (principe transverse #1) : préfixe
+commun ≥ 75 %, dry-run sur le store réel — 3 exacts, 1 candidat à 91 %, **0 faux
+positif**.
+
+**Pas de renommage du dossier** (décision Mathieu) : 6 recaps datés de
+`suspension-intelligente` citent le chemin actuel. La garde le résout à coût
+nul ; renommer aurait tué des pointeurs historiques pour un gain cosmétique.
+
+**Bundle assumé** — l'étape 2 du rituel du README impose de vider les correctifs
+en attente à la ré-émission. Il y en avait un sur ce fichier exact : l'adaptation
+#3 justifiait le retrait de la gestion des sessions parallèles par « Mathieu
+works sequentially, single session », prémisse **mesurément fausse** depuis le
+2026-07-11 (Claude Code et Cowork actifs ensemble sur le vault, l'un appliquant
+les recommandations de l'autre, mal attribuées). Correction datée ajoutée sous
+l'adaptation d'origine, qui n'est pas réécrite.
+
+**`deploy-skills.ps1` sort en code 1 sur un déploiement réussi.** Mesuré ce soir,
+cause établie par test isolé : `robocopy` retourne **1** quand il copie des
+fichiers (« one or more files copied successfully »). Le script teste
+`if ($LASTEXITCODE -ge 8) { throw }` — correct pour détecter un échec de
+sauvegarde — mais ne remet jamais `$LASTEXITCODE` à zéro, et PowerShell propage
+le 1 comme code de sortie du script. Conséquence qui compte : le script possède
+un `exit 1` **légitime** (fichiers divergents APRÈS écriture, ligne 131). Les
+deux modes partagent désormais un seul code — un vrai échec de déploiement est
+indistinguable du bruit de robocopy, et tout futur hook ou gate lisant le code de
+sortie lira un succès comme un échec. Le déploiement de ce soir a donc été prouvé
+**hors du script**, par marqueur de contenu et diff source↔cible.
+**Correctif non appliqué à cette date** — instruit en `ISSUES-LOG.md` ISSUE-003.
 
 ### 2026-07-27 — Session Code : le rang cesse d'être local, et trois dossiers se ferment
 

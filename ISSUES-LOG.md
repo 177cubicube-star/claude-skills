@@ -14,6 +14,76 @@ série de `suspension-intelligente`.
 
 ---
 
+## ISSUE-003 — `deploy-skills.ps1` sort en code 1 sur un déploiement réussi : le succès de robocopy masque l'échec réel
+
+**Date :** 2026-07-27
+**Statut :** Ouvert — instruit, correctif proposé non appliqué
+**Contexte :** `deploy-skills.ps1` lignes 106-132 · premier usage réel du script
+(déploiement de `task-observer-perso` v1.3.0, commit `0dd5496`)
+**Type :** Outillage
+**Sévérité :** Moyenne — aucun effet sur le contenu déployé ; effet réel sur la
+capacité à détecter un déploiement raté
+
+**En une ligne :** `.\deploy-skills.ps1 -Apply -Backup` retourne **1** alors que
+le déploiement a réussi et que le script l'affiche lui-même en vert.
+
+**Ce qui se passe.** `robocopy` retourne `1` quand il a copié au moins un fichier
+(« one or more files copied successfully ») — un code de **succès** dans sa
+convention, pas d'échec. Le script teste `if ($LASTEXITCODE -ge 8) { throw }`,
+ce qui est **correct** pour détecter un échec de sauvegarde, mais il ne remet
+jamais `$LASTEXITCODE` à zéro ensuite. PowerShell propage donc le `1` de robocopy
+comme code de sortie du script entier.
+
+**Mesuré par test isolé le 2026-07-27 :**
+
+```
+robocopy <cible> <tmp> /E /COPY:DAT ...  → LASTEXITCODE = 1  (copie reelle)
+robocopy <cible> <tmp> /E /COPY:DAT ...  → LASTEXITCODE = 0  (rien a copier)
+```
+
+Le déclencheur est donc `-Backup` **avec** des fichiers à sauvegarder — c'est-à-dire
+le cas nominal. Sans `-Backup`, ou sur une sauvegarde sans nouveauté, le script
+sort en 0.
+
+**Pourquoi cette entrée existe — le vrai risque n'est pas le faux échec.** Le
+script possède un `exit 1` **légitime** en ligne 131 : « fichiers divergents
+APRÈS écriture », le seul signal qui distingue un déploiement raté d'un
+déploiement réussi. Les deux modes partagent maintenant un même code de sortie.
+Deux conséquences :
+
+1. Tout hook, gate ou script d'automatisation qui lirait `$LASTEXITCODE` (ou
+   `if ($?)`) prendrait un déploiement nominal pour un échec.
+2. Plus grave, dans l'autre sens : l'opérateur qui voit « code 1 » sur chaque
+   déploiement réussi **apprend à l'ignorer** — et le jour où le 1 est le vrai,
+   il n'a plus de signal. Une alarme qui sonne toujours ne sonne plus.
+
+Cette inversion est cousine d'ISSUE-002 : là, un rapport d'échec faux avait fait
+rejouer une séquence déjà exécutée ; ici, un code d'échec faux entraîne à ne plus
+croire le vrai. Dans les deux cas, **le rapport de l'outil n'est pas l'état du
+monde** — le déploiement du 2026-07-27 a d'ailleurs été prouvé hors du script,
+par marqueur de contenu et diff source ↔ cible.
+
+**Correctif proposé (non appliqué — décision de Mathieu) :** neutraliser le code
+de robocopy dès qu'il a été jugé, pour que seul le script parle de son propre
+succès. Une ligne, juste après le test existant :
+
+```powershell
+if ($LASTEXITCODE -ge 8) { throw "Sauvegarde echouee (robocopy $LASTEXITCODE). Rien ecrit." }
+$global:LASTEXITCODE = 0        # <- robocopy 1..7 = succes ; ne pas le laisser fuir en code de sortie
+```
+
+Vérification après correctif, en deux mesures : un déploiement nominal doit
+sortir **0**, et le chemin de divergence (ligne 131) doit toujours sortir **1** —
+ce second point se teste comme le premier l'a été le 2026-07-27, en modifiant un
+fichier de la cible avant de relancer.
+
+**Réflexe :** quand un script enveloppe un outil natif, le code de sortie de
+l'outil n'est pas le sien. Le juger, puis le neutraliser — sinon la convention
+de l'outil (robocopy : 1 = succès) écrase celle du script (1 = échec), et les
+deux deviennent illisibles.
+
+---
+
 ## ISSUE-002 — Deux commits au message identique : un seul changement logique, scindé par un rapport d'échec faux
 
 **Date :** 2026-07-27
