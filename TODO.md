@@ -108,10 +108,31 @@ provenance. Vérifié avec témoin : `NOUVEAUX=recap-vault, session-prep-vault
 ANCIENS=aucun` dans le vault ; `ANCIENS=recap, session-prep` inchangés dans
 `suspension-intelligente`.
 
-**Reste au compte, non traité — décision de Mathieu :** `session-prep` et
-`recap` (22/07, versions de `suspension-intelligente`). Ils servent peut-être
-réellement en Cowork pour ce projet. Rien ne presse : la collision est levée,
-puisque les versions du vault portent désormais un autre nom.
+**`session-prep` et `recap` restent au compte — décidé le 2026-07-27, sur
+mesure.** Ce sont les versions de `suspension-intelligente` (22/07, `v2.1.0` et
+`v1.1.1`), déployées le jour même où ces versions ont été gravées au dépôt
+(commit `7d814c0`) : **à jour**, contrairement aux trois skills retirés qui
+traînaient deux mois de retard.
+
+**Mesuré, pas supposé.** Mathieu a lancé `recap` en session Cowork avec consigne
+de ne rien sauvegarder — le skill prévisualise et attend confirmation, la mesure
+était donc gratuite. Résultat : **fonctionnel, et pas partiellement**. Le
+contrôle décisif (les hashes de commits) passe et est vérifiable des deux
+côtés : l'aperçu cite `5e75ca9` et `c892491`, deux commits faits le même jour
+depuis Claude Code. Il a aussi lu le gabarit, exécuté `adr_index_drift.py
+--list`, produit toutes les sections, et respecté la consigne en sautant les
+étapes 5 à 8. L'hypothèse « ça ne marche sûrement pas en Cowork » est donc
+fausse — elle n'avait jamais été mesurée.
+
+**Deux réserves relevées dans l'aperçu, à traiter au moment d'une vraie
+sauvegarde, pas avant :**
+- L'aperçu s'est numéroté `recap-20260728-01` alors que la journée de travail
+  était le **2026-07-27** (commits 06:47–07:13). Un jour d'écart, cause non
+  établie — horloge de la VM ? Un recap mal daté se range mal et inverse la
+  lecture du journal. **Vérifier la date avant de sauvegarder.**
+- Le skill signale lui-même que `git fetch` est bloqué depuis la VM (403 proxy),
+  donc le numéro `NN` est calculé sur les refs locaux : il ne peut pas voir si
+  un recap du même jour existe déjà à distance.
       **Décidé le 2026-07-27 :** `tdd-enforcer` est un skill **de projet**,
       adapté à `suspension-intelligente`, utilisé en Claude Code uniquement.
       Il ne va **jamais** au compte — même statut d'exclusion que
