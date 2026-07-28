@@ -69,6 +69,20 @@ date, elle ne se supprime pas).
       3). Il sert au versionnement des fichiers, pas à vérifier un déploiement.
       Pour vérifier qu'un déploiement a pris, mesurer un **marqueur de contenu**,
       pas le numéro de version.
+- [x] **Supprimer `architecture-guard` du compte claude.ai** — **FAIT le
+      2026-07-27**, même geste, même GO. Même situation exactement : skill de
+      projet de `suspension-intelligente`, **dernière mise à jour 27/05/2026**,
+      deux mois de retard, dormant au compte où il pouvait imposer des règles
+      d'architecture périmées en session Cowork.
+      **Vérifié après suppression**, avec témoin :
+      `AG=present TDD=present` depuis `suspension-intelligente` (2 runs) ·
+      `AG=absent TDD=absent` depuis `claude-skills`. Les deux skills vivent
+      dans leur dépôt, le compte n'y était pour rien.
+      **Reste au compte, non traité — décision de Mathieu à venir :**
+      `session-prep` et `recap` (22/07, récents, servent peut-être réellement
+      en Cowork) et `tri-inbox` (12/07), **sans maison-source connue** dans
+      aucun des trois dépôts — dérive ADR-028 à instruire, pas constatée
+      ailleurs qu'ici.
       **Décidé le 2026-07-27 :** `tdd-enforcer` est un skill **de projet**,
       adapté à `suspension-intelligente`, utilisé en Claude Code uniquement.
       Il ne va **jamais** au compte — même statut d'exclusion que
