@@ -78,11 +78,40 @@ date, elle ne se supprime pas).
       `AG=present TDD=present` depuis `suspension-intelligente` (2 runs) ·
       `AG=absent TDD=absent` depuis `claude-skills`. Les deux skills vivent
       dans leur dépôt, le compte n'y était pour rien.
-      **Reste au compte, non traité — décision de Mathieu à venir :**
-      `session-prep` et `recap` (22/07, récents, servent peut-être réellement
-      en Cowork) et `tri-inbox` (12/07), **sans maison-source connue** dans
-      aucun des trois dépôts — dérive ADR-028 à instruire, pas constatée
-      ailleurs qu'ici.
+- [x] **Supprimer `tri-inbox` du compte claude.ai** — **FAIT le 2026-07-27**.
+      Même logique : skill de projet, utilisé seulement dans le vault.
+      Vérifié après suppression, avec témoin : `TRI=present` depuis
+      `cerveau-suspension` (2 runs) · `TRI=absent` depuis `claude-skills`.
+
+**Découverte du 2026-07-27 — un quatrième dépôt et une collision de noms.**
+`tri-inbox` avait bien une maison : **`Documents\cerveau-suspension`** (vault
+Obsidian, dépôt git), que les recherches précédentes n'avaient pas couvert —
+elles portaient sur trois dépôts, et je l'avais dit. Ma réserve « sans
+maison-source connue » tombe : ce n'était pas une dérive ADR-028, c'était une
+lacune de mon inventaire.
+
+Ce dépôt portait **4 skills**, dont deux homonymes de ceux de
+`suspension-intelligente` — mais **des skills différents** (`recap` 5 496 o vs
+22 265 o ; `session-prep` 9 440 o vs 31 674 o). Or le compte ne peut en servir
+qu'un de chaque : **mesuré, c'est la version de `suspension-intelligente` qui
+était montée** (description anglaise, `version 2.1.0`). Une session Cowork sur
+le vault recevait donc le rituel de l'autre projet — cherchant des branches
+`claude/*` et des ADR dans un vault qui n'en a pas, sans aucun signal.
+
+**Traité le jour même** (dépôt `cerveau-suspension`, commits `15ed5ad` et
+`7fa70b9`) : `recap` → **`recap-vault`**, `session-prep` → **`session-prep-vault`**,
+et les 4 skills passés en `version: 1.0.0`. Renommage chirurgical — les
+références internes au vault suivent, mais les lignes d'attribution « Adapté du
+`recap` de suspension-intelligence » restent **intactes** : elles créditent un
+skill qui porte réellement ce nom ailleurs, et les renommer aurait falsifié la
+provenance. Vérifié avec témoin : `NOUVEAUX=recap-vault, session-prep-vault
+ANCIENS=aucun` dans le vault ; `ANCIENS=recap, session-prep` inchangés dans
+`suspension-intelligente`.
+
+**Reste au compte, non traité — décision de Mathieu :** `session-prep` et
+`recap` (22/07, versions de `suspension-intelligente`). Ils servent peut-être
+réellement en Cowork pour ce projet. Rien ne presse : la collision est levée,
+puisque les versions du vault portent désormais un autre nom.
       **Décidé le 2026-07-27 :** `tdd-enforcer` est un skill **de projet**,
       adapté à `suspension-intelligente`, utilisé en Claude Code uniquement.
       Il ne va **jamais** au compte — même statut d'exclusion que
