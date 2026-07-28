@@ -17,7 +17,8 @@ série de `suspension-intelligente`.
 ## ISSUE-003 — `deploy-skills.ps1` sort en code 1 sur un déploiement réussi : le succès de robocopy masque l'échec réel
 
 **Date :** 2026-07-27
-**Statut :** Ouvert — instruit, correctif proposé non appliqué
+**Statut :** **Corrigé (2026-07-27)** — neutralisation posée, **les deux sens
+mesurés** (voir « Vérification » en fin d'entrée)
 **Contexte :** `deploy-skills.ps1` lignes 106-132 · premier usage réel du script
 (déploiement de `task-observer-perso` v1.3.0, commit `0dd5496`)
 **Type :** Outillage
@@ -63,19 +64,30 @@ croire le vrai. Dans les deux cas, **le rapport de l'outil n'est pas l'état du
 monde** — le déploiement du 2026-07-27 a d'ailleurs été prouvé hors du script,
 par marqueur de contenu et diff source ↔ cible.
 
-**Correctif proposé (non appliqué — décision de Mathieu) :** neutraliser le code
-de robocopy dès qu'il a été jugé, pour que seul le script parle de son propre
-succès. Une ligne, juste après le test existant :
+**Correctif appliqué le 2026-07-27 :** neutraliser le code de robocopy dès qu'il
+a été jugé, pour que seul le script parle de son propre succès. Une ligne, juste
+après le test existant (accompagnée du commentaire qui dit pourquoi) :
 
 ```powershell
 if ($LASTEXITCODE -ge 8) { throw "Sauvegarde echouee (robocopy $LASTEXITCODE). Rien ecrit." }
 $global:LASTEXITCODE = 0        # <- robocopy 1..7 = succes ; ne pas le laisser fuir en code de sortie
 ```
 
-Vérification après correctif, en deux mesures : un déploiement nominal doit
-sortir **0**, et le chemin de divergence (ligne 131) doit toujours sortir **1** —
-ce second point se teste comme le premier l'a été le 2026-07-27, en modifiant un
-fichier de la cible avant de relancer.
+**Vérification — les deux sens, par exécution.**
+
+1. **Le succès sort bien 0.** Divergence délibérée posée dans la cible
+   (`defuddle/SKILL.md`), puis `deploy-skills.ps1 -Apply -Backup` lancé en
+   **processus séparé** — seule façon de lire le vrai code de sortie. La
+   sauvegarde a bien copié (donc robocopy a bien rendu 1 en interne) et le
+   script a rendu **0**, contre **1** avant correctif sur la même forme d'appel.
+   La cible a été restaurée par le déploiement lui-même : aucun résidu.
+2. **L'échec légitime sort toujours 1.** La divergence post-écriture (ligne 131)
+   ne se force pas naturellement — le mécanisme a donc été mesuré sur une sonde
+   jetable reproduisant la structure exacte : `robocopy` → neutralisation →
+   `exit 1` plus loin. Résultat : robocopy 1 → neutralisé à 0 → **la sonde sort
+   1**. Un `exit` explicite postérieur n'est pas avalé par la neutralisation.
+   C'est un **proxy du mécanisme**, pas le chemin réel du script parcouru de
+   bout en bout — la distinction est gardée nette exprès.
 
 **Réflexe :** quand un script enveloppe un outil natif, le code de sortie de
 l'outil n'est pas le sien. Le juger, puis le neutraliser — sinon la convention

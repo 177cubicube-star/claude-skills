@@ -312,7 +312,11 @@ deux modes partagent désormais un seul code — un vrai échec de déploiement 
 indistinguable du bruit de robocopy, et tout futur hook ou gate lisant le code de
 sortie lira un succès comme un échec. Le déploiement de ce soir a donc été prouvé
 **hors du script**, par marqueur de contenu et diff source↔cible.
-**Correctif non appliqué à cette date** — instruit en `ISSUES-LOG.md` ISSUE-003.
+**Correctif appliqué le même soir, sur GO de Mathieu** — une ligne de
+neutralisation, et les **deux sens mesurés** : un déploiement nominal rend
+désormais 0 (contre 1 avant, même forme d'appel), et une sonde jetable établit
+qu'un `exit 1` postérieur n'est pas avalé par la neutralisation. Détail et
+réserve d'instrument : `ISSUES-LOG.md` ISSUE-003.
 
 ### 2026-07-27 — Session Code : le rang cesse d'être local, et trois dossiers se ferment
 

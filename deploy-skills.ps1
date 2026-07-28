@@ -108,6 +108,11 @@ if ($Backup) {
     if (-not (Test-Path -LiteralPath $dossier)) { New-Item -ItemType Directory -Force -Path $dossier | Out-Null }
     robocopy $cible $dossier /E /COPY:DAT /R:1 /W:1 /NFL /NDL /NP | Out-Null
     if ($LASTEXITCODE -ge 8) { throw "Sauvegarde echouee (robocopy $LASTEXITCODE). Rien ecrit." }
+    # robocopy 1..7 = succes dans SA convention (1 = au moins un fichier copie). Une fois
+    # ce code juge ci-dessus, le neutraliser : sinon PowerShell le propage comme code de
+    # sortie du script, ou il collisionne avec l'exit 1 legitime de la verification finale.
+    # Deux modes opposes sous un meme code = aucun signal. Voir ISSUES-LOG.md ISSUE-003.
+    $global:LASTEXITCODE = 0
     Write-Host "Sauvegarde : $dossier" -ForegroundColor Green
 }
 
