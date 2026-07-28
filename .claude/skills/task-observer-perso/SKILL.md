@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.2.0
+version: 1.3.0
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -36,6 +36,13 @@ original, decided at install time:
    removed: Mathieu works sequentially, single session, and does not publish
    skills. See the original repo for the full version.
 
+   **Correction (2026-07-11, measured):** the "single session" premise behind
+   this removal is false — Claude Code and Cowork ran concurrently on the same
+   vault, one applying the other's recommendations. Race handling stays out;
+   the attribution rule does not follow from it. When a file changes outside
+   this session, never infer the author from the channel — ask, or write
+   À CONFIRMER (cross-cutting principle #2).
+
 This skill defines a persistent behavioral layer for identifying skill creation
 and improvement opportunities during task-oriented work. It doesn't replace the
 skill-creator — it feeds it. The eyes and ears that notice patterns worth
@@ -47,6 +54,23 @@ capturing; the skill-creator is the hands that build.
 
 - `<project-slug>` = basename of `git rev-parse --show-toplevel`, or `_meta`
   outside a git repo.
+- **Resolve the slug against the store before using it — never create on a
+  miss.** A local directory can be renamed or moved; the derived slug then
+  points nowhere, and creating a fresh store there is indistinguishable from a
+  legitimate first use. The failure is silent: an empty log that looks new.
+  So list the store first — `ls ~/.claude/skill-observations/` — and:
+
+| What you find | What you do |
+|---|---|
+| Exact match | Use it. |
+| No exact match, exactly ONE near-match | Use it. Announce in one line: `ⓘ store résolu : <slug> → <dossier>`. Never create a second store. |
+| No exact match, SEVERAL near-matches | STOP and ask. Never guess. |
+| Nothing close | Create it (templates below), announce in one line. |
+
+  Near-match = a directory sharing ≥ 75 % of the slug's length as a common
+  prefix, compared case-insensitively. Dry-run on the real store (2026-07-27,
+  4 slugs against 4 directories): 3 resolved exactly, 1 resolved to a single
+  candidate at 91 %, **0 false positives**.
 - The observation store lives OUTSIDE any project repo (governed repos stay
   clean):
 
@@ -320,8 +344,10 @@ candidate for reverting.
 
 When this skill activates in a task-oriented session:
 
-1. If the store doesn't exist yet, create it (templates below) — announce it
-   in one line.
+1. Resolve the store against `~/.claude/skill-observations/` (§ Conventions).
+   Create it only when nothing close exists — announce the outcome either way,
+   in one line. "Absent" must be proven, not assumed: an absence is often a
+   key that moved.
 2. Read OPEN observations and active cross-cutting principles for the current
    `<project-slug>` and for `All skills`. Hold them in awareness; apply their
    insights to the current work even if the skill files haven't been updated
@@ -379,6 +405,7 @@ any skill creation or regeneration.
 | What format? | Issue → Suggested improvement → Principle |
 | Numbering? | Read the log, max+1 — never from memory |
 | Where does the log live? | `~/.claude/skill-observations/<project-slug>/` — outside every repo |
+| Store missing under the derived slug? | Resolve before creating — a renamed directory makes an empty store look new (§ Conventions) |
 | Project lesson or skill lesson? | Project → ISSUES-LOG/fils/memory ; skill-shaped → here |
 | Review trigger? | Manual only: "lance la revue des observations" |
 | Simplification? | Prune one-off rules, dead sections, skipped workflows |
