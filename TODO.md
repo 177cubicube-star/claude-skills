@@ -705,15 +705,40 @@ sur-place. *Parade écrite* : R304 — condition de clôture avant la première 
   **(b)** Privé aujourd'hui ne veut pas dire privé demain : un changement de
   visibilité est à deux clics et ne laisse aucun signal, alors que le contenu
   décrit les projets, les décisions et les méthodes de travail.
+- **La réserve (a) est fermée le jour même, et par construction** : un hook
+  `Stop` déclaré dans `~/.claude/settings.json` appelle `push-governance.sh`,
+  qui commite et pousse à chaque fin de tour. La règle d'usage « penser à
+  pousser » a été remplacée par un changement d'ordre des gestes — principe
+  transverse 9 (a). Trois décisions de conception, écrites dans le script avec
+  leur motif, parce que ce sont elles qui se réutilisent :
+  **(i)** `git add -u`, jamais `-A` ni `.` — `-u` ne met en index que des
+  fichiers **déjà suivis**, il lui est structurellement impossible d'en ramasser
+  un nouveau, donc la liste blanche du `.gitignore` reste seule maîtresse. C'est
+  pourquoi l'amorçage a dû être manuel : le script ne peut pas s'ajouter
+  lui-même, et suivre un fichier neuf reste un geste délibéré.
+  **(ii)** Aucune date dans le message d'auto-commit — git horodate le commit ;
+  l'écrire la dupliquerait, et une valeur recopiée dérive (principe 5).
+  **(iii)** Muet en succès, bruyant en échec — un push qui échoue sans rien dire
+  laisse le distant dériver pendant que tout paraît normal, ce qui est
+  l'instrument qui répond sans savoir (principe 11 c). En échec le script émet un
+  `systemMessage` portant la commande de rattrapage.
+  Deux branches **prouvées par exécution**, pas par relecture : avec un fichier
+  suivi modifié → commit `5fdf899` + push, sortie 0, muet ; sur arbre propre →
+  sortie 0, muet, **aucun commit vide** — le piège d'un hook qui se déclenche à
+  chaque tour. Non prouvé : le **déclenchement** du hook lui-même, qui a lieu
+  hors du tour qui l'a écrit.
+- `jq` 1.8.2 installé (winget, portée utilisateur), ce qui a permis la validation
+  du hook par l'instrument prévu — `jq -e` sur `settings.json` — au lieu d'une
+  relecture. Il n'entre **pas** dans `push-governance.sh` : un script qui tourne à
+  chaque fin de tour a intérêt à ne dépendre de rien, et il ne lit pas stdin.
+  À savoir : winget a mis le dossier du paquet dans le PATH utilisateur sans créer
+  le raccourci habituel `WinGet\Links\jq.exe`.
 
 **Décisions ouvertes**
 
 - Élaguer ou non les 6 entrées à risque de la liste d'autorisations (ISSUE-005).
 - Committer ou non les deux `.bak-2026-07-29` **du magasin** comme trace — la
   question reste ouverte là, elle est tranchée pour `~/.claude` (voir ci-dessus).
-- Établir ou non une **cadence de push pour `~/.claude`**. Le distant existe, mais
-  rien ne déclenche la synchronisation : le magasin hérite de la cadence de revue,
-  la constitution n'en a aucune.
 
 **Dossiers ouverts, sans urgence**
 
