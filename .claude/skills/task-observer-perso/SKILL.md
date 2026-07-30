@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.3.0
+version: 1.4.0
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -119,6 +119,14 @@ Before surfacing observations at end of session, verify:
    reference the specific section or rule?
 
 If any observation fails these checks, fix it before surfacing.
+
+**Les cases mesurables ne se cochent pas, elles s'exécutent** (principe
+transverse 7). Les points 2 et 3 portent sur des faits vérifiables par
+commande : les mesurer par `grep` sur le journal — annonce présente, champs
+`Issue` / `Suggested improvement` / `Principle` présents — et **coller la
+sortie**, pas une coche. Une case cochée par relecture et une case cochée par
+exécution s'affichent identiquement au destinataire, qui n'a aucun moyen de les
+distinguer.
 
 ---
 
@@ -337,6 +345,19 @@ Runs ONLY when the user asks (adaptation #2). Interactive, never autonomous.
 During reviews, ask "what can we remove?" as deliberately as "what should we
 add?" A previously-applied observation that turned out to be a one-off is a
 candidate for reverting.
+
+**Deux garde-fous sur cette question, mesurés le 2026-07-29.**
+
+- **Ne jamais juger une observation sur son titre.** Le seul retrait proposé de
+  cette revue-là portait sur une observation dont le titre suggérait un cas
+  isolé ; lue en entier, son principe s'était reproduit deux fois le jour même —
+  et les deux fois par l'agent qui proposait de la retirer. Lire le champ
+  `Principle` avant de proposer un DECLINED, jamais l'en-tête seul.
+- **Quand un défaut récidive malgré une règle correcte, ne pas durcir la règle —
+  chercher ce qui la rend inapplicable.** Une règle qui échoue trois fois n'est
+  pas mal appliquée, elle est **mal ciblée** : le remède est un changement
+  d'objet, pas un supplément de sévérité (obs 17, promue au principe
+  transverse 5).
 
 ---
 
