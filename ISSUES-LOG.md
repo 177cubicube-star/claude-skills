@@ -138,12 +138,15 @@ endroit qui n'accusera pas le vrai coupable.
 ## ISSUE-005 — La liste d'autorisations locale de la maison rejoue indéfiniment `git push`, `Remove-Item *` et la lecture de tout le profil — et rien ne la protégeait d'un commit accidentel
 
 **Date :** 2026-07-29
-**Statut :** **Résolu le 2026-07-30 — garde par construction** (l'occasion
-n'existe plus : plus aucun joker à effet de bord dans la liste). Parade minimale
-posée le 2026-07-29 (`.gitignore` étroit, mordant vérifié) ; élagage exécuté le
-2026-07-30 sur décision de Mathieu — voir « Élagage ». **Déclencheur de
-réexamen** : la liste repousse à l'usage (94 → 143 entrées en deux jours), donc
-la re-mesurer à chaque revue d'observations, pas seulement quand elle inquiète.
+**Statut :** **Rouvert le 2026-07-30 — l'élagage ne tient pas.** Garde
+**qui se régénère** : ni par construction, ni par vigilance. Mesuré trois minutes
+après l'élagage, **trois des dix entrées retirées étaient revenues** —
+`Bash(git add *)`, `Bash(git push *)`, `Bash(python *)` — soit exactement les
+trois commandes utilisées entre-temps. Se servir d'une commande **réinscrit son
+motif large**. Les sept autres ne « tiennent » pas : elles sont inutilisées, et
+reviendront au premier usage. Parade minimale du 2026-07-29 (`.gitignore` étroit,
+étendu à la classe `.bak-*` le 2026-07-30) : **toujours valide**, elle protège la
+publication et non le contenu de la liste.
 **Contexte :** `.claude/settings.local.json` (11 869 o, écrit le 2026-07-28 à
 00:31), non suivi par git · règle « `git add` nommé, jamais `-A` » (CLAUDE.md,
 README) · ADR-028 (le dépôt est la source ; le disque est une cible jamais
@@ -231,6 +234,82 @@ Le fichier étant ignoré par git, c'est le seul chemin de retour.
 **Reste non tranché** : les 7 entrées mortes et la redondance de
 `Read(//c/Users/mat_g/**)`, qui englobe cinq entrées `Read` plus étroites. Sans
 risque — du bruit, pas une faille.
+
+**Correction du 2026-07-30, trois minutes plus tard — l'élagage ne tient pas.**
+Le paragraphe ci-dessus disait « 0 joker à effet de bord » et le statut de cette
+ISSUE a été écrit « Résolu, garde par construction », puis poussé. **C'était
+faux.** Re-mesure après trois commandes :
+
+| Retirée | État 3 min plus tard |
+|---|---|
+| `Bash(git add *)` · `Bash(git push *)` · `Bash(python *)` | **REVENUES** — les trois utilisées entre-temps |
+| les sept autres | absentes — mais **inutilisées**, pas protégées |
+
+Le mécanisme est démontré : **se servir d'une commande réinscrit son motif large**.
+Élaguer une liste d'autorisations est donc un geste sans effet durable — le
+fonctionnement ordinaire du système le défait.
+
+Trois enseignements, dans l'ordre de leur portée :
+
+1. **Un troisième type de garde existe**, que le vocabulaire de l'observation 13
+   ne prévoyait pas. Après `par construction` et `par vigilance` : **`qui se
+   régénère`**. Il est pire que l'absence de garde, parce qu'il laisse une trace
+   écrite affirmant que le problème est réglé. C'est ce qui s'est produit ici,
+   sur GitHub, pendant trois minutes.
+2. **La faute de rédaction est celle du principe 11 (d)** : un énoncé dont la
+   portée dépasse l'instrument. « 0 joker » était vrai **à l'instant de la
+   mesure** ; « l'occasion n'existe plus » en tirait un état permanent qu'aucun
+   run ne portait. La contre-mesure — re-mesurer après un usage — n'a été
+   appliquée que par accident, en vérifiant si un `push` demanderait confirmation.
+3. **Le vrai remède est ailleurs, dans un fichier que la session ne réécrit pas.**
+   `permissions.ask` ou `permissions.deny` posés dans le `.claude/settings.json`
+   **suivi par git** — mesuré ci-dessous.
+
+**Mesure de précédence du 2026-07-30.** Protocole conçu pour que chaque verdict
+n'ait qu'une cause possible (principe transverse 11 a et c). Le piège évité :
+une règle `ask` qui ne déclenche rien est indiscernable d'un fichier de réglages
+non rechargé. D'où un **troisième point de mesure** — une règle `deny`, dont la
+précédence sur `allow` est documentée : si `deny` mord, les réglages sont chargés
+et le verdict sur `ask` a un sens.
+
+Les deux commandes testées étaient présentes dans `allow` de la liste locale au
+moment du test — prémisse vérifiée, pas supposée.
+
+| Commande | Dans `allow` | Règle posée | Résultat |
+|---|---|---|---|
+| `git rev-list --count HEAD` | oui | `deny` | **bloquée** |
+| `git status --short` | oui | `ask` | **exécutée, sans confirmation** |
+
+**Précédence mesurée : `deny` > `allow` > `ask`.**
+
+Conséquence directe : **`ask` est inutilisable** contre une liste qui se
+régénère — elle est écrasée par le premier `allow` que l'usage réinscrit. Seul
+`deny` tient.
+
+Deux faits mesurés au passage, à connaître avant d'écrire un `deny` :
+
+- **`deny` interdit, il ne demande pas.** Il n'y a pas de niveau « confirmer »
+  opposable à un `allow`. Une commande refusée ne peut pas être approuvée en
+  session : il faut éditer le fichier.
+- **`deny` s'applique à la chaîne entière.** Une commande composée contenant un
+  fragment interdit est refusée en bloc — mesuré en tentant de retirer le fichier
+  de test par une commande qui mentionnait `git rev-list`.
+
+**Recadrage, avant de conclure que R202 était contournée.** Une entrée `allow`
+n'annule pas R202 : elle retire le **filet du harnais**, pas la règle. R202 est
+une règle que l'agent applique, et elle l'a été — chaque `push` de la session du
+2026-07-29→30 a eu lieu parce que Mathieu avait écrit « push ». Ce que `Bash(git
+push *)` supprime, c'est la seconde ligne de défense, celle qui protège d'un agent
+qui n'appliquerait pas la règle. La distinction change le remède : il ne s'agit
+pas de rétablir une confirmation déjà obtenue, mais de rendre **structurels les
+arrêts durs** de R202.
+
+**Piste retenue, non appliquée — décision de Mathieu.** Poser en `deny` dans le
+`.claude/settings.json` suivi par git la liste des arrêts durs de R202 :
+`git push --force`, `git reset --hard`, `git clean -fd`, `gh repo delete`,
+`gh repo edit` (visibilité). Coût assumé : ces gestes deviendraient impossibles
+sans édition du fichier — c'est la définition d'un arrêt dur, et cette session en
+a exécuté un (le `--force-with-lease` du 2026-07-29), qui aurait exigé ce geste.
 
 Décompte : **94 entrées** dans `permissions.allow`.
 

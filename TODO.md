@@ -741,7 +741,22 @@ parole, pas sur une mesure.
   chaque fin de tour a intérêt à ne dépendre de rien, et il ne lit pas stdin.
   À savoir : winget a mis le dossier du paquet dans le PATH utilisateur sans créer
   le raccourci habituel `WinGet\Links\jq.exe`.
-- **La liste d'autorisations est élaguée — ISSUE-005 fermée par construction.**
+- **La liste d'autorisations a été élaguée, puis ISSUE-005 ROUVERTE trois minutes
+  plus tard.** L'élagage ne tient pas : `Bash(git add *)`, `Bash(git push *)` et
+  `Bash(python *)` étaient revenues, soit exactement les trois commandes utilisées
+  entre-temps. **Se servir d'une commande réinscrit son motif large.** Les sept
+  autres ne tiennent pas non plus — elles sont inutilisées, pas protégées.
+  Ce que ça révèle dépasse l'incident : il existe un **troisième type de garde**,
+  que le vocabulaire de l'observation 13 ne prévoyait pas. Après `par
+  construction` et `par vigilance` : **`qui se régénère`** — un garde que le
+  fonctionnement ordinaire du système annule, et qui laisse une trace écrite
+  affirmant que le problème est réglé. Cette trace a existé sur GitHub pendant
+  trois minutes, sous ma signature.
+  La faute de rédaction est celle du principe 11 (d) : « 0 joker à effet de bord »
+  était vrai **à l'instant de la mesure** ; « l'occasion n'existe plus » en tirait
+  un état permanent qu'aucun run ne portait.
+  Détail de la mesure, du mécanisme et du remède : ISSUE-005.
+- ~~**La liste d'autorisations est élaguée — ISSUE-005 fermée par construction.**~~
   `143 → 133`, dix jokers à effet de bord retirés, 0 restant (relu depuis le
   disque). La re-mesure a d'abord montré que le fichier avait **grossi de 94 à
   143 entrées en deux jours** : quatre des dix n'existaient pas lors du décompte
