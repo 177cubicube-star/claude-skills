@@ -664,13 +664,38 @@ sur-place. *Parade écrite* : R304 — condition de clôture avant la première 
   `Desktop--skill-observations`, `skill-observations`.
 - Les deux dossiers vides du Bureau, si le rangement importe.
 
+**Fait le 2026-07-30 (matin), après la première rédaction de cette entrée**
+
+- **`~/.claude` est sous git** — `3404202`, 8 fichiers suivis, 70 Ko, aucun
+  distant. La forme est une **liste blanche** (`*` ignore tout, huit lignes `!`
+  font remonter la gouvernance), et c'est la mesure qui l'impose : le dossier
+  contient 4 323 fichiers et ~195 Mo, dont 127 Mo de transcriptions de
+  conversations, un jeton d'authentification et deux clés de daemon. Une liste
+  noire aurait fait entrer chaque fichier nouveau, et le premier oubli aurait été
+  un secret — R203. Vérifié **nominativement** avant commit puis sur
+  l'historique : `.credentials.json`, `daemon/*.key` et `history.jsonl` sont
+  absents des deux.
+- `SKILLS/` en est **exclu**, et c'est un choix de gouvernance, pas de sécurité :
+  c'est une cible de déploiement, pas une source, et l'inclure ferait une seconde
+  maison pour dix skills contre ADR-028. Idem pour la jonction
+  `skill-observations`, déjà son propre dépôt. Les deux motifs sont écrits **dans
+  le `.gitignore`**, pour qu'une session future qui s'interroge trouve la réponse
+  sur place au lieu de l'inventer.
+- Les deux `CLAUDE.md.bak` y entrent **une fois**, comme trace : ils portent les
+  états v2.3 et v2.4 que le dépôt ne peut pas reconstruire, naissant après eux.
+  Décision inverse de celle prise pour le magasin, où les `.bak` dupliquaient un
+  contenu que le premier commit capturait déjà — l'asymétrie est voulue.
+- **Trois dépôts désormais** : `claude-skills` (distant GitHub privé), le magasin
+  d'observations et `~/.claude` (aucun distant).
+
 **Décisions ouvertes**
 
 - Élaguer ou non les 6 entrées à risque de la liste d'autorisations (ISSUE-005).
-- Committer ou non les deux `.bak-2026-07-29` du magasin comme trace.
-- Ajouter ou non un distant au magasin.
-- Mettre ou non `~/.claude/` sous git — la constitution y a pris deux versions en
-  une soirée, ses seules copies de retour sont deux `.bak` datés.
+- Committer ou non les deux `.bak-2026-07-29` **du magasin** comme trace — la
+  question reste ouverte là, elle est tranchée pour `~/.claude` (voir ci-dessus).
+- Ajouter ou non un distant **aux deux dépôts locaux**. Git les protège d'une
+  écriture ratée, pas d'une panne de disque : aujourd'hui les 65 observations,
+  les 11 principes et la constitution n'existent qu'ici.
 
 **Dossiers ouverts, sans urgence**
 
