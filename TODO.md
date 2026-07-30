@@ -773,6 +773,40 @@ parole, pas sur une mesure.
   Déclencheur de réexamen écrit dans l'ISSUE : la liste repousse à l'usage, donc
   la re-mesurer à chaque revue d'observations. Sauvegarde
   `.claude/settings.local.json.bak-20260730` — le fichier est ignoré par git.
+- **Les deux `.bak` du magasin : la précaution a mordu.** Mathieu posait une
+  condition avant de les jeter — vérifier qu'elles sont identiques au contenu
+  commité. **Elles ne l'étaient pas** : `426` lignes contre `612` pour les
+  principes, `14` observations contre `17` pour le log. Elles portaient l'état
+  d'**avant la revue**, que git n'a jamais capturé, le premier commit du magasin
+  lui étant postérieur. Les supprimer sèchement aurait perdu le seul exemplaire.
+  Geste retenu : les faire **entrer dans l'historique** (`46a2601`), puis les
+  retirer du disque (`897ca10`) — le contenu change de porteur, il n'est pas
+  perdu. Et un **pointeur dans le `README.md`** du magasin dit où le relire, avec
+  les deux commandes, vérifiées en les exécutant : sans lui, ce contenu n'aurait
+  été retrouvable que par quelqu'un sachant déjà qu'il existe, c'est-à-dire par
+  personne passé quelques semaines.
+- **Deux arrêts durs de R202 rendus structurels** — `9a115d0`. `deny` dans le
+  `.claude/settings.json` **suivi par git**, donc hors d'atteinte de la liste
+  locale qui se régénère (obs 18). Périmètre à **deux**, pas à trois, sur
+  l'analyse de Mathieu : le push forcé a un filet — le reflog — et cette session
+  l'a exécuté à bon droit ; une garde qui bloque le bon geste finit retirée en
+  bloc, emportant les autres avec elle.
+  **Le motif a été mesuré avant que la garde soit déclarée posée**, et c'était
+  nécessaire : `deny` compare un **préfixe littéral, par sous-commande**. Une
+  règle canonique seule est contournée par toute insertion — `git -C …` passait,
+  et c'est la formulation habituelle de cette session, sans malice. Un joker au
+  milieu rattrape le cas ; chaque cible porte donc trois motifs, en version Bash
+  et PowerShell — lequel mord, mesuré aussi. Mordant prouvé par des formes
+  **inertes** (`--help`) qui matchent le motif sans rien détruire, et contrôle
+  négatif exécuté : `git status`, `gh repo view`, `git reset --soft` passent.
+  **Coût opérationnel rencontré immédiatement** : le premier essai du commit qui
+  posait la garde a été **refusé par la garde**, son message citant les commandes
+  visées. Tout message ou `grep` les mentionnant doit passer par un fichier.
+  Lacunes écrites dans le commit plutôt que tues : l'API GitHub en `DELETE`
+  contourne la règle, l'espace des réécritures est infini, un alias échappe.
+- **ISSUE-005 reste ouverte** malgré cette garde, et c'est volontaire : le `deny`
+  ne corrige pas la liste qui se régénère, il met **deux gestes irrécupérables**
+  hors de sa portée. Le rayon d'explosion est réduit, le mécanisme est intact.
 - **Le Bureau est propre.** Les deux coquilles vides — `Desktop\SKILLS` et
   `Desktop\skill-observations` — ont disparu. Elles auront été données supprimées,
   puis mesurées présentes, puis réellement supprimées entre deux mesures : trois
@@ -782,8 +816,8 @@ parole, pas sur une mesure.
 
 **Décisions ouvertes**
 
-- Committer ou non les deux `.bak-2026-07-29` **du magasin** comme trace — la
-  question reste ouverte là, elle est tranchée pour `~/.claude` (voir ci-dessus).
+*Aucune. Les trois qui restaient au matin du 2026-07-30 sont tranchées — voir le
+bloc « Fait » ci-dessus.*
 
 **Dossiers ouverts, sans urgence**
 
