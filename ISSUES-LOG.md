@@ -138,10 +138,12 @@ endroit qui n'accusera pas le vrai coupable.
 ## ISSUE-005 — La liste d'autorisations locale de la maison rejoue indéfiniment `git push`, `Remove-Item *` et la lecture de tout le profil — et rien ne la protégeait d'un commit accidentel
 
 **Date :** 2026-07-29
-**Statut :** **Constaté** — parade minimale posée (`.gitignore` étroit, mordant
-vérifié) ; **contenu relu et chiffré le 2026-07-29** (94 entrées, 6 à risque,
-7 mortes — voir « Relecture ») ; **tri non tranché, aucune entrée retirée**. La
-décision d'élaguer appartient à Mathieu.
+**Statut :** **Résolu le 2026-07-30 — garde par construction** (l'occasion
+n'existe plus : plus aucun joker à effet de bord dans la liste). Parade minimale
+posée le 2026-07-29 (`.gitignore` étroit, mordant vérifié) ; élagage exécuté le
+2026-07-30 sur décision de Mathieu — voir « Élagage ». **Déclencheur de
+réexamen** : la liste repousse à l'usage (94 → 143 entrées en deux jours), donc
+la re-mesurer à chaque revue d'observations, pas seulement quand elle inquiète.
 **Contexte :** `.claude/settings.local.json` (11 869 o, écrit le 2026-07-28 à
 00:31), non suivi par git · règle « `git add` nommé, jamais `-A` » (CLAUDE.md,
 README) · ADR-028 (le dépôt est la source ; le disque est une cible jamais
@@ -198,9 +200,37 @@ le risque. Les entrées littérales et longues — une commande git complète av
 chemin — sont inoffensives et documentent l'histoire des mesures ; elles peuvent
 rester.
 
-**Relecture du 2026-07-29 — mesurée, aucun élagage.** La piste de tri ci-dessus a
-été exécutée sur le fichier réel. **Aucune entrée n'a été retirée** : le tri
-appartient à Mathieu, et la session s'est arrêtée à sa demande.
+**Élagage du 2026-07-30 — exécuté, 143 → 133.** Sur décision de Mathieu. La
+re-mesure a d'abord montré que le fichier avait **grossi de 94 à 143 entrées en
+deux jours** — la liste repousse à l'usage, ce qui fait de tout décompte un
+instantané.
+
+Dix entrées retirées, toutes des jokers portant un verbe à effet de bord :
+
+| Retirée | Motif |
+|---|---|
+| `Bash(git add *)` `Bash(git commit *)` `Bash(git push *)` | **annulaient R202**, règle [SAFETY LOCK] qui exige confirmation |
+| `Bash(cp *)` `PowerShell(Remove-Item *)` | copie et suppression sans confirmation |
+| `Bash(py -3.13 -c ' *)` `Bash(python *)` | exécution de code arbitraire |
+| `Bash(gh repo *)` `Bash(gh api *)` | couvrent `gh repo delete` et le changement de visibilité — donc **rendre publics** les dépôts privés créés le matin même |
+| `PowerShell(winget install *)` | installation de paquets sans confirmation |
+
+Les quatre dernières n'existaient pas lors de la mesure du 2026-07-29 : elles sont
+apparues pendant les deux jours suivants. Contrôle après écriture, relu depuis le
+disque : **0 joker à effet de bord** dans les 133 entrées restantes.
+
+Conséquence assumée, et c'est le fond de cette ISSUE : la session qui a fait
+l'élagage venait d'enchaîner une dizaine de commits et de pushes **sans une seule
+confirmation**. Ils en demanderont désormais. La friction qui revient n'est pas un
+effet de bord — c'est R202 qui reprend effet après avoir été dispensée en silence
+par un « oui » ponctuel que personne n'avait décidé de rendre permanent.
+
+Sauvegarde avant écriture : `.claude/settings.local.json.bak-20260730` (16 600 o).
+Le fichier étant ignoré par git, c'est le seul chemin de retour.
+
+**Reste non tranché** : les 7 entrées mortes et la redondance de
+`Read(//c/Users/mat_g/**)`, qui englobe cinq entrées `Read` plus étroites. Sans
+risque — du bruit, pas une faille.
 
 Décompte : **94 entrées** dans `permissions.allow`.
 

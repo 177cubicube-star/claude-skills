@@ -741,6 +741,23 @@ parole, pas sur une mesure.
   chaque fin de tour a intérêt à ne dépendre de rien, et il ne lit pas stdin.
   À savoir : winget a mis le dossier du paquet dans le PATH utilisateur sans créer
   le raccourci habituel `WinGet\Links\jq.exe`.
+- **La liste d'autorisations est élaguée — ISSUE-005 fermée par construction.**
+  `143 → 133`, dix jokers à effet de bord retirés, 0 restant (relu depuis le
+  disque). La re-mesure a d'abord montré que le fichier avait **grossi de 94 à
+  143 entrées en deux jours** : quatre des dix n'existaient pas lors du décompte
+  d'ISSUE-005, dont `Bash(gh repo *)` et `Bash(gh api *)`, qui couvrent
+  `gh repo delete` et le changement de visibilité — donc **rendre publics** les
+  deux dépôts privés créés le matin même. Un décompte de liste d'autorisations
+  est un instantané, jamais un état.
+  Le fond de l'ISSUE tient en une phrase : `Bash(git commit *)` et
+  `Bash(git push *)` **annulaient R202**, règle [SAFETY LOCK] exigeant
+  confirmation. Personne ne l'avait décidé — un « oui » ponctuel s'était fait
+  dispense permanente. La session qui a élagué venait d'enchaîner une dizaine de
+  commits et de pushes sans une seule confirmation ; ils en demanderont
+  désormais, et cette friction **est** la règle qui reprend effet.
+  Déclencheur de réexamen écrit dans l'ISSUE : la liste repousse à l'usage, donc
+  la re-mesurer à chaque revue d'observations. Sauvegarde
+  `.claude/settings.local.json.bak-20260730` — le fichier est ignoré par git.
 - **Le Bureau est propre.** Les deux coquilles vides — `Desktop\SKILLS` et
   `Desktop\skill-observations` — ont disparu. Elles auront été données supprimées,
   puis mesurées présentes, puis réellement supprimées entre deux mesures : trois
@@ -750,7 +767,6 @@ parole, pas sur une mesure.
 
 **Décisions ouvertes**
 
-- Élaguer ou non les 6 entrées à risque de la liste d'autorisations (ISSUE-005).
 - Committer ou non les deux `.bak-2026-07-29` **du magasin** comme trace — la
   question reste ouverte là, elle est tranchée pour `~/.claude` (voir ci-dessus).
 
