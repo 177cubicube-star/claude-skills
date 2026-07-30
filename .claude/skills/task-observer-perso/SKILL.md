@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.4.0
+version: 1.5.0
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -281,6 +281,35 @@ contexts (adaptation #2 — no autonomous mode):
 3. **In-session correction** when a skill is producing wrong output and the
    user should know immediately.
 
+### La clôture nomme son garde
+
+Toute observation qu'on ferme — ACTIONED, DECLINED, ou « instance corrigée » —
+porte **le type de garde** qui empêche le retour, en un mot :
+
+| Garde | Ce que ça veut dire |
+|---|---|
+| `par construction` | l'occasion n'existe plus |
+| `par vigilance` | une règle d'usage la surveille — porte son déclencheur de réexamen |
+| `aucun` | limite écrite, déclencheur nommé |
+
+Les trois ferment ; ils ne se relisent pas de la même façon. `ACTIONED` seul dit
+ce qui a cessé, jamais ce qui empêche le retour — et c'est ce mot que lira
+quiconque décidera plus tard s'il faut y revenir.
+
+Une clôture `par vigilance` sans déclencheur de réexamen devient permanente par
+simple absence de revue : le mode d'échec que le principe transverse 9 nomme. Et
+une affirmation d'impossibilité — « structurel », « ne se corrige pas », « limite
+de l'outil » — porte sa mesure ou se marque non mesurée : ce sont les seules
+réclamations qui interdisent leur propre vérification future en décourageant la
+recherche.
+
+Cas d'école, à relire quand le doute vient : le gel de l'obs 5 (store
+`claude-skills`) interdisait d'écrire un principe dans
+`cross-cutting-principles.md`. Le fichier l'a reçu cinq jours plus tard par une
+autre route. Le gel ne retenait donc plus que l'observation qui lui obéissait, pas
+le fichier qu'il prétendait protéger — **garde par vigilance**, et personne ne l'a
+vu passer.
+
 ### Small changes — apply directly
 
 Clearly additive, low-risk, no testing needed: new anti-pattern in a list,
@@ -336,6 +365,7 @@ Runs ONLY when the user asks (adaptation #2). Interactive, never autonomous.
    diffs before writing. Substantial changes go through skill-creator.
 5. **Mark** — update each applied observation from OPEN to
    `ACTIONED — Applied to [skill-name] ([date])`. Declined → DECLINED.
+   Chaque clôture porte son type de garde (§ La clôture nomme son garde).
    Archival happens on the next log write.
 6. **Timestamp** — write today's date to
    `~/.claude/skill-observations/last-review-date.txt`.

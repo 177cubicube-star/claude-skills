@@ -335,6 +335,86 @@ rappel.
 
 ## Journal de sessions (le plus récent en haut)
 
+### 2026-07-29 (nuit) — Session Code : une garde cesse de juger sur le nom, et la checklist devient exécutable
+
+**Point de départ, une demande de trois mots.** « Modifier le message d'un commit
+groupé » — `af34446`, déjà poussé sur `main`. R202 plaçait toute action sur une
+branche *nommée* `main` en arrêt dur : approbation écrite. Mathieu a abandonné —
+« trop de trouble pour changer le message de commit ».
+
+**Ce que la mesure a montré.** Le niveau ne protégeait personne :
+
+| Mesure | Valeur |
+|---|---|
+| `forkCount` | 0 |
+| collaborateurs | 1 |
+| adresses de commit (200 derniers) | 1 |
+| PR ouvertes sur `main` | 0 |
+
+**Premier instrument écarté.** `gh api .../branches/main/protection` répond
+`403 « Upgrade to GitHub Pro »` sur un dépôt privé hors plan payant —
+indiscernable d'un refus de lecture d'une protection réelle. Versé dans une garde,
+ce 403 produit soit un faux feu vert, soit un arrêt dur permanent. Instrument
+changé, pas interprété.
+
+**R202 v2.4.** « Branche protégée (`main`, `master`, `release/*`) » → « branche
+**partagée**, mesurée ». Le nom n'élève plus le niveau ; une action non
+réécrivante sur `main` reste à « confirmation required » ; l'inconnue vaut
+partagé ; plancher inchangé — une réécriture ne se fait jamais en silence.
+Sauvegardes : `~/.claude/CLAUDE.md.bak-2026-07-29` (état v2.3) et
+`.bak-2026-07-29-v2.4` ; le dossier n'est pas sous git.
+
+**Le circuit exercé le soir même.** Mesure → descente d'un niveau → énoncé
+action / conséquence / SHA de retour → go → `af34446` devient `b3642d9`, contenu
+strictement identique (`git diff af34446 b3642d9` vide), date d'auteur préservée.
+Coût réel : trois commandes. C'était le but de la modification.
+
+**Revue des observations, dans la foulée.** Le constat qui a commandé le reste :
+`cross-cutting-principles.md` se déclarait « mandatory checklist » sur 426 lignes.
+Une checklist de 426 lignes est un document qu'on déclare lire. Arbitrage de
+Mathieu : consolider, pas ajouter.
+
+| Geste | Contenu |
+|---|---|
+| Principe 11 | absorbe les obs 1, 2, 3, 7, 8, 9 — la **conception** d'une mesure, en amont de la calibration (P1) et de l'exécution (P7), qui rétrécissent en pointant vers lui |
+| Index exécutable | onze questions en tête de fichier, **seule lecture demandée** ; un corps ne s'ouvre que sur un « non » ou un « je ne sais pas » |
+| Amendements | P1, P3, P7, P8, P9 ← obs 2, 4, 5, 10, 12, 13, 14 |
+| Skills | `skill-intake` 1.1.0 (un outil d'agent écrit au premier lancement, sans invocation) ; `task-observer-perso` 1.5.0 (la clôture nomme son garde) |
+
+À noter sur le résultat, parce que le mot « consolider » pourrait tromper : le
+**corps** du fichier a grossi, c'est l'**objet à lire** qui a rétréci — d'un
+document entier à un index de onze lignes, avec la clause d'exclusivité qui
+l'impose. Sans cette clause, l'index aurait été un onzième document.
+
+**Trois réserves posées par Mathieu, toutes structurantes.** (1) Ne pas
+renuméroter — mesuré : une vingtaine de pointeurs vers des numéros de principes
+existent, dont quatre dans le message de `b9ab677`, non réécrivable. Le nouveau
+principe prend donc le n° 11. (2) L'index n'est une checklist que s'il est la
+seule lecture demandée. (3) Diffs montrés avant toute écriture, y compris les
+petits ajouts.
+
+**Le gel de l'obs 5 levé, et pourquoi ça mérite une ligne.** Il interdisait
+d'écrire un principe dans `cross-cutting-principles.md`. Le fichier l'a reçu cinq
+jours plus tard par une autre route. Le gel ne retenait donc plus que
+l'observation qui lui obéissait, pas le fichier qu'il prétendait protéger :
+**garde par vigilance**, et personne ne l'a vu passer. C'est l'obs 13 appliquée à
+un artefact de l'obs 5.
+
+**R304 ajouté à la constitution** (obs 11 — la seule que la revue n'a pas versée
+dans un principe transverse : elle porte sur le pilotage d'un chantier, pas sur un
+skill, et l'écrire comme 12ᵉ principe l'aurait rendue invisible dans une checklist
+de conception de skill). Un travail long porte sa condition de clôture avant sa
+première mesure ; par palier, « qu'est-ce qui fait aujourd'hui quelque chose qu'il
+ne faisait pas hier ? » ; deux « nous savons quelque chose de plus » de suite = ça
+tourne à vide. La limite est au pilote de la poser.
+
+**Déployé dans la même session.** `deploy-skills.ps1 -Apply -Backup` : 2 fichiers
+écrits, 13 déjà identiques, **sortie 0** — le correctif d'ISSUE-003 tient, deux
+montées de version passent sans que le code de robocopy pollue le signal.
+Sauvegarde : `Claude\sauvegardes\skills-sauvegarde-20260729`. Cible re-mesurée
+hors du rapport du script (principe 7) : `skill-intake` 1.1.0,
+`task-observer-perso` 1.5.0, `diff -r` source ↔ cible vide.
+
 ### 2026-07-29 (soir) — Session Cowork (projet SKILLS_POLICE) : le gel retrouve son critère
 
 **Question reçue d'une session App-Handyman.** Le gel de `CLAUDE.md`

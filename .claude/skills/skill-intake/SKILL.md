@@ -1,6 +1,6 @@
 ---
 name: skill-intake
-version: 1.0.0
+version: 1.1.0
 description: Audit et installation gouvernée de skills, plugins, hooks et
   outils tiers (SKILL.md GitHub, packages PyPI/npm à auto-installeur, serveurs
   MCP). Use this skill WHENEVER the user asks to install, try, adopt, or
@@ -39,6 +39,23 @@ Télécharger/extraire dans le scratchpad ou un répertoire jetable — JAMAIS
 directement dans ~/.claude/, .claude/ ou le repo. Rien n'est actif tant que
 l'audit n'est pas fini.
 
+**Cas particulier — un outil d'agent, pas un skill.** Codex, Cursor, Copilot,
+Antigravity : la zone neutre ne les contient pas. Un outil d'agent **écrit au
+premier lancement, sans invocation** — et l'audit d'un skill tiers ne couvre pas
+ça, il couvre ce qu'un skill fait QUAND ON L'APPELLE. Avant d'installer, relever
+l'empreinte des maisons de skills et des fichiers de contexte de **chaque dépôt
+actif**, puis re-mesurer après le premier lancement :
+
+    git status --short          # dans chaque dépôt actif, avant ET après
+    ls .claude/skills/ CLAUDE.md
+
+Mesuré le 2026-07-24 : le premier lancement de Codex a écrit dans TROIS dépôts
+simultanément — `.agents/skills/` (15, 1 et 342 fichiers) plus un `AGENTS.md` à
+la racine de chacun, dérivés par substitution textuelle aveugle
+(`~/.claude/` → `~/.Codex/`, chemins inexistants). Aucun fichier suivi touché :
+les sources ont survécu par chance, pas par conception. Resté invisible 2 jours ;
+seul `git status` l'a révélé.
+
 ### 3. Lecture intégrale
 
 Lire TOUT le contenu (SKILL.md, scripts, hooks, configs) — pas d'échantillon.
@@ -58,6 +75,16 @@ Chercher spécifiquement :
 
 Chaque friction avec la gouvernance = adaptation nommée AVANT installation,
 jamais un arbitrage silencieux en session.
+
+La question de l'audit n'est pas « que fait cet outil quand je l'appelle » mais
+**« qu'est-ce qui a le droit d'écrire dans mes maisons »**. Signal de détection
+mesuré, utilisable tel quel : un lot de fichiers non suivis à horodatage uniforme
+— étalement < 1 s — est une écriture par outil, jamais par une main.
+
+Corollaire de survie : ce qui a protégé les sources le 2026-07-24 n'est aucune
+règle de l'outil, c'est le **suivi git** — un artefact non suivi reste visible
+dans `git status`, ce qu'un `.gitignore` détruirait. Ne jamais ignorer ce qu'on
+veut voir revenir.
 
 ### 5. Route minimale d'abord (outils à auto-installeur)
 
