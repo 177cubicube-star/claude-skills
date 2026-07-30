@@ -335,6 +335,172 @@ rappel.
 
 ## Journal de sessions (le plus récent en haut)
 
+### 2026-07-30 (matin) — Suite et fin de la session du 29 : le magasin passe sous git, et cinq instruments sont pris en flagrant délit
+
+Récapitulatif complet d'une session qui a franchi minuit. La première moitié est
+détaillée dans l'entrée « 2026-07-29 (nuit) » juste dessous ; celle-ci la
+résume, couvre la seconde moitié, et porte la partie prospective — ce qui peut
+revenir mordre.
+
+**Point de départ, à retenir pour sa disproportion.** Une demande de trois mots :
+« modifier le message d'un commit groupé ». Elle a produit une modification de la
+constitution, une revue complète du magasin d'observations, deux montées de
+version de skills, un dépôt git, et trois observations nouvelles. Le motif n'est
+pas la dérive : c'est que la demande a été **abandonnée** — « trop de trouble
+pour changer le message de commit » — et que l'abandon était le symptôme d'une
+règle mal ciblée.
+
+#### Les problématiques rencontrées, dans l'ordre
+
+| # | Problème | Ce qui l'a révélé |
+|---|---|---|
+| 1 | R202 classait le risque sur le **nom** d'une branche | l'abandon de la tâche par Mathieu |
+| 2 | L'instrument de protection GitHub est inutilisable | `403 Upgrade to GitHub Pro`, indiscernable d'un refus de lecture |
+| 3 | `cross-cutting-principles.md` se déclarait « mandatory checklist » sur 426 lignes | lecture de l'en-tête pendant la revue |
+| 4 | Sept observations formaient une famille sans principe | croisement des obs 1, 2, 3, 7, 8, 9 |
+| 5 | L'obs 11 n'avait aucun foyer — elle porte le pilotage d'un chantier, pas un skill | tentative de la verser dans un principe |
+| 6 | Le gel de l'obs 5 était périmé depuis cinq jours | le fichier avait reçu le principe par une autre route |
+| 7 | La session a franchi minuit | `Get-Date` à 00 h 07 contre l'entrée datée du 29 |
+| 8 | Deux dossiers du Bureau étaient des **copies figées**, pas des jonctions | `ReparsePoint=False`, `dir /AL` vide |
+| 9 | Cinq instruments ont répondu sans savoir | tableau du principe 11 (c) |
+| 10 | Le magasin d'observations n'avait aucun historique | une écriture ratée y était définitive |
+| 11 | Fins de ligne hétérogènes, dont **un fichier mixte avec lui-même** | `git ls-files --eol` puis comptage d'octets |
+| 12 | Une approbation donnée dans un circuit n'a pas atteint l'autre | le diff du principe 11 (c) a attendu une nuit |
+| 13 | Les briefs importés portaient des prémisses fausses | trois sur six, mesurées une à une |
+
+#### Les changements apportés
+
+**Constitution — `~/.claude/CLAUDE.md`** (hors dépôt, non versionnée, sauvegardes
+`.bak-2026-07-29` et `.bak-2026-07-29-v2.4`)
+
+- **R202 v2.4** — « branche protégée (`main`, `master`, `release/*`) » devient
+  « branche **partagée**, mesurée ». Quatre mesures décident : fork,
+  collaborateurs, adresses de commit, PR ouvertes. L'inconnue vaut partagé. Le
+  nom n'élève plus le niveau. Plancher inchangé : une réécriture ne se fait
+  jamais en silence.
+- **R304 v2.5** — un travail long porte sa condition de clôture avant sa première
+  mesure ; par palier, « qu'est-ce qui fait aujourd'hui quelque chose qu'il ne
+  faisait pas hier ? » ; deux « nous savons quelque chose de plus » de suite = ça
+  tourne à vide. Issu de l'obs 11.
+- Colonnes « Reserved » des sections 2 et 3 corrigées.
+
+**Magasin d'observations** — déménagé le matin dans
+`Documents\Claude\skill-observations`, `~\.claude\skill-observations` devenant une
+jonction (geste d'une session Cowork ; `.claude` est protégé par Windows et ne
+peut pas être monté depuis Cowork).
+
+- **Principe transverse 11** — la *conception* d'une mesure, en amont de la
+  calibration (P1) et de l'exécution (P7), qui rétrécissent en pointant vers lui.
+  Absorbe les obs 1, 2, 3, 7, 8, 9.
+- **Index exécutable** de onze questions en tête de fichier, avec **clause
+  d'exclusivité** : c'est la seule lecture demandée ; un corps ne s'ouvre que sur
+  un « non » ou un « je ne sais pas ». Sans cette clause, l'index aurait été un
+  onzième document à lire.
+- **Amendements** : P1 (contrôle négatif → renvoi au 11), P3 (garde indexée sur un
+  nom), P7 (rapport d'échec, contrat de sortie d'un outil enveloppé, le maillon
+  vaut avant jamais après), P8 (une source n'est pas un état), P9 (la clôture
+  nomme son garde).
+- **Les 14 observations ouvertes closes**, chacune portant son **type de garde** —
+  `par construction`, `par vigilance`, ou `aucun`, avec déclencheur de réexamen.
+- **Observations 15, 16, 17 ajoutées** verbatim depuis une session Cowork : les
+  dates UTC, l'audit qui emprunte le comparateur du déployeur, la règle recopiée
+  qui perd sa condition de levée.
+- **Principe 11 (c) enrichi** du tableau des cinq instruments (voir plus bas).
+- **Passé sous git** : `02a8291` puis `ca104be`, 11 fichiers suivis, aucun distant,
+  `.gitattributes` et `.gitignore` posés **avant** le premier commit.
+
+**Skills, dans ce dépôt puis déployés**
+
+- `skill-intake` **1.1.0** — un outil d'agent écrit au premier lancement, sans
+  invocation ; la zone neutre ne le contient pas (obs 6).
+- `task-observer-perso` **1.5.0** — la clôture nomme son garde, § dédié + étape 5
+  de la revue (obs 13).
+- Déployés et vérifiés hors du rapport du script : `~/.claude/SKILLS` en 1.5.0 et
+  1.1.0, `diff -r` source ↔ cible vide.
+- Zips préparés pour le compte : `Documents\Claude\zips-compte-20260730\`,
+  séparateurs conformes, versions relues **dans** les archives.
+
+**Ce dépôt** — `b3642d9` (message du commit groupé réécrit, contenu identique),
+`2109c94` (les deux skills + l'entrée de journal de la nuit), poussés.
+
+#### Les cinq instruments — le fait le plus transférable de la session
+
+| Instrument | Ce qu'il a rendu | Ce qu'il ne savait pas |
+|---|---|---|
+| `gh api .../branches/<b>/protection` | `403 Upgrade to GitHub Pro` | si une protection existe |
+| `Desktop\skill-observations`, copie figée | « 426 lignes, aucun principe 11 » | si la revue avait écrit |
+| `Desktop\SKILLS`, copie figée | `1.4.0` | ce qui était réellement déployé |
+| `awk` sur le champ `description:` | 1114 caractères | où finit le champ |
+| `grep -c $'\r'` | le nombre de lignes, pour tout fichier | si le fichier était en CRLF |
+
+**Aucun des cinq n'a échoué** — ils ont tous répondu, et c'est la réponse qui a
+été prise pour la mesure. **Trois avaient été écrits par l'agent dans la minute.**
+Le dernier a fait contredire une mesure juste venue d'un autre agent : l'erreur
+d'instrument produisait plus d'assurance que la mesure correcte.
+
+#### Décisions de Mathieu, prises pendant la session
+
+1. **Ne pas renuméroter** les principes — une vingtaine de pointeurs existent,
+   dont quatre dans un message de commit non réécrivable.
+2. **L'index est la seule lecture demandée**, clause écrite.
+3. **Diffs montrés avant toute écriture**, y compris les petits ajouts.
+4. **Pas de `Co-Authored-By`** sur un amend qui ne change que le message.
+5. **Gel de l'obs 5 levé**, consigné comme garde par vigilance.
+6. **L'obs 9 entre comme question**, pas comme principe — sa contre-mesure reste
+   une hypothèse de remède.
+7. **Skills locaux au projet par défaut** ; plus de travail de généralisation.
+8. **Objectif « voir les skills déployés depuis Cowork » abandonné** — c'était un
+   confort. Aucune jonction sur le Bureau.
+
+#### Points qui peuvent revenir causer de la friction
+
+**Les dates, tant que deux outils coexistent.** Le défaut est *asymétrique* :
+Cowork date en avance dès 20 h locale, Code date en retard après minuit. Aucune
+vérification unique ne le couvre, seule la mesure au moment de l'écriture protège.
+Se rejouera à chaque soirée de travail. Obs 15, ISSUE-007.
+
+**L'instrument improvisé.** Trois des cinq cas venaient d'un `awk`, d'un `grep` ou
+d'un choix de chemin écrits pour la question du moment. Le défaut se reproduira
+tant que la vérification d'un instrument neuf n'est pas un réflexe : que rend-il
+dans le cas négatif, et dans le cas indisponible ?
+
+**Les prémisses d'un brief importé.** Trois sur six étaient fausses ce matin. Un
+brief énonce ses hypothèses d'état à l'indicatif, ce qui les rend invisibles.
+Chaque import doit re-mesurer avant la première étape — principe 8 (b).
+
+**Le canal entre circuits.** Une approbation donnée le soir dans Cowork n'a pas
+atteint la session Code, qui a tenu un diff en attente une nuit. Même forme que le
+gel de l'obs 5 : une décision ne franchit pas la frontière et rien ne signale
+qu'elle attend. Maintenant que Cowork écrit dans le magasin, le canal existe —
+mais aucune règle ne dit de s'en servir.
+
+**Le compte claude.ai, seul circuit sans pont.** Aucune mesure ne détecte sa
+dérive. Il est à 1.2.0 pendant que maison et disque sont à 1.5.0.
+
+**Le corps des principes continue de grossir** (426 → 646 lignes en une nuit).
+L'index protège la *lecture*, pas la taille. Si les corps deviennent illisibles,
+l'index ne le signalera pas — R602 et R304 s'appliquent au dispositif lui-même.
+
+**La contre-mesure (d) du principe 11 n'a jamais fonctionné seule.** Trois écarts
+de portée, trois fois trouvés par un relecteur humain. Le prochain protocole
+exécuté sans relecteur sera son premier test. Réserve écrite dans le corps.
+
+**Les 14 clôtures attendent leur archivage.** Elles restent dans le log actif
+parce qu'elles datent de la session courante ; c'est la **première écriture d'une
+prochaine session** qui les déplacera vers `archive/`. Si personne n'écrit, elles
+restent.
+
+**Deux `.bak-2026-07-29` non suivis** dans le magasin. Décision non prise : les
+committer une fois comme trace, ou les laisser hors historique.
+
+**Le magasin n'a aucun distant.** Git le protège d'une écriture ratée, pas d'une
+perte de disque. Décision distincte, non prise.
+
+**`~/.claude/` n'est toujours pas versionné.** La constitution y a pris deux
+versions en une soirée ; ses seules copies de retour sont deux `.bak` datés.
+
+---
+
 ### 2026-07-29 (nuit) — Session Code : une garde cesse de juger sur le nom, et la checklist devient exécutable
 
 **Point de départ, une demande de trois mots.** « Modifier le message d'un commit
