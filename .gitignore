@@ -1,0 +1,5 @@
+# Réglages locaux de session Claude Code — personnels au poste, jamais partagés.
+# Entrée VOLONTAIREMENT étroite : ne jamais ignorer `.claude/` en bloc — la
+# maison des skills y vit et elle est suivie (`.claude/skills/`, dix skills).
+# Motif et portée : ISSUES-LOG.md, ISSUE-005 (2026-07-29).
+.claude/settings.local.json

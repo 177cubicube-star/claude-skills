@@ -74,11 +74,25 @@ divergence en attente.
   ADR-005, plus forte qu'un gel. Deux skills distincts partagent ce nom
   (App-Handyman et suspension-intelligente) ; ils ne se croisent jamais, chaque
   session ne voyant que son projet.
-- **16 skills gelés / 5 libres** (`defuddle`, `json-canvas`, `obsidian-bases`,
-  `obsidian-cli`, `obsidian-markdown`). Le gel interdit modifier, déplacer,
-  renommer — pas distribuer.
+- **Gel de migration** (§ 5 « rayon d'impact », proposition du 2026-07-23).
+  Tout skill ayant un dépendant hors du projet pilote est **gelé** : ni
+  déplacé, ni renommé, ni édité hors de la maison — jusqu'à ce que ce projet
+  entre dans la migration, sur GO explicite. Le gel n'interdit ni la
+  distribution (additive) ni l'amélioration par le circuit de la maison
+  (étape 5 : observation → maison → bump → déploiement).
+  État mesuré le 2026-07-24 : 16 gelés / 5 libres (`defuddle`, `json-canvas`,
+  `obsidian-bases`, `obsidian-cli`, `obsidian-markdown` — aucun dépendant hors
+  pilote, re-vérifié le 2026-07-29). Ce compte est un instantané qui ne se
+  reconstitue plus exactement : il se re-mesure, il ne se cite pas comme règle.
 - **`git add` nommé, jamais `-A`**, tant qu'une sonde jetable vit dans
   `.claude/skills/`. Forme forte, à préférer : poser la sonde **après** le push.
+- **Une date se mesure, jamais ne se suppose.** L'en-tête d'une session Cowork et
+  `date` du pont sont en UTC ; dès 20 h locale, ils annoncent le lendemain.
+  Référence, disponible depuis le pont :
+  `git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'` — git horodate avec
+  le fuseau du poste. Motif mesuré et symptôme inverse (une session Code qui
+  traverse minuit garde sa date d'ouverture) : ISSUE-007. Arbitrage de Mathieu,
+  2026-07-29.
 
 ---
 

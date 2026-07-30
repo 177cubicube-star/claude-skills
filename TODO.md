@@ -147,6 +147,52 @@ sauvegarde, pas avant :**
       Vérification : le skill ne doit plus figurer dans Personnaliser →
       Compétences, et une session Cowork relancée ne doit plus le proposer.
 
+- [ ] **Réaligner les trois circuits de `task-observer-perso`** — mesuré le
+      2026-07-29 à 22 h 50 locale : maison **1.4.0** (`b9ab677`), disque
+      **1.3.0** (déployé le 2026-07-27 à 21 h 32), compte **1.2.0**. Les trois
+      sont désalignés et le déploiement rendu obligatoire par ISSUE-001 n'a pas
+      tourné pour 1.4.0. Ordre : `deploy-skills.ps1 -Apply -Backup`, puis zip
+      manuel vers le compte — ce circuit n'a pas de pont (F9), le zip est son
+      seul canal.
+      Vérification : rouvrir une session Cowork et lire le `version:` du skill
+      réellement chargé, jamais celui du dépôt.
+- [x] **Revue des observations `task-observer-perso`** (étape 2 du rituel) —
+      **faite le 2026-07-29** en session Claude Code : bump 1.3.0 → **1.4.0**,
+      commit `b9ab677` à 22 h 13 locale, principes transverses portés de six à
+      dix. Cette ligne avait été ouverte par la session Cowork à 21 h 50 alors
+      que le travail était déjà en cours ailleurs : deux sessions, aucune ne
+      voyait l'autre (journal du 2026-07-29).
+
+- [x] **Relire `.claude/settings.local.json`** — **fait le 2026-07-29**, chiffré
+      et consigné à ISSUE-005 § « Relecture ». Mesuré : **94 entrées**, dont
+      **6 à risque** — `git push *`, `git commit *`, `git add *`, `cp *`,
+      `Remove-Item *`, et `py -3.13 -c ' *` que la piste de tri ne nommait pas
+      (elle exécute du Python arbitraire, portée égale à `Remove-Item *`) — plus
+      **7 entrées mortes** et 76 littérales inoffensives. Deux constats de fond
+      dans l'ISSUE : la règle « `git add` nommé, jamais `-A` » est contredite par
+      l'autorisation `git add *` qui couvre `-A` ; et `Read(//c/Users/mat_g/**)`
+      englobe cinq entrées plus étroites, ce qui rend le choix « quel bout
+      garder » et non « lesquelles retirer »
+- [ ] **Trancher le tri des autorisations** — la relecture est faite, l'élagage
+      non : **aucune entrée n'a été retirée**, la décision est de Mathieu
+      (ISSUE-005 le pose, et la session s'est arrêtée à sa demande). Trois lots
+      par ordre de rendement, détaillés à l'ISSUE : les 6 jokers larges (seul lot
+      qui change le risque, au prix d'une confirmation à chaque geste) · les 5
+      `Read` englobés **ou** le large qui les englobe (le second restreint
+      réellement) · les 2 `sed -i` de marqueurs `MARQUEUR-V3BIS-*`, mesure
+      terminée. Élaguer casse des workflows en cours — ne pas le faire à sa place
+- [x] **Supprimer `.git/index.lock.orphelin-20260730-0139`** — **fait le
+      2026-07-29**, par nom complet, sans joker. Vérifié : `test -e` répond NON,
+      aucun verrou ne subsiste dans `.git/`, `git status` répond en exit 0,
+      `git fsck` sain. Le fichier faisait 0 octet et git n'était pas bloqué —
+      supprimer a fermé une ligne, pas un risque. **La cause reste armée** : le
+      pont Cowork ne sait pas supprimer un verrou, seulement le déplacer, donc
+      toute commande git lancée depuis le pont en laissera un nouveau, et
+      celui-là bloquera la commande suivante. Le garde en place (« ne pas lancer
+      git depuis le pont ») est un garde **par vigilance** — le principe
+      transverse 9 dirait de chercher un garde par construction. Observation
+      consignée pour la prochaine revue : store `claude-skills`, obs 13
+
 ## À faire — chantiers, dans l'ordre hérité (feuille de route, passation 3 § 8)
 
 1. [x] **Sauvegarde datée** de `~\.claude\skills\` (robocopy vers
@@ -265,9 +311,143 @@ Rappel d'ouverture de session Cowork : rebrancher les dossiers
 (`claude-skills`, et au besoin le vault) — les accès ne survivent pas
 à la session.
 
+**État du mandat au 2026-07-29** — ajouté sans toucher au texte d'origine.
+Quatre sessions ont eu lieu depuis son enregistrement (26, 27, 27 au soir, 30) :
+« prochaine session » ne désigne donc plus personne. Livré contre ce mandat, et
+mesurable dans le dépôt : le `CLAUDE.md` du projet, le rituel de déploiement et
+son script (`1700fc2`), le routage en quatre questions, ce registre d'issues, et
+la clarification du gel (2026-07-29). Restent ouverts : la généralisation du
+lanceur `claude-ah`, et l'étape 4 — dont la nature dépendait d'ISSUE-001,
+désormais tranchée (option 2), donc débloquée.
+
+**Rappel d'ouverture de session Cowork — corrigé le 2026-07-29 par l'expérience.**
+Le rappel d'origine nomme `claude-skills` et le vault. Il manquait **la copie qui
+exécute** : `~\.claude\SKILLS` est un emplacement protégé, jamais connectable, et
+sans elle une session Cowork ne mesure aucun circuit — elle ne voit que le dépôt
+et la copie du compte, et conclut faux sur le reste (voir le journal du
+2026-07-29, rétractation). Contournement éprouvé aujourd'hui : brancher un point
+d'accès à cette copie (Mathieu a branché `Desktop\SKILLS`). À rebrancher, dans
+cet ordre : `claude-skills`, la copie qui exécute, puis au besoin le dépôt du
+projet concerné et le vault. Deux allers-retours ont été perdus faute de ce
+rappel.
+
 ---
 
 ## Journal de sessions (le plus récent en haut)
+
+### 2026-07-29 (soir) — Session Cowork (projet SKILLS_POLICE) : le gel retrouve son critère
+
+**Question reçue d'une session App-Handyman.** Le gel de `CLAUDE.md`
+(« 16 skills gelés / 5 libres ») interdit-il de modifier `task-observer-perso` ?
+Deux lectures étaient proposées : le texte est un durcissement et la pratique
+fait foi, ou le gel tient et `0dd5496` l'a enfreint. **Aucune des deux.**
+
+**Mesuré, source par source** (le dépôt et `Desktop\SKILLS` branchés à la
+session Cowork au fil de la revue) :
+
+| Date | Document | Ce qu'il porte |
+|---|---|---|
+| 2026-07-23 | proposition § 5 « rayon d'impact » | la règle entière : critère (**dépendant hors du pilote**), interdits (déplacer / renommer / modifier), **condition de lever** (jusqu'à ce que ce projet entre dans la migration) |
+| 2026-07-24 | `archives/skills-maisons-et-acces-20260724.md` l. 78 | le comptage + les interdits — critère et condition de lever **perdus** |
+| 2026-07-27 | `CLAUDE.md` § « Règles en vigueur » (`1700fc2`, création du fichier) | recopie de l'archive sous « Règles en vigueur » : un instantané devenu permanent |
+
+**Conclusion.** Le gel est réel — c'est une exigence de Mathieu datée du
+2026-07-23, pas un effet de rédaction — mais c'est un **garde-fou de chantier**,
+pas une interdiction d'améliorer. L'étape 5 du plan de migration prévoit
+explicitement « observation 11 → task-observer […] Chacune se fait DANS la
+maison, puis descend par sync ». `0dd5496` (auteur et committer Mathieu, 27
+juillet 21 h 33 ; dans la maison ; sans renommage — le message le dit ; avec
+montée de version et dry-run mesuré) est donc **une application de la règle, pas
+une entorse**. Le durcissement ne portait pas sur l'existence de la règle mais
+sur la perte de sa condition de lever. Ligne 77 de `CLAUDE.md` réécrite en
+conséquence : critère et condition restaurés, le comptage rétrogradé au rang
+d'instantané. Même remède qu'ADR-002 dans App-Handyman — on réécrit la ligne et
+on consigne l'arbitrage, on ne dispense pas en silence.
+
+Détail arithmétique retenu au passage : le compte « 16 / 5 » ne se reconstitue
+plus. Cinq libres et cinq gelés dans la maison, huit dans `suspension-intelligente`,
+quatre au vault — la somme la plus plausible donne 17, pas 21. L'écart d'un n'est
+pas résolvable sans brancher les deux autres dépôts. Un compte qu'on ne peut pas
+reconstituer n'a pas sa place dans « Règles en vigueur » ; c'est le motif de sa
+rétrogradation.
+
+**Trois mesures de circuit faites au passage :**
+
+- **Le déploiement disque a bien eu lieu.** `Desktop\SKILLS` porte
+  `task-observer-perso` **1.3.0**, octet pour octet identique à la maison, écrit
+  le 2026-07-28 à 01:32 — quatre heures après le commit. Une première lecture de
+  cette session concluait au manquement à la décision ISSUE-001 sur la seule base
+  de la copie du compte : **rétracté**. La conclusion portait sur un circuit non
+  mesuré, faute d'accès ; c'est l'erreur que le protocole du § 6 nomme déjà
+  (conclure avant d'avoir écarté une hypothèse).
+- **Le compte, lui, sert encore 1.2.0** — mesuré dans la session Cowork
+  elle-même, sur le skill réellement chargé. Ce n'est pas un manquement au
+  rituel : c'est le circuit sans pont (F9). Geste court ajouté.
+- **`grill-me` et `json-canvas` : fausse alerte de divergence.** md5 différents
+  entre disque et maison à version égale — donc l'alarme la plus grave du dépôt.
+  Cause réelle : CRLF contre LF, contenu identique au caractère près. Le remède
+  était déjà dans `deploy-skills.ps1` (normalisation avant hachage, ligne 51).
+  → **ISSUE-004**.
+
+**Divergence à corriger hors de ce dépôt :** les instructions du projet Cowork
+SKILLS_POLICE listent encore ISSUE-001 comme ouverte avec « deux options
+instruites », alors qu'elle est **résolue depuis le 2026-07-27, option 2**
+(`ISSUES-LOG.md`, ISSUE-001 § 0). Elles datent d'avant `1700fc2`. Geste de la main de
+Mathieu — les instructions d'un projet Cowork ne sont pas un fichier du dépôt.
+
+**Second passage, même session — « touche ce que tu as vu ».** Les deux éléments
+signalés sans y toucher ont été traités, et la mesure en a fait sortir deux
+autres :
+
+- **`.claude/settings.local.json` non suivi, et aucun `.gitignore` dans le
+  dépôt.** Un `git add -A` aurait poussé 11 869 octets de réglages personnels sur
+  GitHub. `.gitignore` créé, une seule entrée, volontairement étroite. Mais le
+  contenu du fichier est le vrai sujet : il autorise `git push`, `git commit`,
+  `cp *`, `PowerShell(Remove-Item *)` et `Read(//c/Users/mat_g/**)` sans
+  redemander, à toute session future — soit la permission d'écraser les copies
+  déployées que la gouvernance interdit d'éditer. → **ISSUE-005**, tri laissé à
+  Mathieu.
+- **Le mandat du 2026-07-24 re-daté**, sans réécriture : livré / ouvert séparés,
+  et le rappel d'ouverture Cowork corrigé — il oubliait la copie qui exécute,
+  et c'est précisément ce qui a produit la rétractation d'aujourd'hui.
+- **Un verrou git orphelin, produit par cette session.** Le `git status` de la
+  revue a laissé `.git/index.lock` derrière lui : le pont Cowork crée mais ne
+  supprime pas. Le prochain `git add` du poste aurait échoué en accusant un
+  processus concurrent inexistant. Verrou déplacé, et règle d'usage mesurée :
+  `git --no-optional-locks` ne pose aucun verrou. → **ISSUE-006**.
+- **Restauration V3-bis vérifiée par effet de bord.** `json-canvas`, marqué des
+  deux côtés le 2026-07-27, est identique au caractère près entre maison et
+  disque. Le « marqueur retiré, copie restaurée » du protocole n'avait jamais été
+  vérifié ; il l'est. → dans ISSUE-004.
+
+**Réserve à porter à la prochaine session.** La nature exacte de
+`Desktop\SKILLS` — copie de `~\.claude\SKILLS` ou jonction vers elle — n'a pas
+été mesurée. Ce qui est mesuré : ce dossier n'est **pas** une copie de la copie de
+travail du dépôt (les fins de ligne de deux fichiers diffèrent), il porte les dix
+skills, et `task-observer-perso` y est en 1.3.0 daté du 2026-07-28 à 01:32. Les
+conclusions de la journée tiennent dans les deux cas de figure, mais la question
+se tranche depuis Windows, pas depuis Cowork.
+
+**Correction du même soir — la session Cowork avait tort sur les dates, et sur
+qui se trompait.** Cette entrée et les trois ISSUE créées ce soir portaient la
+date du **2026-07-30** ; il était le **29 à 21 h 30** chez Mathieu. Le conteneur
+de la session Cowork et la VM du pont sont tous deux en UTC ; seul Windows porte
+l'heure réelle. La session Claude Code qui travaillait en parallèle datait donc
+**juste**, et cette session l'a accusée à tort d'une erreur de date. Cause
+mesurée, portée et règle : **ISSUE-007**, dont la règle de mesure a été promue
+aux « Règles en vigueur » de `CLAUDE.md` sur GO de Mathieu le même soir —
+arbitrage explicite, pas effet de rédaction. Corrigé ici : le titre de l'entrée et
+quatre dates dans ce fichier.
+
+**Et la session concurrente avait de l'avance.** À 22 h 13 locale elle a committé
+`b9ab677` — `task-observer-perso` **1.4.0**, revue des observations faite, étape 5
+du rituel, principes transverses portés de six à dix. Les deux gestes courts que
+la session Cowork venait d'ouvrir étaient donc périmés au moment de leur écriture
+(21 h 50) : la revue était en cours ailleurs, et la cible du zip n'était plus
+1.3.0. Réécrits en conséquence. Effet mesuré au passage, à 22 h 50 : la maison
+porte **1.4.0**, le disque **1.3.0**, le compte **1.2.0** — les trois circuits
+sont désalignés, et le déploiement rendu obligatoire par ISSUE-001 n'a pas encore
+tourné pour 1.4.0.
 
 ### 2026-07-27 (soir) — Session Code : le circuit fait son premier aller-retour, et un code de sortie ment
 

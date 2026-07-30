@@ -14,6 +14,327 @@ série de `suspension-intelligente`.
 
 ---
 
+## ISSUE-007 — Les dates écrites par une session Cowork sont celles d'UTC : tout travail fait après 20 h locale est daté du lendemain
+
+**Date :** 2026-07-29
+**Statut :** **Corrigé** — 18 dates rétro-corrigées dans quatre fichiers, règle de
+mesure posée ci-dessous
+**Contexte :** session Cowork du 2026-07-29 (projet SKILLS_POLICE) · ISSUE-004 à
+ISSUE-006, l'entrée de journal du 29 et le `.gitignore`, tous créés ce soir-là ·
+question de Mathieu : « le décalage d'heure, c'est une problématique générale que
+j'ai et je ne sais pas pourquoi »
+**Type :** Méthode de mesure
+**Sévérité :** Élevée — dans un dépôt dont toute la méthode est la mesure datée,
+une date fausse casse la chronologie qui sert de preuve
+
+**En une ligne :** la session Cowork a daté tout son travail du **2026-07-30**
+alors qu'il était **le 2026-07-29 à 21 h 30** chez Mathieu, puis a accusé une
+session Claude Code d'avoir mal daté le sien — c'est l'inverse qui était vrai.
+
+**Mesuré le 2026-07-29 à 22 h 49 locale :**
+
+| Horloge | Réponse | Écart |
+|---|---|---|
+| Conteneur infonuagique de la session Cowork | 2026-07-30 02:49 UTC | +4 h |
+| VM du pont sur le poste (`device_bash`) | `Etc/UTC`, `+0000` | +4 h |
+| Windows / git (`%ad` des commits) | 2026-07-29 22:49 `-04:00` | référence |
+
+Les deux environnements qu'une session Cowork peut interroger sont en UTC. Le
+seul qui porte l'heure de Mathieu est Windows, et il n'est atteignable
+qu'indirectement — par git, qui horodate avec le fuseau du poste.
+
+**Pourquoi ce défaut le touche systématiquement.** Toronto est à UTC-4 : dès
+**20 h locale**, UTC est déjà le lendemain. Or les douze derniers commits du dépôt
+tombent à 21 h (×4), 20 h (×2), 22 h (×1), 19 h (×1) — la majorité du travail est
+dans la fenêtre où la date UTC est fausse. Ce n'est pas un incident, c'est le
+régime normal de ses soirées.
+
+**Le symptôme inverse existe aussi**, et il explique l'autre moitié de la
+confusion : une session **Claude Code** sur Windows lit l'horloge locale et date
+juste, mais si elle traverse minuit elle garde la date de son ouverture. Selon
+l'outil, la même soirée produit donc des dates en **avance** (Cowork, dès 20 h) ou
+en **retard** (Code, après minuit). D'où l'impression d'un décalage général sans
+cause identifiable — il y a deux causes opposées, pas une.
+
+**Rétro-correction appliquée le 2026-07-29 :** 18 occurrences de `2026-07-30`
+ramenées à `2026-07-29` — `CLAUDE.md` (1), `.gitignore` (1), `TODO.md` (4 plus le
+titre de l'entrée de journal), `ISSUES-LOG.md` (8, dont les en-têtes de date
+d'ISSUE-004, ISSUE-005 et ISSUE-006), et les mentions d'heures relues en local.
+Laissé tel quel comme trace : le nom `index.lock.orphelin-20260730-0139`, que le
+fichier a réellement porté.
+
+**Règle de mesure.** Une date qui entre dans un fichier de ce dépôt se **mesure**
+sur l'horloge du poste — jamais sur l'en-tête de la session, jamais sur `date` du
+pont. Commande de référence, disponible depuis le pont :
+
+```
+git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'
+```
+
+Elle rend l'heure locale et son décalage, parce que git horodate avec le fuseau de
+Windows. Depuis un conteneur, `TZ=America/Toronto date` fait l'affaire. Le contrôle
+qui aurait suffi ce soir : comparer la date qu'on s'apprête à écrire au `%ad` du
+dernier commit.
+
+**Réflexe réutilisable.** « Mesurer plutôt que supposer » vaut aussi pour la date.
+Elle a l'air d'un fait donné ; c'est une mesure, et elle a un fuseau. Un agent qui
+écrit une date sans l'avoir mesurée signe le document avec l'heure du serveur qui
+l'héberge.
+
+---
+
+## ISSUE-006 — Toute commande git lancée depuis le pont Cowork laisse un `.git/index.lock` orphelin : le pont ne sait pas supprimer
+
+**Date :** 2026-07-29
+**Statut :** **Fermé sur le symptôme, cause armée** — verrou déplacé le
+2026-07-29 à 21 h 39, puis **supprimé et vérifié absent** le même soir en session
+Claude Code (`test -e` négatif, `git fsck` sain) ; la règle d'usage ci-dessous est
+un garde par vigilance, pas par construction
+**Contexte :** session Cowork avec `claude-skills` monté par le pont
+(`device_bash`) · `git status --short` lancé à 01:39
+**Type :** Outillage / pont Cowork
+**Sévérité :** Élevée — un verrou orphelin bloque la **prochaine** commande git
+du poste, et son message d'erreur accuse une cause qui n'existe pas
+
+**En une ligne :** `git status` a fonctionné, puis a échoué à retirer son propre
+verrou — `warning: unable to unlink '.git/index.lock': Operation not permitted` —
+laissant un fichier de 0 octet qui aurait fait échouer le prochain `git add` de
+Mathieu sur Windows.
+
+**Ce qui se passe.** Git pose `.git/index.lock` dès qu'il rafraîchit l'index,
+même pour une lecture, puis le retire. Le pont Cowork monte le dossier en
+lecture-écriture mais **interdit `unlink`** : création autorisée, suppression
+refusée. Le verrou survit donc à la commande qui l'a posé.
+
+**Conséquence sur le poste.** La commande git suivante échoue par « Unable to
+create '.git/index.lock': File exists », qui désigne un processus git concurrent
+inexistant. Le diagnostic naturel — « une session a planté » — est faux, et la
+vraie cause n'est pas visible depuis Windows.
+
+**Contournement appliqué le 2026-07-29.** Le verrou a été **déplacé**, pas
+supprimé (le pont ne sait pas supprimer) : `.git/index.lock` →
+`.git/index.lock.orphelin-20260730-0139` — nom dont la date est elle-même en UTC
+(ISSUE-007), conservé tel quel puisque le fichier l'a porté. Supprimé depuis.
+
+**Règle d'usage, mesurée.** Depuis une session Cowork, lire l'état git avec
+`git --no-optional-locks <commande>` — le drapeau existe exactement pour cela.
+Vérifié le 2026-07-29 : `git --no-optional-locks status --short` rend le même
+résultat et **ne crée aucun verrou**. Les commandes d'écriture (`add`, `commit`,
+`push`) restent hors de portée du pont et doivent le rester : elles posent un
+verrou qu'elles ne pourront pas reprendre.
+
+**Ce que cela révise.** Le journal du 2026-07-24 notait « git = lecture seule
+depuis Cowork » comme une limite d'accès subie. C'en est aussi une **règle de
+sécurité** : une écriture git depuis le pont laisserait le dépôt verrouillé
+derrière elle.
+
+**Réflexe réutilisable.** Sur un système de fichiers monté à distance, vérifier
+non pas ce qu'on peut écrire, mais ce qu'on peut **retirer**. Un outil qui pose
+un fichier temporaire sans pouvoir le reprendre laisse une panne différée, à un
+endroit qui n'accusera pas le vrai coupable.
+
+---
+
+## ISSUE-005 — La liste d'autorisations locale de la maison rejoue indéfiniment `git push`, `Remove-Item *` et la lecture de tout le profil — et rien ne la protégeait d'un commit accidentel
+
+**Date :** 2026-07-29
+**Statut :** **Constaté** — parade minimale posée (`.gitignore` étroit, mordant
+vérifié) ; **contenu relu et chiffré le 2026-07-29** (94 entrées, 6 à risque,
+7 mortes — voir « Relecture ») ; **tri non tranché, aucune entrée retirée**. La
+décision d'élaguer appartient à Mathieu.
+**Contexte :** `.claude/settings.local.json` (11 869 o, écrit le 2026-07-28 à
+00:31), non suivi par git · règle « `git add` nommé, jamais `-A` » (CLAUDE.md,
+README) · ADR-028 (le dépôt est la source ; le disque est une cible jamais
+éditée à la main)
+**Type :** Gouvernance
+**Sévérité :** Moyenne pour le risque de commit, Élevée pour la portée des
+autorisations
+
+**Deux problèmes distincts dans un même fichier.**
+
+### 1. Rien ne le protégeait
+
+Le dépôt n'avait **aucun `.gitignore`**. Un `git add -A` — celui que la règle
+d'ordre interdit précisément — aurait committé puis poussé sur GitHub un fichier
+de réglages personnels de 11 869 octets, avec les chemins absolus du poste et
+l'historique des commandes autorisées. La règle existait, le filet non.
+
+**Parade posée le 2026-07-29 :** `.gitignore` créé, avec **une seule entrée** —
+`.claude/settings.local.json`. Volontairement étroite : ignorer `.claude/` en bloc
+décrocherait la maison entière (`.claude/skills/`, dix skills suivis). Vérifié
+après écriture : le fichier a disparu de `git status`, les dix skills y restent.
+
+### 2. Son contenu est une autorisation permanente que personne ne relit
+
+La liste `permissions.allow` a grossi par accumulation : chaque « oui » ponctuel
+d'une session s'y est gravé. Elle contient aujourd'hui, entre autres :
+
+```
+"Bash(git add *)"           "Bash(git commit *)"       "Bash(git push *)"
+"Bash(cp *)"                "PowerShell(Remove-Item *)"
+"Read(//c/Users/mat_g/**)"  "Read(//c/Users/mat_g/.claude/skill-observations/**)"
+```
+
+Conséquence mesurable : toute session Claude Code ouverte dans ce dépôt peut
+committer, pousser sur `origin/main`, copier n'importe quoi et supprimer par
+PowerShell **sans redemander**, et lire l'intégralité du profil utilisateur — y
+compris `~/.claude`, que ce dépôt traite par ailleurs comme une cible qu'on
+n'édite jamais à la main.
+
+C'est la contradiction à nommer : la gouvernance interdit d'éditer les copies
+déployées, et la liste d'autorisations permet de les écraser sans confirmation.
+L'incident du 2026-07-26 (« un autre agent avait écrit dans la maison ») a été
+consigné comme un problème d'accès externe ; ce fichier montre que la porte
+intérieure est ouverte aussi.
+
+**Ce que cette entrée ne tranche pas.** Quelles entrées retirer. Ce fichier est
+la configuration vivante des sessions de Mathieu ; l'élaguer depuis une session
+Cowork casserait des workflows en cours sans qu'il l'ait demandé. Le tri lui
+appartient.
+
+**Piste de tri, si elle est jugée utile.** Les entrées à joker large
+(`git push *`, `Remove-Item *`, `cp *`, `Read(//c/Users/mat_g/**)`) portent tout
+le risque. Les entrées littérales et longues — une commande git complète avec son
+chemin — sont inoffensives et documentent l'histoire des mesures ; elles peuvent
+rester.
+
+**Relecture du 2026-07-29 — mesurée, aucun élagage.** La piste de tri ci-dessus a
+été exécutée sur le fichier réel. **Aucune entrée n'a été retirée** : le tri
+appartient à Mathieu, et la session s'est arrêtée à sa demande.
+
+Décompte : **94 entrées** dans `permissions.allow`.
+
+| Classe | Nombre | Porte le risque ? |
+|---|---|---|
+| Joker large sur verbe d'écriture | **6** | Oui — tout le risque |
+| Joker étroit | 12 | Partiellement (voir entrées mortes) |
+| Littéral — une commande exacte, une seule chose possible | **76** | Non — documentaires |
+
+Les six à risque, dont **une que la piste de tri ne nommait pas** :
+
+```
+Bash(git push *)            Bash(git commit *)         Bash(git add *)
+Bash(cp *)                  PowerShell(Remove-Item *)  Bash(py -3.13 -c ' *)
+```
+
+`Bash(py -3.13 -c ' *)` exécute du code Python arbitraire : sa portée réelle
+égale celle de `Remove-Item *`. Elle avait échappé au premier tri — et à mon
+propre classificateur, calibré sur des **verbes** au lieu de la **sémantique**.
+Le défaut est celui de l'amendement du principe transverse 1 (« la cause
+structurelle à connaître avant de choisir un motif »), commis une heure après
+son écriture. Une liste d'autorisations ne se trie pas par nom de commande.
+
+**La contradiction à nommer, mesurée.** `CLAUDE.md` et `README.md` posent
+« `git add` nommé, jamais `-A` » — règle qui existe précisément pour empêcher
+qu'une sonde jetable entre dans l'historique. La liste accorde
+`Bash(git add *)`, **qui couvre `git add -A`**. La règle interdit le geste,
+l'autorisation le permet sans confirmation. Même forme que la contradiction déjà
+nommée au § 2 sur les copies déployées, mais portant sur la règle la plus citée
+du dépôt.
+
+**Sept entrées mortes, mesurées.** `Read(//c/Users/mat_g/**)` **englobe**
+`Read(…/Documents/**)`, `Read(…/Documents/Claude/**)`,
+`Read(…/.claude/skill-observations/**)` et les deux
+`Read(…/.claude/projects/…claude-skills/**)` — cinq entrées qui n'ajoutent
+aucun droit. Elles documentent le mécanisme d'accumulation : chaque session a dit
+oui à un chemin plus étroit, puis un oui a été donné au profil entier, et
+personne n'a retiré les précédents. **Le choix n'est donc pas de les retirer,
+mais de décider quel bout on garde** — le large (les cinq tombent, rien ne
+change) ou les étroits (le large tombe, et le privilège se restreint réellement).
+S'y ajoutent les deux `sed -i` posant les marqueurs `MARQUEUR-V3BIS-*`,
+reliquats d'une mesure terminée.
+
+**Parade vérifiée.** `git check-ignore -v .claude/settings.local.json` confirme
+que l'entrée du `.gitignore` mord, et qu'elle reste étroite — `.claude/` n'est pas
+ignoré en bloc, la maison demeure suivie.
+
+**Réflexe réutilisable.** Une liste d'autorisations est un journal qui **exécute**.
+Elle enregistre des « oui » ponctuels et les rejoue indéfiniment, sans date et
+sans motif. Elle se relit à intervalle, comme un ISSUES-LOG — sinon elle devient
+une porte que personne n'a décidé d'ouvrir.
+
+---
+
+## ISSUE-004 — Comparer les octets entre deux circuits fabrique de fausses divergences : `grill-me` et `json-canvas` signalés divergents, contenu identique
+
+**Date :** 2026-07-29
+**Statut :** **Constaté** — règle de méthode posée ci-dessous ; reste ouverte la
+question de rejouer l'audit repo ↔ compte du 2026-07-26
+**Contexte :** session Cowork (projet SKILLS_POLICE), premier accès mesuré à la
+copie personnelle depuis Cowork (`Desktop\SKILLS` branché par Mathieu) ·
+`deploy-skills.ps1` lignes 51-56 · audit md5 repo ↔ compte du 2026-07-26
+**Type :** Méthode de mesure
+**Sévérité :** Moyenne — aucun effet sur le contenu déployé ; effet réel sur la
+confiance qu'on peut accorder à un verdict de divergence
+
+**En une ligne :** un `md5sum` brut sur `SKILL.md` a déclaré deux skills
+divergents entre la copie personnelle et la maison **à numéro de version
+identique** — la divergence était entièrement due aux fins de ligne.
+
+**Mesuré le 2026-07-29 :**
+
+```
+grill-me      disque LF  (24 lignes,   811 o) · maison CRLF (24 lignes,   835 o)
+json-canvas   disque LF  (245 lignes, 7639 o) · maison CRLF (245 lignes, 7884 o)
+diff --strip-trailing-cr  →  identiques au caractère près, les deux
+```
+
+Les huit autres skills sont identiques octet pour octet, `task-observer-perso`
+compris. L'écart ne suit donc aucune règle globale : il ne s'anticipe pas
+fichier par fichier, il se mesure.
+
+**Ce qui se passe.** Le dépôt porte `* text=auto` (`.gitattributes`), donc git
+compare des contenus normalisés et ne voit rien. L'état réel des fichiers, lui,
+n'est pas uniforme — mesuré le 2026-07-29 sur les dix skills :
+
+| Fin de ligne | Maison (copie de travail) | Disque (`~\.claude\SKILLS`) |
+|---|---|---|
+| CRLF | `grill-me`, `json-canvas` | aucun |
+| LF | les huit autres | les dix |
+
+Les deux fichiers signalés sont donc les seuls, dans la copie de travail, que
+rien n'a réécrits depuis l'extraction par git ; les huit autres ont été réécrits
+en LF par un outil de session à un moment indéterminé. `git status` reste muet
+dans les deux cas. Un audit par octets ne mesure donc pas la dérive de contenu :
+il mesure **quel outil a touché le fichier en dernier**.
+
+**Bénéfice inattendu de la mesure.** `json-canvas` est précisément le fichier
+marqué des deux côtés pendant la mesure V3-bis du 2026-07-27
+(`MARQUEUR-V3BIS-MAISON` et `MARQUEUR-V3BIS-PERSONNEL`, visibles dans la liste
+d'autorisations locale). Le protocole exigeait « marqueur retiré et copie
+restaurée après verdict » sans que personne ne l'ait vérifié depuis. C'est fait,
+trois jours plus tard, par effet de bord : les deux copies sont identiques au
+caractère près. La restauration a bien eu lieu.
+
+**Pourquoi c'est une issue et pas une note de bas de page.** La règle du dépôt
+dit que deux contenus différents ne portent jamais le même numéro de version. Un
+faux positif de divergence à version égale déclenche donc exactement l'alarme la
+plus grave de la maison, et envoie chercher une dérive qui n'existe pas — le
+coût est une session, pas un fichier.
+
+**Le remède existait déjà dans le dépôt.** `deploy-skills.ps1` normalise
+`\r\n` → `\n` avant de hacher, et son commentaire de la ligne 51 nomme le piège
+mot pour mot : « Comparer les octets ferait voir une divergence sur chaque
+fichier. » Le script avait raison ; l'instrument improvisé avait tort.
+
+**Règle de méthode (applicable immédiatement).** Toute comparaison de copies
+entre deux circuits — maison ↔ disque ↔ compte — normalise les fins de ligne
+avant de comparer, ou réutilise la fonction de hachage de `deploy-skills.ps1`.
+Un `md5sum` ou `Get-FileHash` brut n'est pas un instrument d'audit valide dans
+ce dépôt.
+
+**Question ouverte.** L'audit md5 repo ↔ compte du 2026-07-26 — celui qui a
+conclu « `tdd-enforcer` périmé sur le compte » — a-t-il normalisé ? Si non, son
+verdict peut rester juste par ailleurs, mais sa méthode est à rejouer sous la
+règle ci-dessus. Non mesurable depuis Cowork : le compte n'expose pas ses
+fichiers.
+
+**Réflexe réutilisable.** Avant de conclure à une divergence entre deux copies,
+mesurer d'abord **comment l'outil qui les déploie les compare**. L'instrument de
+l'audit doit être celui du déploiement, jamais un raccourci de session.
+
+---
+
 ## ISSUE-003 — `deploy-skills.ps1` sort en code 1 sur un déploiement réussi : le succès de robocopy masque l'échec réel
 
 **Date :** 2026-07-27
