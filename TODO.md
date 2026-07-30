@@ -666,7 +666,15 @@ sur-place. *Parade écrite* : R304 — condition de clôture avant la première 
   retirer les anciennes versions + `tdd-enforcer` périmé.
 - Retirer 3 montages morts de la liste de dossiers Cowork : `SKILLS`,
   `Desktop--skill-observations`, `skill-observations`.
-- Les deux dossiers vides du Bureau, si le rangement importe.
+
+Ces deux-là restent parce qu'une session Code **ne peut pas les mesurer**, et pas
+seulement pas les faire. Le contenu du compte claude.ai n'est jamais lisible
+directement ; la liste de dossiers de Cowork n'existe sur aucun fichier de ce
+poste — vérifié le 2026-07-30 par `grep` sur toutes les configurations, puis par
+le navigateur (`claude.ai/cowork` redirige vers une page marketing, et
+`claude.ai` n'expose que du téléversement de fichiers). Ce sont les deux seuls
+points de cette entrée dont l'état ne se prouve pas d'ici : ils se ferment sur ta
+parole, pas sur une mesure.
 
 **Fait le 2026-07-30 (matin), après la première rédaction de cette entrée**
 
@@ -733,6 +741,12 @@ sur-place. *Parade écrite* : R304 — condition de clôture avant la première 
   chaque fin de tour a intérêt à ne dépendre de rien, et il ne lit pas stdin.
   À savoir : winget a mis le dossier du paquet dans le PATH utilisateur sans créer
   le raccourci habituel `WinGet\Links\jq.exe`.
+- **Le Bureau est propre.** Les deux coquilles vides — `Desktop\SKILLS` et
+  `Desktop\skill-observations` — ont disparu. Elles auront été données supprimées,
+  puis mesurées présentes, puis réellement supprimées entre deux mesures : trois
+  états en une matinée pour deux dossiers vides. Le portillon de suppression a
+  fonctionné comme prévu et n'a rien eu à faire — il compte les éléments avant
+  d'agir et refuse tout ce qui n'est pas prouvé vide.
 
 **Décisions ouvertes**
 
