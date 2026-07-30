@@ -609,8 +609,12 @@ Mathieu ou une tâche pour une session Code. Une session Cowork qui « nettoie �
 laisse toujours quelque chose derrière elle — c'est exactement pourquoi les deux
 dossiers du Bureau sont encore là, vides (§ 8).
 
-**7.11 Le magasin n'a pas de copie hors du poste.** Sous git, mais sans distant.
-Si le disque meurt, les observations et les principes meurent avec lui.
+**7.11 Le magasin n'a pas de copie hors du poste.** ~~Sous git, mais sans
+distant. Si le disque meurt, les observations et les principes meurent avec
+lui.~~ **Fermé le 2026-07-30** — distant privé ajouté au magasin et à
+`~/.claude` (voir § 9). Conservé barré plutôt que supprimé : la friction a été
+réelle pendant douze heures, et ce qui l'a fermée est une **construction**, pas
+une vigilance — la distinction est le sujet de l'observation 13.
 
 **7.12 Le corps des principes grossit malgré l'index** (426 → 646 lignes en une
 nuit). L'index protège la lecture, pas la taille. R602 et R304 s'appliquent au
@@ -685,17 +689,31 @@ sur-place. *Parade écrite* : R304 — condition de clôture avant la première 
   états v2.3 et v2.4 que le dépôt ne peut pas reconstruire, naissant après eux.
   Décision inverse de celle prise pour le magasin, où les `.bak` dupliquaient un
   contenu que le premier commit capturait déjà — l'asymétrie est voulue.
-- **Trois dépôts désormais** : `claude-skills` (distant GitHub privé), le magasin
-  d'observations et `~/.claude` (aucun distant).
+- **Les trois dépôts ont un distant privé.** `skill-observations` et
+  `claude-home` créés sur GitHub le 2026-07-30, aux côtés de `claude-skills`.
+  Ordre suivi, et il comptait : dépôts créés **vides**, visibilité mesurée
+  `PRIVATE`, push **ensuite** — si la création avait produit un dépôt public,
+  rien ne serait encore parti. Vérifié à destination et non sur le disque :
+  l'arborescence lue par l'API GitHub est identique aux fichiers suivis
+  localement (11 et 8 blobs), zéro fichier à risque.
+- La friction 7.11 est donc fermée, et **par construction** : ce n'est plus une
+  règle d'usage qui protège les observations, c'est une copie qui existe
+  ailleurs. Deux réserves la remplacent, plus petites. **(a)** Un push n'est pas
+  automatique — pour le magasin la cadence existe (un commit à la fin d'une
+  revue, le push s'y ajoute), pour `~/.claude` il n'y en a aucune, et la
+  constitution changera à la prochaine session sans que rien ne le rappelle.
+  **(b)** Privé aujourd'hui ne veut pas dire privé demain : un changement de
+  visibilité est à deux clics et ne laisse aucun signal, alors que le contenu
+  décrit les projets, les décisions et les méthodes de travail.
 
 **Décisions ouvertes**
 
 - Élaguer ou non les 6 entrées à risque de la liste d'autorisations (ISSUE-005).
 - Committer ou non les deux `.bak-2026-07-29` **du magasin** comme trace — la
   question reste ouverte là, elle est tranchée pour `~/.claude` (voir ci-dessus).
-- Ajouter ou non un distant **aux deux dépôts locaux**. Git les protège d'une
-  écriture ratée, pas d'une panne de disque : aujourd'hui les 65 observations,
-  les 11 principes et la constitution n'existent qu'ici.
+- Établir ou non une **cadence de push pour `~/.claude`**. Le distant existe, mais
+  rien ne déclenche la synchronisation : le magasin hérite de la cadence de revue,
+  la constitution n'en a aucune.
 
 **Dossiers ouverts, sans urgence**
 
