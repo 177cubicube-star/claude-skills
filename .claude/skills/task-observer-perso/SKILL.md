@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.5.0
+version: 1.6.0
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -290,11 +290,40 @@ porte **le type de garde** qui empêche le retour, en un mot :
 |---|---|
 | `par construction` | l'occasion n'existe plus |
 | `par vigilance` | une règle d'usage la surveille — porte son déclencheur de réexamen |
+| `qui se régénère` | **l'usage la reconstitue dans le sens qui l'affaiblit** — voir ci-dessous |
 | `aucun` | limite écrite, déclencheur nommé |
 
-Les trois ferment ; ils ne se relisent pas de la même façon. `ACTIONED` seul dit
+Les quatre ferment ; ils ne se relisent pas de la même façon. `ACTIONED` seul dit
 ce qui a cessé, jamais ce qui empêche le retour — et c'est ce mot que lira
 quiconque décidera plus tard s'il faut y revenir.
+
+**`qui se régénère` — le seul qui laisse une trace rassurante** (obs 18 du store
+`claude-skills`, 2026-07-30). Ce n'est ni la construction, dont l'occasion a
+disparu, ni la vigilance, qui a au moins le taux d'échec de l'attention : c'est
+une garde que le **fonctionnement ordinaire du système défait**, donc à taux
+d'échec de 100 % à terme.
+
+Son signe distinctif est ce qui la rend pire que l'absence de garde. Une garde
+absente, on la cherche — son absence se voit au décompte. Celle-ci **laisse
+derrière elle un document affirmant que le problème est réglé**, donc personne ne
+la cherche. Cas d'origine : dix entrées à joker retirées d'une liste
+d'autorisations, contrôle immédiat à zéro, statut « Résolu — par construction »
+écrit et publié ; trois minutes et trois commandes plus tard, trois entrées
+étaient revenues — exactement les trois utilisées.
+
+**Le test pour la reconnaître, en une question :** *cette liste grossit-elle sans
+que personne ne l'écrive ?* Si oui, tout élagage est cosmétique et toute clôture
+est fausse. Le motif ne vit pas que dans les permissions — il vit dans **toute
+liste d'exceptions qu'un outil alimente** : waivers temporaires qui se
+renouvellent, exclusions de linter posées par un correctif automatique,
+`# type: ignore` ajoutés par un assistant, cases d'un TODO cochées par le geste
+qui les crée, dépendances autorisées par un gestionnaire de paquets. Là où
+l'usage écrit dans la liste qui le limite, la limite ne tient pas.
+
+**Remède, et il est contraint :** une règle du même niveau sera écrasée par la
+prochaine réinscription. Il faut une contrainte **d'un niveau supérieur, dans un
+support que le système régénérant ne peut pas atteindre**. Et ce support se
+mesure avant d'être cru — la précédence entre niveaux ne se suppose pas.
 
 Une clôture `par vigilance` sans déclencheur de réexamen devient permanente par
 simple absence de revue : le mode d'échec que le principe transverse 9 nomme. Et
