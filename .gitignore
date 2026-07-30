@@ -3,3 +3,9 @@
 # maison des skills y vit et elle est suivie (`.claude/skills/`, dix skills).
 # Motif et portée : ISSUES-LOG.md, ISSUE-005 (2026-07-29).
 .claude/settings.local.json
+
+# Ses sauvegardes datées portent le même contenu et courent le même risque.
+# L'élagage du 2026-07-30 en a produit une, non suivie ET non ignorée : un
+# `git add -A` l'aurait poussée, exactement le scénario qu'ISSUE-005 décrit.
+# La parade doit couvrir la classe, pas l'instance.
+.claude/settings.local.json.bak-*
