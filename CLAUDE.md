@@ -39,6 +39,18 @@ pas un contrat documenté. À toute montée de version, rejouer le protocole
 Le script ne supprime jamais rien, signale les orphelins, et **vérifie après
 écriture** au lieu de se fier à son propre rapport. Sans `-Apply`, il n'écrit pas.
 
+**Sa fonction `Get-Empreinte` est le comparateur de référence de ce dépôt.**
+Tout audit de copies l'emprunte — ou emprunte sa sémantique : normaliser
+`\r\n` → `\n` **avant** de hacher. Comparer les octets bruts ne mesure pas la
+dérive de contenu, il mesure quel outil a écrit le fichier en dernier : la source
+est en CRLF (git la réécrit au checkout, `text=auto`), la cible en LF. Mesuré
+deux fois, le 2026-07-26 et le 2026-07-31 : `sha256sum` sur les octets bruts
+déclare `grill-me` et `json-canvas` divergents **à version identique** — l'alarme
+la plus grave de ce dépôt — alors que l'écart en octets vaut exactement le nombre
+de fins de ligne (24 et 245) et que le déployeur répond « 15 fichiers
+identiques ». En une ligne, hors PowerShell :
+`diff --strip-trailing-cr -q <source> <cible>`.
+
 Avant de déployer : **monter `version:`** dans le frontmatter. Toujours, même
 pour une ligne. Deux contenus différents ne portent jamais le même numéro.
 Retouche +0.0.1 · ajout +0.1.0 · refonte +1.0.0. Un skill sans `version:` ne
