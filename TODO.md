@@ -147,8 +147,8 @@ sauvegarde, pas avant :**
       Vérification : le skill ne doit plus figurer dans Personnaliser →
       Compétences, et une session Cowork relancée ne doit plus le proposer.
 
-- [ ] **Réaligner les trois circuits de `task-observer-perso`** — **deux sur
-      trois faits, reste le compte.**
+- [x] **Réaligner les trois circuits de `task-observer-perso`** — **FAIT le
+      2026-07-30 à 22 h 17 locale. Les trois circuits sont à 1.6.0.**
       *État à l'ouverture, mesuré le 2026-07-29 à 22 h 50 locale :* maison
       **1.4.0** (`b9ab677`), disque **1.3.0** (déployé le 2026-07-27 à 21 h 32),
       compte **1.2.0** — les trois désalignés, le déploiement rendu obligatoire
@@ -162,26 +162,37 @@ sauvegarde, pas avant :**
       l'arbre de travail portant déjà le fichier ; c'est l'égalité des
       empreintes qui fait preuve, pas la chronologie. Les neuf autres skills de
       la maison sont eux aussi alignés maison/disque (aucun écart sur les dix).
-      **Ce qui reste ouvert : le compte claude.ai seul.** Dernier chiffre connu
-      **1.2.0**, du 2026-07-29 — c'est une valeur héritée, pas une mesure du
-      jour : aucune session Claude Code ne peut lire la version montée au
-      compte (F9, pas de pont ; le zip est son seul canal).
-      Geste préparé le 2026-07-30 : zip conforme construit et vérifié →
-      `Bureau\task-observer-perso-v160.zip` (entrée `task-observer-perso/SKILL.md`,
-      `description` 776 car. ≤ 1024, SHA-256 identique à la source). Reste la
-      main de Mathieu : Personnaliser → Compétences → **supprimer l'ancien** →
-      téléverser → relancer l'app desktop au complet.
+      **Compte claude.ai — téléversé et vérifié le 2026-07-30 à 22 h 17
+      locale.** Zip construit ici et téléversé de la main de Mathieu
+      (`Bureau\task-observer-perso-v160.zip` : entrée
+      `task-observer-perso/SKILL.md`, `description` 776 car. ≤ 1024, SHA-256
+      identique à la source), après suppression de l'ancien et redémarrage
+      complet de l'app. Le `1.2.0` du 2026-07-29 n'a jamais été confirmé : la
+      date de dernière mise à jour de l'ancien n'a pas été relevée avant sa
+      suppression, et cette fenêtre ne se rouvre pas. C'est une valeur héritée
+      qui le restera.
       Note de construction : `Compress-Archive` (PS 5.1) écrit les chemins
       internes à l'antislash, ce que la spec ZIP interdit ; le zip a été
       reconstruit entrée par entrée avec des slashes.
-      **Vérification — par marqueur de contenu, jamais par `version:`.** Le
-      champ `version` n'est pas exposé de façon fiable dans une session
-      (mesuré le 2026-07-27 : `VERSION=inconnue` sur 2 runs / 3). Témoin du
-      1.6.0 : § « La clôture nomme son garde » compte **quatre** types de garde,
-      dont `qui se régénère`. Trois entrées, ou pas de `qui se régénère` → le
-      téléversement n'a pas pris.
-      **Se coche quand** le témoin des quatre gardes répond depuis une session
-      Cowork relancée.
+      **Ce que la vérification a coûté — deux témoins faux avant le bon.** Le
+      contenu d'un skill **n'est pas préchargé** dans une session : seuls son
+      `name` et sa `description` le sont. Toute vérification de contenu passe
+      donc par une lecture explicite, et **c'est le chemin lu qui identifie le
+      circuit** — pas la question posée.
+      · Témoin 1 (« combien de gardes ? ») : répondu depuis
+      `~/.claude/skills/`, le **disque**, déjà prouvé par empreinte. Mesure
+      juste, circuit faux.
+      · Témoin 2 (« sans lire aucun fichier ») : **inexécutable** — la session
+      l'a refusé plutôt que de fabriquer, à raison. Interdire la source ne
+      désigne pas la bonne.
+      · Témoin 3, celui qui tranche : lire `/mnt/skills/user/<skill>/SKILL.md`,
+      le montage du compte, et rendre `version:` + le marqueur.
+      **Résultat, concordant verbatim avec la maison :** `version: 1.6.0`
+      (ligne 3) · table des gardes lignes 289-294, **quatre** entrées jusqu'au
+      « — voir ci-dessous » du troisième · renvoi de la ligne 397 présent.
+      Lire `version:` **dans le fichier** est fiable ; la réserve du
+      2026-07-27 (`VERSION=inconnue` sur 2 runs / 3) porte sur le *listing*
+      d'une session, pas sur le fichier.
 - [x] **Revue des observations `task-observer-perso`** (étape 2 du rituel) —
       **faite le 2026-07-29** en session Claude Code : bump 1.3.0 → **1.4.0**,
       commit `b9ab677` à 22 h 13 locale, principes transverses portés de six à
