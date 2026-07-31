@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.6.0
+version: 1.7.0
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -208,6 +208,25 @@ writing is the enforcement mechanism.
 
 Keep the announcement to that single line; do not interrupt the flow further.
 
+**Dating (mandatory pre-check):** a date is a **measure**, not a given — and it
+has a timezone. Measure it at the moment of writing, never from the session
+header nor from a bridge's `date`. Applies to all three places this skill writes
+one: the `**Date:**` field, the archive filename `log-YYYY-MM-DD.md`, and
+`last-review-date.txt`.
+
+```bash
+git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'   # in a repo — git stamps with the machine's zone
+TZ=America/Toronto date '+%Y-%m-%d %H:%M %z'                # outside one
+```
+
+The defect is **asymmetric by tool**, so no single check covers it (measured
+2026-07-29): from Cowork the container and bridge run UTC, so **past 20:00 local
+the announced date is tomorrow's**; from Claude Code the local clock is right but
+**frozen at session open**, so past midnight it is yesterday's. A wrong date never
+contradicts itself — it becomes the store's reference chronology, and the *next*
+correct measure is what will look wrong. Cross-cutting principle 3, amendment
+obs 15.
+
 **Numbering (mandatory pre-check):** before assigning a number, read the
 actual log file and take max+1 — never trust session memory:
 
@@ -248,7 +267,8 @@ observations. Skill-shaped insights rarely need them.
 ### Archival on Write
 
 On every log write, first move entries already marked ACTIONED or DECLINED
-**in a previous session** to `archive/log-YYYY-MM-DD.md` (preserve the header
+**in a previous session** to `archive/log-YYYY-MM-DD.md` (date **measured**, see
+Dating pre-check — a misdated archive files itself under the wrong day; preserve the header
 and status key). Entries resolved in the CURRENT session stay visible until
 the next write. The active log holds OPEN items plus the just-resolved ones.
 
@@ -397,7 +417,9 @@ Runs ONLY when the user asks (adaptation #2). Interactive, never autonomous.
    Chaque clôture porte son type de garde (§ La clôture nomme son garde).
    Archival happens on the next log write.
 6. **Timestamp** — write today's date to
-   `~/.claude/skill-observations/last-review-date.txt`.
+   `~/.claude/skill-observations/last-review-date.txt`. **Measured**, per the
+   Dating pre-check — this file gates the next review's cadence, so a date taken
+   from the session header shifts every future review by a day.
 7. **Summary** — updated skills with 1-sentence changes + observations
    actioned + skipped (with reasons).
 
