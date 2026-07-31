@@ -153,14 +153,15 @@ sauvegarde, pas avant :**
       **1.4.0** (`b9ab677`), disque **1.3.0** (déployé le 2026-07-27 à 21 h 32),
       compte **1.2.0** — les trois désalignés, le déploiement rendu obligatoire
       par ISSUE-001 n'ayant pas tourné pour 1.4.0.
-      *Re-mesuré le 2026-07-30 à 13 h 55 locale :* maison **1.6.0** (`c2f5d52`)
+      *Re-mesuré le 2026-07-30 à 22 h locale :* maison **1.6.0** (`c2f5d52`)
       et disque **1.6.0** — **alignés**, et pas sur la foi des numéros : le
       SHA-256 des deux `SKILL.md` est identique
-      (`028a782c…`). La cible a été écrite à 13 h 48, sept minutes **avant** le
-      commit de 13 h 55 — même contenu, l'arbre de travail portait déjà le
-      fichier ; c'est l'égalité des empreintes qui fait preuve, pas la
-      chronologie. Les neuf autres skills de la maison sont eux aussi alignés
-      maison/disque (aucun écart sur les dix).
+      (`028a782c…`). Les deux circuits avaient été portés à 1.6.0 le jour même
+      par une session antérieure : cible écrite à 13 h 48, commit à 13 h 55 —
+      le déploiement précède donc la gravure de sept minutes, même contenu,
+      l'arbre de travail portant déjà le fichier ; c'est l'égalité des
+      empreintes qui fait preuve, pas la chronologie. Les neuf autres skills de
+      la maison sont eux aussi alignés maison/disque (aucun écart sur les dix).
       **Ce qui reste ouvert : le compte claude.ai seul.** Dernier chiffre connu
       **1.2.0**, du 2026-07-29 — c'est une valeur héritée, pas une mesure du
       jour : aucune session Claude Code ne peut lire la version montée au
