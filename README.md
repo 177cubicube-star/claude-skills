@@ -66,7 +66,15 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
    |---|---|---|
    | Maison | `.claude/skills/<nom>/SKILL.md` | ce dépôt |
    | Disque | `~/.claude/SKILLS/<nom>/SKILL.md` | session Claude Code locale |
-   | Compte | `/mnt/skills/user/<nom>/SKILL.md` | session claude.ai (Cowork/Chat) |
+   | Compte | **le chemin que la session annonce** — le lui demander | session claude.ai (Cowork/Chat) |
+
+   **Pour le compte, demander le chemin avant de le dicter.** Il varie selon le
+   type de session : `/mnt/skills/user/<nom>/` mesuré le 2026-07-30,
+   `/root/.claude/skills/<nom>/` mesuré le 2026-07-31 dans une autre session.
+   Un témoin qui code le chemin en dur échoue sur la moitié des sessions, et son
+   échec ressemble à « le skill n'est pas là ». Forme juste : « d'où vient le
+   skill `<nom>` que tu as chargé ? » puis « lis ce fichier-là et rends `version:`
+   + le marqueur ».
 
    **Pourquoi le chemin et pas la question** (obs 19 du store, 2026-07-30). Les trois circuits portent le même contenu sous le même nom — c'est justement ce qu'on cherche à établir. Aucune question sur le contenu ne peut donc dire *lequel* a répondu : le seul discriminateur est l'emplacement lu, et il doit être écrit dans le témoin, pas déduit de la réponse. Un témoin qui admet plusieurs sources mesure la plus commode.
 
@@ -74,7 +82,7 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
 
    **`version:` lu dans le fichier est fiable ; demandé au listing d'une session, non** (`VERSION=inconnue` sur 2 runs / 3, mesuré le 2026-07-27). La réserve porte sur le listing, pas sur le fichier ouvert.
 
-   **Borne de validité :** `/mnt/skills/user/` est un fait d'environnement mesuré le 2026-07-30, pas un contrat documenté — même statut que la borne CLI 2.1.220. Il se re-mesure ; en cas de doute, demander à la session d'où vient le skill qu'elle a chargé.
+   **Borne de validité — et la preuve qu'elle sert.** Le chemin du compte est un fait d'environnement, pas un contrat documenté — même statut que la borne CLI 2.1.220. Écrit ici le 2026-07-30 comme `/mnt/skills/user/`, il était **faux dès le lendemain** : une session du 31 n'avait pas de `/mnt/skills/` du tout et chargeait depuis `/root/.claude/skills/`. Un jour d'écart a suffi. C'est pourquoi la table ci-dessus ne donne pas de chemin pour le compte : la borne ne suffisait pas, il fallait retirer le chemin du geste lui-même.
 
 Piège connu : « This skill name is already in use » peut persister après suppression (réservation résiduelle côté serveur ; noms du catalogue d'exemples Anthropic réservés en permanence). Contournement : suffixe `-perso`. Le déclenchement est piloté par la `description`, pas par le nom.
 

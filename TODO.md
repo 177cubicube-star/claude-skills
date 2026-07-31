@@ -197,6 +197,30 @@ sauvegarde, pas avant :**
       Lire `version:` **dans le fichier** est fiable ; la réserve du
       2026-07-27 (`VERSION=inconnue` sur 2 runs / 3) porte sur le *listing*
       d'une session, pas sur le fichier.
+- [x] **Réaligner les trois circuits sur `task-observer-perso` 1.7.0** —
+      **FAIT le 2026-07-31 à 18 h 06 locale.** Cycle complet en un jour :
+      obs 15 appliquée → maison **1.7.0** (`e457695`) → déploiement disque
+      (`deploy-skills.ps1 -Apply -Backup`, sauvegarde `skills-sauvegarde-20260731`)
+      → zip reconstruit → téléversement de la main de Mathieu.
+      **Maison et disque :** SHA-256 identiques, `3a8357eabe1e` — preuve stricte.
+      **Compte :** mesuré par lecture du fichier chargé en session claude.ai —
+      `version: 1.7.0`, § « Dating (mandatory pre-check) » ligne 211, rappels
+      croisés lignes 271 et 421, taille 23 340 o. **Concordance sur quatre
+      points indépendants** avec la maison (taille + trois positions de ligne +
+      version). Ce n'est **pas** une égalité d'empreinte : deux fichiers de même
+      taille peuvent différer, et la comparaison de hachages exigerait un
+      « Add folder » côté session. Quatre coïncidences dont trois positions de
+      ligne ne se produisent pas par hasard — mais l'écrire comme une preuve
+      d'identité serait faux.
+      **Le témoin que j'avais écrit était faux, et la session l'a corrigé.**
+      Il codait en dur `/mnt/skills/user/…`, chemin mesuré le 2026-07-30 dans
+      une session d'un autre type. Dans celle du 31, `/mnt/skills/` **n'existe
+      pas** : la copie du compte est en `/root/.claude/skills/`. C'est
+      exactement ce que la borne R603 du README interdit — ce chemin est un fait
+      d'environnement, il se re-mesure. Écrite le matin, violée au premier usage
+      le soir. **Forme corrigée du témoin, à réutiliser :** demander à la session
+      **d'où vient** le skill qu'elle a chargé, puis lire ce chemin-là — jamais
+      lui dicter le chemin.
 - [x] **Revue des observations `task-observer-perso`** (étape 2 du rituel) —
       **faite le 2026-07-29** en session Claude Code : bump 1.3.0 → **1.4.0**,
       commit `b9ab677` à 22 h 13 locale, principes transverses portés de six à
