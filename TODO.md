@@ -10,6 +10,10 @@ date, elle ne se supprime pas).
   jamais « en attente » sans condition nommée.
 - Un sujet garé porte sa **condition de réouverture** — c'est ce qui le
   distingue d'un oubli.
+- Un **remède** porte son propre statut de preuve, séparé de celui du
+  diagnostic — voir **R604** (`~/.claude/CLAUDE.md`), qui porte aussi la règle
+  de re-mesure au-delà de deux semaines de sommeil. Ne pas la recopier ici :
+  elle vit là-bas, et une règle recopiée perd sa condition (obs 17).
 - Toute session future **re-mesure avant de relire**.
 
 ---
