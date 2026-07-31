@@ -116,6 +116,25 @@ supprimé (le pont ne sait pas supprimer) : `.git/index.lock` →
 `.git/index.lock.orphelin-20260730-0139` — nom dont la date est elle-même en UTC
 (ISSUE-007), conservé tel quel puisque le fichier l'a porté. Supprimé depuis.
 
+**Portée élargie, mesurée le 2026-07-31 : un second dépôt est touché.**
+`Suspension-intelligente` portait un `.git/index.lock` de 0 octet daté du
+2026-07-30 à 13 h 09, qui a fait échouer un `git switch` dix-huit heures plus
+tard. Le motif n'est donc pas propre à `claude-skills` : il suit le pont, pas le
+dépôt. Retiré par nom complet, sans joker ; `git status` exit 0, `fsck` sain.
+
+**Et le contournement s'accumule — la parade est une garde `qui se régénère`.**
+Le même dépôt portait un dossier `.git/_locks-perimes-a-supprimer/` avec
+**quatre verrous git** datés du 2026-07-20 : `index.lock`, `packed-refs.lock`, et
+deux verrous de référence (`recap-20260719-04.lock`,
+`issue035-rag-counsel-trigger.lock` — noms de branches, vérifiés au reflog).
+Onze jours dans un dossier dont le nom est un ordre que personne n'a exécuté.
+C'est la forme la plus littérale de l'obs 18 du store : le geste de contourner
+produit l'artefact qui atteste que le problème est traité, donc plus personne ne
+le cherche. Les quatre supprimés le 2026-07-31, le dossier avec — un dossier vide
+portant ce nom n'est pas neutre, il invite à rejouer la parade.
+**Ce que ça ne corrige pas :** la cause. Cinq verrous retirés, zéro mécanisme
+changé. Le prochain passage du pont en posera un autre.
+
 **Règle d'usage, mesurée.** Depuis une session Cowork, lire l'état git avec
 `git --no-optional-locks <commande>` — le drapeau existe exactement pour cela.
 Vérifié le 2026-07-29 : `git --no-optional-locks status --short` rend le même
