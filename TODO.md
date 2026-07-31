@@ -147,15 +147,40 @@ sauvegarde, pas avant :**
       Vérification : le skill ne doit plus figurer dans Personnaliser →
       Compétences, et une session Cowork relancée ne doit plus le proposer.
 
-- [ ] **Réaligner les trois circuits de `task-observer-perso`** — mesuré le
-      2026-07-29 à 22 h 50 locale : maison **1.4.0** (`b9ab677`), disque
-      **1.3.0** (déployé le 2026-07-27 à 21 h 32), compte **1.2.0**. Les trois
-      sont désalignés et le déploiement rendu obligatoire par ISSUE-001 n'a pas
-      tourné pour 1.4.0. Ordre : `deploy-skills.ps1 -Apply -Backup`, puis zip
-      manuel vers le compte — ce circuit n'a pas de pont (F9), le zip est son
-      seul canal.
-      Vérification : rouvrir une session Cowork et lire le `version:` du skill
-      réellement chargé, jamais celui du dépôt.
+- [ ] **Réaligner les trois circuits de `task-observer-perso`** — **deux sur
+      trois faits, reste le compte.**
+      *État à l'ouverture, mesuré le 2026-07-29 à 22 h 50 locale :* maison
+      **1.4.0** (`b9ab677`), disque **1.3.0** (déployé le 2026-07-27 à 21 h 32),
+      compte **1.2.0** — les trois désalignés, le déploiement rendu obligatoire
+      par ISSUE-001 n'ayant pas tourné pour 1.4.0.
+      *Re-mesuré le 2026-07-30 à 13 h 55 locale :* maison **1.6.0** (`c2f5d52`)
+      et disque **1.6.0** — **alignés**, et pas sur la foi des numéros : le
+      SHA-256 des deux `SKILL.md` est identique
+      (`028a782c…`). La cible a été écrite à 13 h 48, sept minutes **avant** le
+      commit de 13 h 55 — même contenu, l'arbre de travail portait déjà le
+      fichier ; c'est l'égalité des empreintes qui fait preuve, pas la
+      chronologie. Les neuf autres skills de la maison sont eux aussi alignés
+      maison/disque (aucun écart sur les dix).
+      **Ce qui reste ouvert : le compte claude.ai seul.** Dernier chiffre connu
+      **1.2.0**, du 2026-07-29 — c'est une valeur héritée, pas une mesure du
+      jour : aucune session Claude Code ne peut lire la version montée au
+      compte (F9, pas de pont ; le zip est son seul canal).
+      Geste préparé le 2026-07-30 : zip conforme construit et vérifié →
+      `Bureau\task-observer-perso-v160.zip` (entrée `task-observer-perso/SKILL.md`,
+      `description` 776 car. ≤ 1024, SHA-256 identique à la source). Reste la
+      main de Mathieu : Personnaliser → Compétences → **supprimer l'ancien** →
+      téléverser → relancer l'app desktop au complet.
+      Note de construction : `Compress-Archive` (PS 5.1) écrit les chemins
+      internes à l'antislash, ce que la spec ZIP interdit ; le zip a été
+      reconstruit entrée par entrée avec des slashes.
+      **Vérification — par marqueur de contenu, jamais par `version:`.** Le
+      champ `version` n'est pas exposé de façon fiable dans une session
+      (mesuré le 2026-07-27 : `VERSION=inconnue` sur 2 runs / 3). Témoin du
+      1.6.0 : § « La clôture nomme son garde » compte **quatre** types de garde,
+      dont `qui se régénère`. Trois entrées, ou pas de `qui se régénère` → le
+      téléversement n'a pas pris.
+      **Se coche quand** le témoin des quatre gardes répond depuis une session
+      Cowork relancée.
 - [x] **Revue des observations `task-observer-perso`** (étape 2 du rituel) —
       **faite le 2026-07-29** en session Claude Code : bump 1.3.0 → **1.4.0**,
       commit `b9ab677` à 22 h 13 locale, principes transverses portés de six à
