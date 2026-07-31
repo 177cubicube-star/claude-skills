@@ -157,7 +157,28 @@ endroit qui n'accusera pas le vrai coupable.
 ## ISSUE-005 — La liste d'autorisations locale de la maison rejoue indéfiniment `git push`, `Remove-Item *` et la lecture de tout le profil — et rien ne la protégeait d'un commit accidentel
 
 **Date :** 2026-07-29
-**Statut :** **Rouvert le 2026-07-30 — l'élagage ne tient pas.** Garde
+**Statut :** **Fermé le 2026-07-31 sur les deux classes destructrices — par
+construction, dans `deny`.** L'élagage est abandonné, définitivement : il ne
+pouvait pas tenir. Ce qui tient est une garde d'un niveau supérieur, posée dans
+`.claude/settings.json` — fichier **suivi par git**, que le harnais ne réécrit
+pas. Portée de 10 à **26 entrées** : `git push --force` / `-f` /
+`--force-with-lease` (12 motifs, Bash et PowerShell, y compris la forme
+`git -C <chemin>`) et `git clean` (4). Mesure de conformité avant écriture :
+**13 motifs testés, 13 conformes**, dans les deux sens — `push --force` bloqué,
+`push origin main` et `commit` intacts. Le trou réel était `Bash(git push *)`
+dans `allow`, qui couvrait `--force` : ta R202 le classe en arrêt dur, et rien
+ne l'arrêtait qu'un respect de règle.
+**Reste gardé par vigilance seule, arbitrage explicite de Mathieu le
+2026-07-31 :** `git rebase` et la **suppression de branche**. Écartés du `deny`
+au motif du coût — un motif ne distingue pas un rebase qui réécrit d'un rebase
+qui ne réécrit pas, et une suppression de branche légitime avait eu lieu le jour
+même. Ce sont deux arrêts durs de R202 **sans garde mécanique** ; le choix est
+défendable, il est ici écrit pour ne pas se perdre.
+**Ce qui n'est pas fermé :** les entrées d'`allow`. Elles restent, et c'est le
+sens de la mesure — les retirer ne tient pas. Preuve chiffrée, mesurée le
+2026-07-31 : **94 entrées le 2026-07-29, 159 aujourd'hui**, +65 en deux jours,
+sans que personne ne les écrive. La liste ne dérive pas, elle se régénère.
+**Historique — rouvert le 2026-07-30, l'élagage ne tient pas.** Garde
 **qui se régénère** : ni par construction, ni par vigilance. Mesuré trois minutes
 après l'élagage, **trois des dix entrées retirées étaient revenues** —
 `Bash(git add *)`, `Bash(git push *)`, `Bash(python *)` — soit exactement les

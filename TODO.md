@@ -210,14 +210,30 @@ sauvegarde, pas avant :**
       l'autorisation `git add *` qui couvre `-A` ; et `Read(//c/Users/mat_g/**)`
       englobe cinq entrées plus étroites, ce qui rend le choix « quel bout
       garder » et non « lesquelles retirer »
-- [ ] **Trancher le tri des autorisations** — la relecture est faite, l'élagage
-      non : **aucune entrée n'a été retirée**, la décision est de Mathieu
-      (ISSUE-005 le pose, et la session s'est arrêtée à sa demande). Trois lots
-      par ordre de rendement, détaillés à l'ISSUE : les 6 jokers larges (seul lot
-      qui change le risque, au prix d'une confirmation à chaque geste) · les 5
-      `Read` englobés **ou** le large qui les englobe (le second restreint
-      réellement) · les 2 `sed -i` de marqueurs `MARQUEUR-V3BIS-*`, mesure
-      terminée. Élaguer casse des workflows en cours — ne pas le faire à sa place
+- [x] **Trancher le tri des autorisations** — **TRANCHÉ le 2026-07-31 : il n'y
+      aura pas de tri.** La question était mal posée, et c'est la mesure qui l'a
+      montrée telle : `allow` est passé de **94 entrées le 2026-07-29 à 159 le
+      2026-07-31**, +65 en deux jours, sans que personne ne les écrive. Élaguer
+      une liste que l'usage réécrit est cosmétique — et pire, ça publie un
+      « réglé » qui empêche de chercher plus loin (obs 18, la garde
+      `qui se régénère`).
+      **Ce qui a été fait à la place :** `deny` porté de 10 à **26 entrées** dans
+      `.claude/settings.json` — fichier **suivi par git**, que le harnais ne
+      réécrit pas, et que la mesure du 2026-07-30 place au-dessus d'`allow`.
+      Couvre `git push --force` / `-f` / `--force-with-lease` (12 motifs, Bash et
+      PowerShell, forme `git -C <chemin>` incluse) et `git clean` (4). **13
+      motifs testés avant écriture, 13 conformes**, dans les deux sens.
+      **Le trou que ça ferme :** `Bash(git push *)` vivait dans `allow` et
+      couvrait `--force` — arrêt dur de R202 que rien n'arrêtait qu'un respect de
+      règle. Première garde par construction de ce dossier.
+      **Le prix, arbitré par Mathieu et écrit pour ne pas se perdre :** `git
+      rebase` et la **suppression de branche** sont **écartés du `deny`**. Motif :
+      un motif ne distingue pas un rebase qui réécrit d'un rebase qui ne réécrit
+      pas, et une suppression de branche légitime avait eu lieu le jour même.
+      Ces deux arrêts durs de R202 restent donc **sans garde mécanique** —
+      vigilance seule, le niveau que l'obs 18 classe comme faillible.
+      **Ce que ça ne ferme pas :** les 159 entrées d'`allow`, laissées telles
+      quelles. C'est le sens de la mesure, pas un renoncement. Détail : ISSUE-005
 - [x] **Supprimer `.git/index.lock.orphelin-20260730-0139`** — **fait le
       2026-07-29**, par nom complet, sans joker. Vérifié : `test -e` répond NON,
       aucun verrou ne subsiste dans `.git/`, `git status` répond en exit 0,

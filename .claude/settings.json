@@ -10,7 +10,23 @@
       "Bash(gh repo delete*)",
       "Bash(gh * repo delete*)",
       "PowerShell(gh repo delete*)",
-      "PowerShell(gh * repo delete*)"
+      "PowerShell(gh * repo delete*)",
+      "Bash(git push --force*)",
+      "Bash(git * push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git push -f*)",
+      "Bash(git * push -f*)",
+      "Bash(git push * -f*)",
+      "PowerShell(git push --force*)",
+      "PowerShell(git * push --force*)",
+      "PowerShell(git push * --force*)",
+      "PowerShell(git push -f*)",
+      "PowerShell(git * push -f*)",
+      "PowerShell(git push * -f*)",
+      "Bash(git clean*)",
+      "Bash(git * clean*)",
+      "PowerShell(git clean*)",
+      "PowerShell(git * clean*)"
     ]
   }
 }
