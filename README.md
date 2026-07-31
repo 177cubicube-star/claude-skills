@@ -60,7 +60,21 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
      **Cette étape n'est pas optionnelle, et c'est mesuré** (V3-bis, 2026-07-26 Windows ; répliqué 2026-07-27 Linux ; CLI 2.1.220). Le skill personnel l'emporte sur son homonyme atteint par `--add-dir` **et** sur celui du `.claude/skills/` du projet courant — et il l'**efface** de la liste. Les 10 skills de la maison ayant tous un homonyme personnel, **ils sont tous servis par la copie, jamais par la source** : `git pull` ne déploie rien, et une copie périmée est **invisible** en session. Le script est le seul détecteur.
 
      Ce que V0/V0-ter avaient prouvé reste vrai et n'est pas rétracté : `--add-dir` lit bien la maison à la source — mais seulement pour les skills **sans homonyme personnel**. La question « retirer les copies personnelles ? » est **tranchée le 2026-07-27** : non, option 2 retenue (`ISSUES-LOG.md`, ISSUE-001 § 0).
-7. **Vérifier** : en session, demander « vérifie les versions des skills » et comparer au frontmatter. Pas de confirmation = pas de déploiement.
+7. **Vérifier — un chemin par cible, jamais une question en l'air.** Ouvrir le fichier de la cible testée et en lire `version:` plus un marqueur de contenu propre à la nouvelle version. Pas de lecture = pas de déploiement.
+
+   | Cible | Fichier à ouvrir | Depuis |
+   |---|---|---|
+   | Maison | `.claude/skills/<nom>/SKILL.md` | ce dépôt |
+   | Disque | `~/.claude/SKILLS/<nom>/SKILL.md` | session Claude Code locale |
+   | Compte | `/mnt/skills/user/<nom>/SKILL.md` | session claude.ai (Cowork/Chat) |
+
+   **Pourquoi le chemin et pas la question** (obs 19 du store, 2026-07-30). Les trois circuits portent le même contenu sous le même nom — c'est justement ce qu'on cherche à établir. Aucune question sur le contenu ne peut donc dire *lequel* a répondu : le seul discriminateur est l'emplacement lu, et il doit être écrit dans le témoin, pas déduit de la réponse. Un témoin qui admet plusieurs sources mesure la plus commode.
+
+   **Ne jamais formuler la consigne en négatif** (« réponds sans lire aucun fichier »). Le contenu d'un skill **n'est pas préchargé** en session : seuls son `name` et sa `description` entrent en contexte. Utiliser le skill *signifie* lire son fichier — une interdiction de lire ne laisse que le blocage ou la fabrication. Mesuré le 2026-07-30, sur trois témoins dont deux faux.
+
+   **`version:` lu dans le fichier est fiable ; demandé au listing d'une session, non** (`VERSION=inconnue` sur 2 runs / 3, mesuré le 2026-07-27). La réserve porte sur le listing, pas sur le fichier ouvert.
+
+   **Borne de validité :** `/mnt/skills/user/` est un fait d'environnement mesuré le 2026-07-30, pas un contrat documenté — même statut que la borne CLI 2.1.220. Il se re-mesure ; en cas de doute, demander à la session d'où vient le skill qu'elle a chargé.
 
 Piège connu : « This skill name is already in use » peut persister après suppression (réservation résiduelle côté serveur ; noms du catalogue d'exemples Anthropic réservés en permanence). Contournement : suffixe `-perso`. Le déclenchement est piloté par la `description`, pas par le nom.
 
