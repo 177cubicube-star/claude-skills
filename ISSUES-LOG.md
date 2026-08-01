@@ -86,10 +86,11 @@ l'héberge.
 ## ISSUE-006 — Toute commande git lancée depuis le pont Cowork laisse un `.git/index.lock` orphelin : le pont ne sait pas supprimer
 
 **Date :** 2026-07-29
-**Statut :** **Fermé sur le symptôme, cause armée** — verrou déplacé le
-2026-07-29 à 21 h 39, puis **supprimé et vérifié absent** le même soir en session
-Claude Code (`test -e` négatif, `git fsck` sain) ; la règle d'usage ci-dessous est
-un garde par vigilance, pas par construction
+**Statut :** **Toujours ouverte. Mécanisme compris et mesuré, couverture du
+remède NON mesurée** (2026-07-31). Le symptôme est fermé à chaque fois — verrou
+déplacé le 2026-07-29 à 21 h 39, supprimé et vérifié absent le même soir ; 5
+autres retirés le 2026-07-31 — mais la cause reste armée, et le remède posé ce
+jour vise peut-être la mauvaise surface (voir « Le remède candidat » ci-dessous).
 **Contexte :** session Cowork avec `claude-skills` monté par le pont
 (`device_bash`) · `git status --short` lancé à 01:39
 **Type :** Outillage / pont Cowork
@@ -141,6 +142,43 @@ Vérifié le 2026-07-29 : `git --no-optional-locks status --short` rend le même
 résultat et **ne crée aucun verrou**. Les commandes d'écriture (`add`, `commit`,
 `push`) restent hors de portée du pont et doivent le rester : elles posent un
 verrou qu'elles ne pourront pas reprendre.
+
+**Le mécanisme, mesuré le 2026-07-31 — acquis.** Sur un dépôt jetable, en
+rendant l'index périmé puis en observant la mtime de `.git/index` :
+
+| Commande | Index réécrit | Verrou |
+|---|---|---|
+| `git status` nu | oui | **posé** |
+| `GIT_OPTIONAL_LOCKS=0 git status` | non | aucun |
+| `git --no-optional-locks status` | non | aucun |
+
+Les trois rendent une sortie **identique** (empreintes des sorties égales). La
+variable d'environnement fait donc ce que fait le drapeau, sans qu'on ait à le
+taper : c'est la version **par construction** de la règle d'usage ci-dessus.
+
+**Le remède candidat, et sa limite — la limite compte plus que le remède.**
+`GIT_OPTIONAL_LOCKS=0` posé dans le bloc `env` de `~/.claude/settings.json`
+(commit `79b5f73` du dépôt `claude-home`). Mais le schéma décrit ce bloc comme
+« Environment variables to set for **Claude Code sessions** ». Or le défaut
+**ne vient pas des sessions Claude Code** — elles posent un verrou et le
+retirent sans peine, c'est mesuré depuis le premier jour. Il vient du **pont
+Cowork**. Que la variable atteigne le pont **n'est pas mesuré, et ne peut pas
+l'être depuis une session Code**. Le remède est donc au mieux une garde par
+construction sur une surface qui n'échouait pas, au pire un placebo sur celle
+qui échoue.
+
+**La mesure qui trancherait, en une ligne, depuis une session Cowork :** lancer
+une commande git, puis `test -e .git/index.lock`. S'il subsiste, la variable n'a
+pas atteint le pont — la cause est dans la configuration du pont, pas dans celle
+de Claude Code, et cette entrée devra être réécrite. S'il ne subsiste pas,
+ISSUE-006 se ferme par construction.
+**Tant que cette mesure n'a pas été faite, ne pas écrire que l'issue est
+réglée** — c'est précisément le motif de l'obs 20 du store (un remède déduit
+qui hérite de l'autorité du diagnostic mesuré qui le précède).
+
+**Coût assumé du remède, si la mesure le valide :** sans verrou optionnel, git ne
+persiste plus son cache de `stat`, donc un `git status` ultérieur refait le
+travail. Négligeable sur ces dépôts.
 
 **Ce que cela révise.** Le journal du 2026-07-24 notait « git = lecture seule
 depuis Cowork » comme une limite d'accès subie. C'en est aussi une **règle de
