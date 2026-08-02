@@ -45,11 +45,40 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
 1. **Éditer la source** : `.claude/skills/<nom>/SKILL.md` dans ce repo, rien d'autre.
 2. **Vérifier les correctifs en attente** (log d'observations task-observer) — toute correction notée « à appliquer à la ré-émission » s'applique maintenant.
 3. **Monter `version:`** — toujours, même pour une ligne. Deux contenus différents ne portent jamais le même numéro. Retouche : +0.0.1 · ajout : +0.1.0 · refonte : +1.0.0.
-4. **Contraintes d'upload claude.ai** (mesurées 2026-07-22) : `description` ≤ 1024 caractères · nom du dossier = `name` du frontmatter · `SKILL.md` requis.
+4. **Contraintes d'upload claude.ai** (mesurées 2026-07-22) : `description` ≤ 1024 caractères · nom du dossier = `name` du frontmatter · `SKILL.md` requis. S'y ajoute **le séparateur `/` dans les chemins du zip** (mesuré 2026-08-02 — détail et remède au point 6).
 5. **Commit + push** ce repo — **par `git add` nommé, jamais `git add -A` ni `git add .`, tant qu'une sonde de mesure vit dans `.claude/skills/`** (règle du 2026-07-24). Une sonde est un skill jetable, non suivi par conception ; un staging global l'embarquerait dans l'historique de la maison, où elle n'a rien à faire.
    **Règle plus forte, à préférer chaque fois qu'elle est applicable : poser la sonde APRÈS le push, jamais avant.** Le séquencement rend l'erreur impossible au lieu de la surveiller ; le `git add` nommé n'est que le repli pour le cas où une sonde doit coexister avec un commit. Vérification en une commande : `git status --short` doit montrer la sonde en `??` avant ET après le commit.
 6. **Déployer vers chaque cible** où le skill doit tourner :
    - Compte claude.ai (Cowork/Chat) : zipper le dossier du skill → Personnaliser → Compétences → supprimer l'ancien → téléverser → relancer l'app desktop au complet.
+
+     **Le zip doit porter des barres obliques, et `Compress-Archive` n'en met pas** (mesuré 2026-08-02, PowerShell 5.1 Windows, en empaquetant `session-prep` v1.3.0). La spécification ZIP impose `/` comme séparateur de chemin ; `Compress-Archive` écrit le séparateur natif Windows. Le téléversement est alors refusé — **« Zip file contains path with invalid characters »** — sans dire quel chemin ni pourquoi. Le défaut touche **toutes** les entrées, y compris celles à plat (`session-prep\SKILL.md`) : ce n'est pas une affaire de sous-dossier, c'est l'outil. Les zips faits à la main dans l'Explorateur écrivent `/` correctement — ce qui explique que le rituel ne l'ait jamais rencontré avant 2026-08-02.
+
+     Deux chemins sûrs. Le second ne dépend pas de la plateforme, et c'est celui à préférer dès qu'une session construit le paquet :
+
+     ```powershell
+     # a) Explorateur : clic droit sur le dossier → Envoyer vers → Dossier compressé
+     # b) dicter soi-même les noms d'entrées :
+     Add-Type -AssemblyName System.IO.Compression
+     Add-Type -AssemblyName System.IO.Compression.FileSystem
+     $fs = [System.IO.File]::Open($zip, [System.IO.FileMode]::Create)
+     $a  = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
+     $e  = $a.CreateEntry('session-prep/SKILL.md', [System.IO.Compression.CompressionLevel]::Optimal)
+     $o  = $e.Open(); $b = [System.IO.File]::ReadAllBytes($source); $o.Write($b, 0, $b.Length); $o.Close()
+     $a.Dispose(); $fs.Close()
+     ```
+
+     **Relire l'archive produite avant de téléverser — jamais présumer :**
+
+     ```powershell
+     $z = [System.IO.Compression.ZipFile]::OpenRead($zip)
+     $z.Entries | ForEach-Object { $_.FullName }                              # doit montrer des « / »
+     @($z.Entries | Where-Object { $_.FullName.Contains([char]92) }).Count    # antislash — attendu 0
+     @($z.Entries | Where-Object { $_.FullName.Contains('/') }).Count         # contrôle positif — attendu > 0
+     $z.Dispose()
+     ```
+
+     Le contrôle positif n'est pas décoratif : « 0 antislash » est aussi ce que rendrait une archive vide ou mal ouverte. `[char]92` plutôt que le littéral échappé — un antislash doublé dans une commande fait tousser certains scanneurs de sécurité, qui y lisent un chemin système.
+
    - Disque (Claude Code local) — **une commande, depuis la racine du dépôt** :
 
      ```powershell
