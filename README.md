@@ -79,6 +79,10 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
 
      Le contrôle positif n'est pas décoratif : « 0 antislash » est aussi ce que rendrait une archive vide ou mal ouverte. `[char]92` plutôt que le littéral échappé — un antislash doublé dans une commande fait tousser certains scanneurs de sécurité, qui y lisent un chemin système.
 
+     **L'upload du compte préserve les sous-dossiers** (mesuré 2026-08-02, `session-prep` v1.3.0 — 1re mesure de ce genre : tous les skills téléversés jusque-là étaient à fichiers plats). Un `references/<fichier>.md` embarqué dans le zip est arrivé intact au compte, vérifié à l'octet près (7 104 octets, 139 lignes, identiques à l'entrée du zip). Conséquence : un skill peut sortir sa matière de référence dans un sous-dossier — remède officiel Anthropic aux plafonds de contexte, « Move detailed reference material to separate files » — **sans se couper de son contenu au compte**.
+
+     Le marqueur de contenu doit être une **chaîne, jamais un numéro de ligne** : la synchronisation vers le compte reformate le `description:` du frontmatter en YAML multi-lignes, ce qui décale la numérotation (+2 mesuré le 2026-08-02, à total de lignes pourtant identique). Un témoin bâti sur « lis la ligne N » mesure autre chose que ce qu'il croit. Bons marqueurs : `version:`, le total de lignes, la taille en octets, une chaîne distinctive.
+
    - Disque (Claude Code local) — **une commande, depuis la racine du dépôt** :
 
      ```powershell
