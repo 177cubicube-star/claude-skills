@@ -1,0 +1,216 @@
+---
+name: recap-{{SUFFIXE}}
+version: 1.0.0
+description: Clôture de session du projet {{PROJET}} — produit le document de continuité depuis les faits git (HEAD mesuré, rien d'inventé, VALIDÉ seulement sur accord), aperçu puis « oui » avant écriture, met à jour le TODO, affiche les gestes de clôture. À lancer sur « recap », « fin de session », « clôturer », ou quand un travail est interrompu.
+---
+
+# recap-{{SUFFIXE}} — clôture de session ({{PROJET}})
+
+> Instancié depuis le gabarit `rituel-session` v{{VERSION_GABARIT}} — maison
+> `claude-skills` @ `{{SHA_MAISON}}`. Les blocs 🔒 FOND ne s'éditent pas ici :
+> une amélioration du fond se fait dans le gabarit, puis se reporte.
+
+<!-- 🔒 FOND:role -->
+**Rôle** : produire en fin de session un document de continuité **honnête**,
+qui permet à la session suivante de reprendre sans relire la conversation.
+Un recap faux est pire que pas de recap : il induit la session suivante en
+erreur. D'où quatre règles qui ne se négocient pas :
+
+- les faits viennent de git et du dépôt, pas de la mémoire de la conversation ;
+- rien d'inventé, et **VALIDÉ** seulement si l'utilisateur l'a dit dans cette
+  session ;
+- rien n'est écrit sans aperçu **et** un « oui » explicite ;
+- rien n'est commité.
+<!-- /FOND:role -->
+
+<!-- ✏️ FORME:config -->
+## Forme du projet
+
+| Paramètre | Valeur pour {{PROJET}} |
+|---|---|
+| Référence distante | `{{REF}}` (ex. `origin/main`) |
+| Fuseau du poste | `{{FUSEAU}}` (ex. `America/Toronto`) |
+| Template de continuité | `{{TEMPLATE}}` |
+| Dossier des recaps | `{{SESSIONS}}` |
+| Nommage | `recap-YYYYMMDD-NN.md` |
+| TODO | `{{TODO}}` ou `aucun` |
+| ADR | dossier `{{DECISIONS}}` ou `aucun` · ligne de statut `{{LIGNE_STATUT}}` |
+| Pages de fil | `{{FILS}}` ou `aucun` · gabarit `{{GABARIT_FIL}}` |
+| Fichiers « code » (gate code/docs) | `{{MOTIFS_CODE}}` |
+| Compter les tests | `{{CMD_TESTS}}` ou `aucun` |
+| Marqueurs de dette | `{{CMD_DETTE}}` ou `aucun` |
+| Vue de la structure | `{{CMD_STRUCTURE}}` ou `aucun` |
+| Scripts testés du projet (remplacent la procédure en ligne) | NN libre : `{{SCRIPT_NN}}` · statuts ADR : `{{SCRIPT_ADR}}` · audit des claims : `{{SCRIPT_CLAIMS}}` — ou `aucun` |
+| Grille de triage des décisions | pointeur `{{TRIAGE}}` ou `aucun` |
+| Rapport externe (Notion…) | pointeur vers la procédure `{{RAPPORT}}` ou `aucun` |
+| Gestes de clôture | pointeur vers leur source d'autorité `{{GESTES}}` |
+
+Règle de remplissage : un **pointeur**, jamais une copie, pour toute règle qui
+vit ailleurs (procédure de merge, grille, rapport). Une règle recopiée perd sa
+condition de levée.
+<!-- /FORME:config -->
+
+<!-- 🔒 FOND:regles-transverses -->
+## Règles transverses (valent à chaque étape)
+
+- **Lecture git sans verrou.** Toute commande git de lecture se lance en
+  `git --no-optional-locks …`. Depuis le pont Cowork, un `git status` nu laisse
+  un `.git/index.lock` que le pont ne sait pas retirer, et la commande git
+  suivante du poste échoue.
+- **Écriture git : jamais depuis ce skill.** Ni add, ni commit, ni push.
+- **Le script d'abord.** Si la forme déclare un script testé pour une étape,
+  on l'invoque tel quel et on insère sa sortie **verbatim**. On ne refait jamais
+  sa logique de tête. Sinon, on applique la procédure en ligne ci-dessous, qui
+  est une garde **par vigilance, non calibrée**.
+- **La date se mesure** : `TZ=<fuseau> date +%Y%m%d`, jamais `date` nu ni
+  l'en-tête de session (les conteneurs sont en UTC, donc au lendemain dès 20 h).
+  Contrôle : comparer au `%ad` du dernier commit,
+  `git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'`.
+- **Un module à `aucun` est sauté**, et on le dit en une ligne dans l'aperçu.
+<!-- /FOND:regles-transverses -->
+
+<!-- 🔒 FOND:etape-1 -->
+## Étape 1 — Localiser et nommer
+
+1. Lire le template en entier, sans le modifier. S'il est absent : **arrêter**
+   et nommer le chemin.
+2. Rafraîchir la référence : `git fetch origin`. En cas d'échec (le 403 du
+   proxy en VM est connu), retenter à 2, 4, puis 8 s ; sinon, continuer et
+   **déclarer** dans l'aperçu que tout ce qui suit est calculé contre une réf
+   possiblement périmée.
+3. **Ancre** : le champ `HEAD : \`sha\`` du dernier recap **présent sur la
+   réf** (`git ls-tree --name-only <ref> -- <sessions>`). Sans recap, ou sans
+   champ, prendre les 15 derniers commits et le dire.
+4. **NN du jour, lu sur la réf** : NN = max(NN existants de la date mesurée) + 1,
+   sans jamais combler un trou. Si un script NN est déclaré, recopier son NN
+   verbatim. Refaire ce calcul juste avant d'écrire le fichier : une session
+   parallèle a pu en créer un entre-temps.
+<!-- /FOND:etape-1 -->
+
+<!-- 🔒 FOND:etape-2 -->
+## Étape 2 — Collecter
+
+**2a. État git (toujours exécuté)**
+
+```bash
+git --no-optional-locks branch --show-current
+git --no-optional-locks rev-parse --short <ref>        # → le HEAD à écrire dans le recap
+git --no-optional-locks log --oneline <ancre>..HEAD
+git --no-optional-locks diff --stat <ancre>..HEAD
+git --no-optional-locks status --porcelain             # à signaler, jamais toucher
+```
+
+**Gate code/docs.** `git diff --stat <ancre>..HEAD -- <fichiers code>`. S'il ne
+renvoie rien, c'est une session docs : on saute 2b et on écrit
+`[session docs — code inchangé depuis <recap ancre>]`.
+
+**2b. Instantané code.** On lance les commandes déclarées dans la forme.
+**Contrôle positif** : un 0 sur un dépôt qui a manifestement des tests met en
+cause la commande, pas le dépôt. On l'écrit alors `[0 — commande à vérifier]`,
+jamais « 0 test ».
+
+**2c. ADR (si déclarés).** On utilise le script déclaré, sinon on lit la ligne de
+statut de chaque ADR du working tree et on donne le prochain numéro libre
+(max + 1). Si le dossier n'est pas vide mais qu'aucun statut n'est lu, on écrit
+`[convention de statut à vérifier]`, jamais « aucun ADR ».
+<!-- /FOND:etape-2 -->
+
+<!-- 🔒 FOND:etape-3 -->
+## Étape 3 — Remplir le template
+
+- **Le template fait autorité** sur les sections, les libellés et le vocabulaire.
+- **Le bloc d'en-tête est obligatoire, champ `HEAD` compris**, avec le sha
+  mesuré en 2a, **jamais recopié** d'un recap précédent. C'est la clé que lit
+  `session-prep` à l'ouverture suivante. Sans elle, le détecteur de session non
+  recappée devient aveugle, et il l'est en silence.
+- Aucune section n'est supprimée. Sans données, on écrit
+  `[Aucune donnée disponible cette session]`.
+- Rien n'est inventé. En cas de doute, on écrit `[À CONFIRMER]` ou
+  `[HYPOTHÈSE]`.
+
+| Statut (si le template n'en impose pas) | Quand |
+|---|---|
+| **VALIDÉ** | L'utilisateur a dit oui / go / approuvé **dans cette session** |
+| **FAIT** | Prouvé par un commit ou constaté dans le dépôt |
+| **EN ATTENTE** | Discuté, pas exécuté |
+| **À CONFIRMER** | Tout le reste, sans statut intermédiaire |
+
+**Triage des décisions (si une grille est déclarée).** On applique la grille
+pointée, sans la recopier. La décision humaine reste toujours à `PENDING` :
+la grille propose, l'utilisateur tranche. Ce triage est consultatif et ne bloque
+jamais.
+<!-- /FOND:etape-3 -->
+
+<!-- 🔒 FOND:etape-4 -->
+## Étape 4 — Aperçu, avec contrôle anti-sur-claim
+
+1. Écrire le brouillon dans un fichier temporaire, hors du dépôt.
+2. Si un script d'audit est déclaré, on l'invoque et on insère sa shortlist
+   verbatim. Sinon, on dresse la **shortlist** des lignes qui portent un verdict
+   (FAIT, VALIDÉ, vert, passe, corrigé…) **sans preuve sur la même ligne**
+   (sha, chemin, sortie de commande). Pour chacune : preuve présente ailleurs →
+   RAS ; enjeu faible → RAS ; sinon → ré-étiqueter la ligne ou dégrader son
+   statut **avant** l'aperçu.
+3. Afficher le document, la shortlist, les modules sautés et les réserves
+   (fetch, date), puis demander :
+   `Je sauvegarde dans <sessions>/<nom> ? « oui » ou corrections.`
+
+## Étape 5 — Sauvegarder
+
+Seulement après un « oui » explicite. On écrit le fichier, on signale
+`✅ <chemin>`, et **aucun commit**.
+<!-- /FOND:etape-4 -->
+
+<!-- 🔒 FOND:etape-6 -->
+## Étape 6 — Fil et TODO (seulement s'ils sont déclarés)
+
+**Page de fil.** Identifier le fil touché ; si c'est ambigu, **demander**. On
+rafraîchit les sections vivantes définies par le gabarit de fil, on déplace ce
+qui n'est plus courant vers l'archive datée et on ne supprime jamais rien.
+Montrer avant → après, attendre le « oui », puis écrire.
+
+**TODO.**
+
+- Cocher ce qui est FAIT, avec sa preuve.
+- Passer « en cours » ce qui l'est.
+- **Ajouter** les prochaines actions et les dettes relevées qui ne sont pas
+  encore listées.
+- Ne jamais supprimer une ligne, inventer une tâche, ni changer un bloquant
+  sans instruction.
+- Mettre à jour la date d'en-tête, mesurée.
+
+Montrer seulement les lignes changées (`[ ] → [x]  <tâche> ← <preuve>`),
+attendre le « oui », puis écrire.
+
+**Rapport externe (si déclaré).** Suivre la procédure pointée. Outil
+indisponible → le dire en une ligne, sans bloquer.
+<!-- /FOND:etape-6 -->
+
+<!-- 🔒 FOND:etape-7 -->
+## Étape 7 — Gestes de clôture (dernier écran, aucune écriture)
+
+La branche se lit par `git --no-optional-locks branch --show-current`, jamais
+écrite en dur. On affiche les gestes **lus dans leur source d'autorité**
+(bloc FORME), résumés fidèlement, en citant la source. En cas de divergence,
+la source prime.
+
+```
+═══ GESTES DE CLÔTURE ═══
+Branche : <branche>
+<gestes, source citée>
+Rien n'a été commité par ce skill.
+```
+<!-- /FOND:etape-7 -->
+
+<!-- 🔒 FOND:checklist -->
+## Checklist (avant chaque écriture)
+
+- [ ] Date mesurée avec le fuseau, et comparée au dernier commit
+- [ ] Fetch réussi, ou son échec déclaré dans l'aperçu
+- [ ] NN calculé sur la réf, juste avant l'écriture
+- [ ] Champ `HEAD` présent, avec un sha **mesuré** sur la réf
+- [ ] Aucun placeholder oublié ; aucun VALIDÉ sans accord dans la session
+- [ ] Shortlist anti-sur-claim traitée et affichée
+- [ ] Chaque écriture précédée d'un « oui » ; aucun commit
+- [ ] Toutes les lectures git faites en `--no-optional-locks`
+<!-- /FOND:checklist -->
