@@ -1,6 +1,6 @@
 ---
 name: session-prep-{{SUFFIXE}}
-version: 1.1.0
+version: 1.1.1
 description: Ouverture de session du projet {{PROJET}} — lecture seule, reconstruit l'état RÉEL sur la référence distante (recaps, ADR, TODO, sync git) et signale ce qui est déjà fait (« ne pas refaire »). À lancer AVANT tout travail sur « où en est-on », « reprendre », « début de session ».
 ---
 
@@ -34,9 +34,19 @@ l'écran.
 | ADR | dossier `{{DECISIONS}}` ou `aucun` · ligne de statut `{{LIGNE_STATUT}}` |
 | TODO | `{{TODO}}` ou `aucun` · marqueurs `{{MARQUEURS_TODO}}` |
 | Règles actives du projet | `{{INSTRUCTIONS}}` (ex. `CLAUDE.md`) |
-| Sections de règles à lire | titres `{{SECTIONS_REGLES}}` (motif, ex. `^## Règle`) ou `aucun` · sinon plafond de `{{PLAFOND_REGLES}}` lignes (ex. `80`) |
+| Sections de règles à lire | voir le bloc « Lecture des règles » ci-dessous — **jamais dans ce tableau** : dans une cellule, `\|` y remplace `|`, et la commande copiée n'extrairait rien |
 | Pages de fil | `{{FILS}}` ou `aucun` |
 | Scripts testés du projet | gap recap `{{SCRIPT_GAP}}` · axes de sync `{{SCRIPT_AXES}}` · ADR sur la réf `{{SCRIPT_ADR_REF}}` · fils actifs `{{SCRIPT_FILS}}` · vues dérivées `{{SCRIPTS_DERIVES}}` — ou `aucun` |
+
+Lecture des règles (copié tel quel dans la commande de l'étape 5) :
+
+```text
+MOTIF   : {{SECTIONS_REGLES}}
+PLAFOND : {{PLAFOND_REGLES}}
+```
+
+`MOTIF` : expression régulière des titres à lire (ex. `^## (Règle|Langue)`) ou
+`aucun`. `PLAFOND` : lignes lues si `MOTIF` vaut `aucun` (ex. `80`).
 <!-- /FORME:config -->
 
 <!-- 🔒 FOND:regles-transverses -->
@@ -151,7 +161,9 @@ Le fichier de règles grossit avec le projet ; le lire en entier à chaque
 ouverture ferait grossir chaque ouverture avec lui.
 
 1. Mesurer d'abord : `wc -l <fichier de règles>`.
-2. **Sections déclarées** → extraire seulement celles-là. Chaque section va de
+2. **Sections déclarées** → extraire seulement celles-là. Le motif se prend
+   **tel quel dans le bloc « Lecture des règles »** de la FORME, jamais dans une
+   cellule de tableau. Chaque section va de
    son titre au titre suivant de même niveau :
    ```bash
    awk -v m='<motif>' '/^#+ /{lvl=index($0," ")-1; if(on&&lvl<=L)on=0; if($0~m){on=1;L=lvl}} on' <fichier>
@@ -160,8 +172,11 @@ ouverture ferait grossir chaque ouverture avec lui.
    déclaré, c'est le motif qui est en cause, pas le fichier. On le dit.
 3. **Aucune section déclarée** → lire les `<plafond>` premières lignes, et
    déclarer la lecture partielle.
-4. Résumer en **une ligne** ce qui change ce qu'on a le droit de faire
-   maintenant. On résume, on ne recopie pas.
+4. Résumer ce qui change ce qu'on a le droit de faire maintenant : **une ligne
+   par interdiction ou obligation active** (« jamais… », « toujours… »), puis
+   une ligne au plus pour le reste. On résume, on ne recopie pas. Une seule
+   ligne pour neuf sections laisse tomber des interdits en silence (mesuré sur
+   la 1re instance, 2026-09-23).
 5. La ligne 📖 du briefing porte toujours la mesure :
    `règles : <N> l., lues : <sections … | L premières lignes> (<intégral | partiel>)`.
 
@@ -229,7 +244,7 @@ porte toujours sur les recaps du jour le plus récent.
 📖 Périmètre de lecture : <intégral | partiel — source, ce qui n'a PAS été lu, motif>
 🕐 Fetch : <OK | ÉCHEC — réf possiblement périmée> · date mesurée : <AAAA-MM-JJ HH:MM ±zone (instrument) | NON MESURÉE>
 📐 Prochain ADR libre : … · Proposés non actés : …
-📏 Règles ce cycle : <1 ligne>
+📏 Règles ce cycle : <une ligne par interdiction ou obligation active>
 📋 Reprise : <pointeur vers la section de reprise de l'ancre>
 ════════════════════════════════
 ```

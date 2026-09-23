@@ -1,6 +1,6 @@
 # Gabarit — rituel de session (`recap` + `session-prep`)
 
-**version du gabarit : 1.1.0**
+**version du gabarit : 1.1.1**
 
 Le champ `version:` des fichiers `SKILL.gabarit.md` porte **la version du
 gabarit**, la même que ci-dessus. Une instance tient ensuite sa propre version
@@ -81,6 +81,13 @@ CONTRAINTES
   Renseigner la ligne « Instancié depuis » (version du gabarit + sha de la maison).
 - Date : appliquer la règle « la date se mesure, et la mesure se contrôle » du
   fond (instrument valide, sinon « NON MESURÉE »). Lectures git : --no-optional-locks.
+- Lecture des règles (session-prep) : lister les titres du fichier de règles,
+  proposer un MOTIF, exécuter la commande awk de l'étape 5 avec ce motif et me
+  MONTRER le nombre de lignes extraites sur le total, les titres retenus et les
+  sections laissées de côté ; attendre mon choix. Une section qui mêle
+  référence et règle ENTRE dans la liste si elle porte une règle de travail
+  active : la borne vient de la liste fixe, pas du nombre de lignes. Le motif
+  s'écrit dans le bloc « Lecture des règles », jamais dans le tableau.
 - Aucun commit sans mon GO ; git add nommé, jamais -A.
 
 LIVRABLE
@@ -140,7 +147,12 @@ leur premier tour ici.
    « oui », puis l'écriture ; le fichier porte `HEAD : \`sha\``.
 3. Pousser, puis relancer `/session-prep-<suffixe>`. Attendu : **OK**, et pas
    GAP. Si c'est GAP, les fichiers de clôture sont mal déclarés dans la FORME.
-4. Tout écart va dans le store d'observations du projet (`task-observer-perso`),
+4. **Projet avec du code seulement** : faire une session **sur une branche de
+   travail**, avec au moins un commit de code, puis la clôturer. Attendus :
+   `recap` classe la session « code » et lance les instantanés déclarés (tests,
+   dette) ; `session-prep` affiche les axes de synchronisation de la branche.
+   Première occasion de roder ce qu'un dépôt de documents ne peut pas exercer.
+5. Tout écart va dans le store d'observations du projet (`task-observer-perso`),
    et remonte au gabarit s'il touche le fond.
 
 ---
@@ -181,7 +193,9 @@ leur premier tour ici.
 3. **Reporter** : remplacer chaque bloc FOND de l'instance par celui du
    gabarit. Dans les blocs FORME, **ne modifier aucune valeur existante** ; si le
    gabarit ajoute une **clé** de forme (une ligne de la table), l'ajouter avec
-   sa valeur **mesurée** sur le projet, ou `aucun`. Relancer ensuite 3 a) et 3 b) :
+   sa valeur **mesurée** sur le projet, ou `aucun`. Si le gabarit **déplace** une
+   clé (d'une cellule vers un bloc, par exemple), déplacer la valeur **sans la
+   changer**. Relancer ensuite 3 a) et 3 b) :
    le contrôle a) attrape toute clé ajoutée mais laissée en `{{…}}`.
 4. **Bumper l'instance** (`version:` +0.1.0 si le fond change son comportement,
    +0.0.1 pour une retouche), mettre à jour la ligne « Instancié depuis », puis
@@ -226,8 +240,8 @@ retrouver pourquoi ; ils ne se recopient pas dans les instances.
 | Procédure « Mettre à jour une instance » | **Exercée une fois, 2026-09-23** : report 1.0.0 → 1.0.1 dans Dr-bobo (commit `1495dbe`). FOND des deux instances identique au gabarit `bc77723`, FORME inchangée, provenance mise à jour, 0 placeholder — vérifié sur les fichiers. |
 | Mesure de la date (v1.0.1) | **Rodée en conteneur, 2026-09-23** : fuseau connu accepté ; fuseau inconnu → repli UTC **attrapé** (le défaut réel, reproduit : `exit 0`, `+0000`) ; projet réellement en UTC **non rejeté** ; aucun instrument valide → « NON MESURÉE ». **Validée sous Windows, dans le skill, 2026-09-23 (Dr-bobo)** : `TZ` déclaré invalide (`+0000`), PowerShell retenu — `recap-drbobo` à `14:34 -04:00`, `session-prep-drbobo` à `14:48 -04:00`. |
 | Axes de sync, shortlist anti-sur-claim, gate code/docs | **Non calibrés** — gardes par vigilance. Première instance (Dr-bobo, projet sans code) : **non exercés** — ni code, ni branche de travail, ni claim à auditer. |
-| Recaps frères du même jour (session-prep, étape 2) | **Déclaré conforme par Mathieu, 2026-09-23** (Dr-bobo, après `recap-20260923-02`) : deux recaps lus, DELTA commun, pas de doublon, `OK`. Briefing **non versé** : c'est une déclaration, pas une mesure lue ici. |
-| Lecture des règles par sections (v1.1.0) | **Rodée en conteneur, 2026-09-23** : la commande **telle qu'écrite dans le gabarit** extrait les deux sections visées, sous-section comprise, et s'arrête au titre de même niveau ou supérieur ; motif faux → 0 ligne. Le rodage a **trouvé un défaut** : la première version utilisait `in`, mot réservé d'awk → erreur de syntaxe, code de sortie 2 ; corrigé et rejoué. Non exercée sur un vrai projet. |
+| Recaps frères du même jour (session-prep, étape 2) | **Déclaré conforme par Mathieu, 2026-09-23** (Dr-bobo, après `recap-20260923-02`) : deux recaps lus, DELTA commun, pas de doublon, `OK`. Briefing **non versé** : c'est une déclaration, pas une mesure lue ici. **Observé ensuite sur un briefing lu ici** (Dr-bobo, @ `00fd682`) : trois recaps du jour lus, `OK`. |
+| Lecture des règles par sections (v1.1.0 → 1.1.1) | Rodée en conteneur (awk : un défaut `in` trouvé et corrigé). **Validée en conditions réelles, Dr-bobo, 2026-09-23** : 186/236 lignes, 9 sections exactes, briefing @ `00fd682`. **Défaut trouvé par ce premier passage** : le motif, rangé dans une cellule de tableau, y était écrit avec `\|` ; copié tel quel, il extrait **0 ligne**. L'agent a compensé de lui-même, en retirant les `\` : une garde par jugement. **1.1.1** : le motif sort du tableau, dans un bloc copié tel quel (garde par construction). Autre défaut : la ligne 📏 unique perdait deux interdits extraits → une ligne par interdiction active. |
 | Archivage du journal (v1.1.0) | **Rodé en conteneur, 2026-09-23** : TODO de 6 lignes → 4 restantes + 3 archivées − 1 pointeur = CONFORME ; une ligne perdue en route → ÉCART détecté. Non exercé sur un vrai projet. |
 | Défaut cosmétique relevé | au premier briefing réel, la ligne `CONTINUITÉ` a été affichée deux fois — à surveiller, non corrigé |
 

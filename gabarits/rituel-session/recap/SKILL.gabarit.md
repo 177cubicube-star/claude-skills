@@ -1,6 +1,6 @@
 ---
 name: recap-{{SUFFIXE}}
-version: 1.1.0
+version: 1.1.1
 description: Clôture de session du projet {{PROJET}} — produit le document de continuité depuis les faits git (HEAD mesuré, rien d'inventé, VALIDÉ seulement sur accord), aperçu puis « oui » avant écriture, met à jour le TODO, affiche les gestes de clôture. À lancer sur « recap », « fin de session », « clôturer », ou quand un travail est interrompu.
 ---
 

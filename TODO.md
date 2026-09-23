@@ -512,6 +512,19 @@ la commande d'extraction. **Reste** : reporter 1.1.0 dans Dr-bobo (deux clés de
 forme nouvelles, mesurées sur le projet ou `aucun`), puis une première
 ouverture en 1.1.0.
 
+**Même jour, soir — 1.1.0 reporté dans Dr-bobo, puis 1.1.1.** Le report a été
+vérifié ici sur les fichiers : FOND identique, `@ 2a72d96`, commits Dr-bobo
+`42353d0` puis `00fd682`. Le premier `session-prep` en 1.1.0 lit **186/236
+lignes** de `CLAUDE.md`, sur 9 sections choisies par Mathieu : il avait refusé
+un premier motif de 5 sections qui écartait trois interdits actifs. Deux
+défauts ont été trouvés au passage. (1) Le motif, écrit dans une cellule de
+tableau avec `\|`, rendait 0 ligne une fois copié tel quel ; l'agent l'a
+corrigé de lui-même, ce qui reste une garde par jugement. (2) La ligne 📏
+unique perdait deux interdits. D'où **1.1.1** : le motif passe dans un bloc
+copié tel quel, et 📏 prend une ligne par interdiction active. Le README gagne
+aussi le prompt d'instanciation mis à jour et un 4e temps « projet avec du
+code », en prévision d'App-Handyman et de Pilote automatique.
+
 **Même jour, première instance : Dr-bobo.** Préparée en Cowork, posée en deux
 temps, parce que le pont **refuse toute écriture sous `.claude/`**. C'était
 pourtant consigné ici le 2026-07-24 : je l'avais lu, et je ne l'ai pas appliqué.
