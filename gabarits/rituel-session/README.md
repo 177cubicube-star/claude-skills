@@ -214,11 +214,44 @@ retrouver pourquoi ; ils ne se recopient pas dans les instances.
 
 | Procédure | État |
 |---|---|
-| Verdict de continuité (session-prep, étape 2) | **Rodé sur dépôt jetable, 2026-09-23** : 5 cas (aucun recap, RECAP_LOCAL, OK après clôture, GAP, sans HEAD) rendent le verdict attendu, 0 verrou restant. Ce rodage a **trouvé un défaut** : sans exclure les fichiers de clôture, chaque clôture propre rendait GAP ; corrigé et re-mesuré. Jamais tourné sur un vrai dépôt. |
+| Verdict de continuité (session-prep, étape 2) | **Rodé sur dépôt jetable, 2026-09-23** : 5 cas (aucun recap, RECAP_LOCAL, OK après clôture, GAP, sans HEAD) rendent le verdict attendu, 0 verrou restant. Ce rodage a **trouvé un défaut** : sans exclure les fichiers de clôture, chaque clôture propre rendait GAP ; corrigé et re-mesuré. **Validé sur un vrai dépôt, Dr-bobo, 2026-09-23** : `INDÉTERMINÉ — aucun recap` avant le premier recap, puis **OK** après la clôture poussée (`0 commit hors sessions/ après 1495dbe`, briefing @ `0282b6a`) — le faux GAP du rodage n'est pas revenu. |
 | Contrôles d'instanciation (§ Instancier, étape 5) | **Rodés dans les deux sens** : instance correcte en CRLF acceptée, mutation du fond détectée, modification de forme seule acceptée, placeholder oublié détecté. |
-| Mesure de la date (v1.0.1) | **Rodée en conteneur, 2026-09-23** : fuseau connu accepté ; fuseau inconnu → repli UTC **attrapé** (le défaut réel, reproduit : `exit 0`, `+0000`) ; projet réellement en UTC **non rejeté** ; aucun instrument valide → « NON MESURÉE ». **Branche PowerShell non rodée ici** (pas de Windows) — sa validité repose sur la mesure de la 1re instance (`14:12 −04:00`). |
-| Axes de sync, shortlist anti-sur-claim, gate code/docs | **Non calibrés** — gardes par vigilance. Première instance = premier test. | Là où un projet possède un script testé qui fait le même travail,
+| Procédure « Mettre à jour une instance » | **Exercée une fois, 2026-09-23** : report 1.0.0 → 1.0.1 dans Dr-bobo (commit `1495dbe`). FOND des deux instances identique au gabarit `bc77723`, FORME inchangée, provenance mise à jour, 0 placeholder — vérifié sur les fichiers. |
+| Mesure de la date (v1.0.1) | **Rodée en conteneur, 2026-09-23** : fuseau connu accepté ; fuseau inconnu → repli UTC **attrapé** (le défaut réel, reproduit : `exit 0`, `+0000`) ; projet réellement en UTC **non rejeté** ; aucun instrument valide → « NON MESURÉE ». **Validée sous Windows, dans le skill, 2026-09-23 (Dr-bobo)** : `TZ` déclaré invalide (`+0000`), PowerShell retenu — `recap-drbobo` à `14:34 -04:00`, `session-prep-drbobo` à `14:48 -04:00`. |
+| Axes de sync, shortlist anti-sur-claim, gate code/docs | **Non calibrés** — gardes par vigilance. Première instance (Dr-bobo, projet sans code) : **non exercés** — ni code, ni branche de travail, ni claim à auditer. |
+| Défaut cosmétique relevé | au premier briefing réel, la ligne `CONTINUITÉ` a été affichée deux fois — à surveiller, non corrigé |
+
+Là où un projet possède un script testé qui fait le même travail,
 son bloc FORME le déclare et le fond l'invoque à la place.
+
+---
+
+## Contrainte de conception — toute lecture est bornée
+
+**Origine.** L'observation de Mathieu qui a déclenché la réorganisation des
+skills : l'historique grossissait sans arrêt, et l'exécution des skills prenait
+un temps fou. Un rituel de session est exactement le genre d'outil qui recrée ce
+problème en silence : chaque clôture écrit, chaque ouverture relit. Traces de ce
+motif dans les documents : obs 22 (store `Suspension-intelligence`, un TODO de
+591 lignes lu tronqué sans le dire) et friction 7.12 (journal de la maison,
+2026-07-30).
+
+**Règle.** Tout ce que le rituel **lit** à chaque session a une borne qui ne
+dépend pas de l'âge du projet. Tout ce qu'il **écrit** est un fichier nouveau,
+ou un ajout à un fichier que quelque chose archive.
+
+| Élément | État en 1.0.1 |
+|---|---|
+| Taille des skills | environ 240 lignes chacun — **borné** |
+| Recaps lus par `session-prep` | ceux du jour le plus récent seulement — **borné par construction** |
+| TODO lu par `session-prep` | par `grep` sur les items ouverts, avec un contrôle positif — **borné par le nombre d'items ouverts**, pas par l'âge du fichier ; les items cochés ne sont jamais relus |
+| Recap écrit par `recap` | un fichier neuf par session — **n'alourdit aucun fichier lu** |
+| Journal alimenté par `recap` (TODO, fils) | grossit à chaque clôture — **non borné** |
+| Fichier de règles actives lu par `session-prep` | lu sans limite de taille — **non borné** |
+
+Les deux lignes non bornées sont **à traiter en 1.0.2**, en session dédiée.
+Elles ne jouent pas dans Dr-bobo, qui n'a ni TODO, ni fils, ni gros fichier de
+règles ; elles joueraient dans un projet comme `suspension-intelligente`.
 
 ---
 

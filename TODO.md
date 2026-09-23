@@ -370,7 +370,7 @@ sauvegarde, pas avant :**
 6. [ ] **Circuit Android** — V7-pre d'abord (plan payant + exécution de
        code au compte : la porte peut être fermée), puis V7, puis la
        routine d'empaquetage zip.
-7. [ ] **Première instance du gabarit `rituel-session`** — ouvert le
+7. [x] **Première instance du gabarit `rituel-session`** — ouvert le
        2026-09-23. Gabarit v1.0.0 commité (`edfd1f3`). Candidat : App-Handyman,
        projet pilote. Marche à suivre et prompt :
        `gabarits/rituel-session/README.md`. **Condition de clôture** (R304) :
@@ -384,6 +384,18 @@ sauvegarde, pas avant :**
        et a rendu un verdict juste (`INDÉTERMINÉ — aucun recap`). **Défaut trouvé** :
        la date (voir le journal) → gabarit 1.0.1. Restent : report de 1.0.1 dans
        l'instance, puis les temps 2 et 3 (premier recap, puis `OK`).
+       **CLOS le 2026-09-23 à 14 h 48 locale — condition atteinte, trois temps
+       conformes, dans Dr-bobo :**
+       (1) `INDÉTERMINÉ — aucun recap` avant tout recap ;
+       (2) premier recap `sessions/recap-20260923-01.md`, `HEAD : 1495dbe`
+       mesuré, date `14:34 -04:00` par PowerShell (`TZ` déclaré invalide),
+       écrit après « oui » (commits `f259c01`, `0282b6a`) ;
+       (3) `OK — 0 commit hors sessions/ après 1495dbe`, briefing @ `0282b6a`.
+       Preuves de pose : `4a3dbaf` (instance 1.0.0), `1495dbe` (report 1.0.1).
+       **Restent non exercés** : axes de sync avec branche, shortlist sur un
+       vrai claim, gate code/docs — Dr-bobo n'a pas de code. **Suite** : les deux
+       lectures non bornées (README du gabarit, § « Contrainte de conception »)
+       → gabarit 1.0.2, en session dédiée.
 
 ## Sujets garés — ne rouvrir que sur leur condition
 
