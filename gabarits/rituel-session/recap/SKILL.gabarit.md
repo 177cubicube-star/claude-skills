@@ -1,6 +1,6 @@
 ---
 name: recap-{{SUFFIXE}}
-version: 1.0.1
+version: 1.1.0
 description: Clôture de session du projet {{PROJET}} — produit le document de continuité depuis les faits git (HEAD mesuré, rien d'inventé, VALIDÉ seulement sur accord), aperçu puis « oui » avant écriture, met à jour le TODO, affiche les gestes de clôture. À lancer sur « recap », « fin de session », « clôturer », ou quand un travail est interrompu.
 ---
 
@@ -36,6 +36,8 @@ erreur. D'où quatre règles qui ne se négocient pas :
 | TODO | `{{TODO}}` ou `aucun` |
 | ADR | dossier `{{DECISIONS}}` ou `aucun` · ligne de statut `{{LIGNE_STATUT}}` |
 | Pages de fil | `{{FILS}}` ou `aucun` · gabarit `{{GABARIT_FIL}}` |
+| Seuil de relecture | `{{SEUIL_LIGNES}}` lignes par fichier relu à l'ouverture (ex. `300`) ou `aucun` |
+| Archives | TODO → `{{TODO_ARCHIVE}}` · fils → `{{FILS_ARCHIVE}}` (ex. `archives/TODO-AAAA.md`, `archives/fils/`) ou `aucun` |
 | Fichiers « code » (gate code/docs) | `{{MOTIFS_CODE}}` |
 | Compter les tests | `{{CMD_TESTS}}` ou `aucun` |
 | Marqueurs de dette | `{{CMD_DETTE}}` ou `aucun` |
@@ -187,11 +189,34 @@ Montrer avant → après, attendre le « oui », puis écrire.
 - **Ajouter** les prochaines actions et les dettes relevées qui ne sont pas
   encore listées.
 - Ne jamais supprimer une ligne, inventer une tâche, ni changer un bloquant
-  sans instruction.
+  sans instruction. Un **déplacement vers l'archive**, proposé à l'étape 6b et
+  accepté, n'est pas une suppression.
 - Mettre à jour la date d'en-tête, mesurée.
 
 Montrer seulement les lignes changées (`[ ] → [x]  <tâche> ← <preuve>`),
 attendre le « oui », puis écrire.
+
+**Étape 6b — Mesurer ce qui sera relu (si un seuil est déclaré).** Chaque
+clôture écrit, chaque ouverture relit : sans borne, le rituel recrée le
+problème qu'il sert à éviter (README du gabarit, § « Contrainte de
+conception »).
+
+1. Mesurer `wc -l` du TODO et de chaque page de fil touchée, **après** les
+   écritures de l'étape 6. Afficher toujours la ligne
+   `📏 Relu à l'ouverture : TODO <N> l. · fil <slug> <N> l. · seuil <S>`,
+   même sous le seuil. Une mesure absente se lit « rien à signaler ».
+2. Au-delà du seuil, **proposer** l'archivage, sans jamais l'imposer :
+   - TODO : déplacer les items `fait`, avec leurs sous-lignes, vers l'archive
+     déclarée, sous un en-tête daté ; laisser dans le TODO une ligne
+     `Archivé le <date> : <n> items → <archive>` ;
+   - fil : déplacer le contenu de sa section d'archive datée vers
+     `<archive des fils>/<slug>.md`, et laisser un pointeur.
+3. Montrer le mouvement (ce qui part, où il va, les comptes avant et après),
+   attendre le « oui », puis écrire. **Contrôle de conservation** : les lignes
+   avant = les lignes restantes + les lignes archivées − les lignes de pointeur.
+   Un écart signifie qu'on arrête et qu'on le signale.
+4. Archives `aucun` alors que le seuil est dépassé → le signaler dans
+   l'aperçu, sans rien déplacer.
 
 **Rapport externe (si déclaré).** Suivre la procédure pointée. Outil
 indisponible → le dire en une ligne, sans bloquer.
@@ -225,4 +250,5 @@ Rien n'a été commité par ce skill.
 - [ ] Shortlist anti-sur-claim traitée et affichée
 - [ ] Chaque écriture précédée d'un « oui » ; aucun commit
 - [ ] Toutes les lectures git faites en `--no-optional-locks`
+- [ ] Ligne 📏 affichée (si seuil déclaré) ; tout archivage proposé, montré, accepté, et son contrôle de conservation passé
 <!-- /FOND:checklist -->

@@ -1,6 +1,6 @@
 ---
 name: session-prep-{{SUFFIXE}}
-version: 1.0.1
+version: 1.1.0
 description: Ouverture de session du projet {{PROJET}} — lecture seule, reconstruit l'état RÉEL sur la référence distante (recaps, ADR, TODO, sync git) et signale ce qui est déjà fait (« ne pas refaire »). À lancer AVANT tout travail sur « où en est-on », « reprendre », « début de session ».
 ---
 
@@ -34,6 +34,7 @@ l'écran.
 | ADR | dossier `{{DECISIONS}}` ou `aucun` · ligne de statut `{{LIGNE_STATUT}}` |
 | TODO | `{{TODO}}` ou `aucun` · marqueurs `{{MARQUEURS_TODO}}` |
 | Règles actives du projet | `{{INSTRUCTIONS}}` (ex. `CLAUDE.md`) |
+| Sections de règles à lire | titres `{{SECTIONS_REGLES}}` (motif, ex. `^## Règle`) ou `aucun` · sinon plafond de `{{PLAFOND_REGLES}}` lignes (ex. `80`) |
 | Pages de fil | `{{FILS}}` ou `aucun` |
 | Scripts testés du projet | gap recap `{{SCRIPT_GAP}}` · axes de sync `{{SCRIPT_AXES}}` · ADR sur la réf `{{SCRIPT_ADR_REF}}` · fils actifs `{{SCRIPT_FILS}}` · vues dérivées `{{SCRIPTS_DERIVES}}` — ou `aucun` |
 <!-- /FORME:config -->
@@ -144,11 +145,26 @@ grep -nE '<classes ouvertes>' "$TODO"       # 3. à faire + en cours + bloquant,
 Un compte à 0 met en cause l'instrument, pas le fichier. Le tri par priorité
 se fait dans le briefing, pas dans le grep.
 
-## Étape 5 — Règles actives
+## Étape 5 — Règles actives, lecture bornée
 
-On lit le fichier de règles du projet et on résume en **une ligne** ce qui
-change ce qu'on a le droit de faire maintenant : politique git et merge, plan
-avant code, skills obligatoires. On résume, on ne recopie pas.
+Le fichier de règles grossit avec le projet ; le lire en entier à chaque
+ouverture ferait grossir chaque ouverture avec lui.
+
+1. Mesurer d'abord : `wc -l <fichier de règles>`.
+2. **Sections déclarées** → extraire seulement celles-là. Chaque section va de
+   son titre au titre suivant de même niveau :
+   ```bash
+   awk -v m='<motif>' '/^#+ /{lvl=index($0," ")-1; if(on&&lvl<=L)on=0; if($0~m){on=1;L=lvl}} on' <fichier>
+   ```
+   **Contrôle positif** : si 0 ligne est extraite alors que le motif est
+   déclaré, c'est le motif qui est en cause, pas le fichier. On le dit.
+3. **Aucune section déclarée** → lire les `<plafond>` premières lignes, et
+   déclarer la lecture partielle.
+4. Résumer en **une ligne** ce qui change ce qu'on a le droit de faire
+   maintenant. On résume, on ne recopie pas.
+5. La ligne 📖 du briefing porte toujours la mesure :
+   `règles : <N> l., lues : <sections … | L premières lignes> (<intégral | partiel>)`.
+
 <!-- /FOND:etape-3-5 -->
 
 <!-- 🔒 FOND:etape-6 -->
@@ -233,6 +249,7 @@ porte toujours sur les recaps du jour le plus récent.
       continuité rendu, avec la précondition nommée s'il est INDÉTERMINÉ
 - [ ] Chaque 🛑 appuyé par une preuve ; le cas « ADR déjà Accepté » vérifié
 - [ ] Motif du TODO mesuré, contrôle positif > 0
+- [ ] Fichier de règles mesuré, lu par sections ou sous plafond, portée déclarée en 📖
 - [ ] Aiguillage présenté, réponse attendue
 - [ ] Lignes 📖 et 🕐 présentes
 - [ ] Toutes les lectures git en `--no-optional-locks` ; **aucun fichier écrit**

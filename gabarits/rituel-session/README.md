@@ -1,6 +1,10 @@
 # Gabarit — rituel de session (`recap` + `session-prep`)
 
-**version du gabarit : 1.0.1**
+**version du gabarit : 1.1.0**
+
+Le champ `version:` des fichiers `SKILL.gabarit.md` porte **la version du
+gabarit**, la même que ci-dessus. Une instance tient ensuite sa propre version
+(décidé en pratique le 2026-09-23, au passage en 1.0.1).
 
 Modèle de référence pour doter un projet de son propre couple
 clôture / ouverture de session. **Ce n'est pas un skill** : rien ici ne se
@@ -174,8 +178,11 @@ leur premier tour ici.
 2. **Mesurer l'écart** : le contrôle 3 b), lancé contre le gabarit courant.
    Un diff non vide = le fond de l'instance est en retard (ou a été édité à
    tort).
-3. **Reporter** : remplacer chaque bloc FOND de l'instance par celui du gabarit,
-   **sans toucher aux blocs FORME**, puis relancer 3 a) et 3 b).
+3. **Reporter** : remplacer chaque bloc FOND de l'instance par celui du
+   gabarit. Dans les blocs FORME, **ne modifier aucune valeur existante** ; si le
+   gabarit ajoute une **clé** de forme (une ligne de la table), l'ajouter avec
+   sa valeur **mesurée** sur le projet, ou `aucun`. Relancer ensuite 3 a) et 3 b) :
+   le contrôle a) attrape toute clé ajoutée mais laissée en `{{…}}`.
 4. **Bumper l'instance** (`version:` +0.1.0 si le fond change son comportement,
    +0.0.1 pour une retouche), mettre à jour la ligne « Instancié depuis », puis
    committer dans le dépôt du projet.
@@ -219,6 +226,9 @@ retrouver pourquoi ; ils ne se recopient pas dans les instances.
 | Procédure « Mettre à jour une instance » | **Exercée une fois, 2026-09-23** : report 1.0.0 → 1.0.1 dans Dr-bobo (commit `1495dbe`). FOND des deux instances identique au gabarit `bc77723`, FORME inchangée, provenance mise à jour, 0 placeholder — vérifié sur les fichiers. |
 | Mesure de la date (v1.0.1) | **Rodée en conteneur, 2026-09-23** : fuseau connu accepté ; fuseau inconnu → repli UTC **attrapé** (le défaut réel, reproduit : `exit 0`, `+0000`) ; projet réellement en UTC **non rejeté** ; aucun instrument valide → « NON MESURÉE ». **Validée sous Windows, dans le skill, 2026-09-23 (Dr-bobo)** : `TZ` déclaré invalide (`+0000`), PowerShell retenu — `recap-drbobo` à `14:34 -04:00`, `session-prep-drbobo` à `14:48 -04:00`. |
 | Axes de sync, shortlist anti-sur-claim, gate code/docs | **Non calibrés** — gardes par vigilance. Première instance (Dr-bobo, projet sans code) : **non exercés** — ni code, ni branche de travail, ni claim à auditer. |
+| Recaps frères du même jour (session-prep, étape 2) | **Déclaré conforme par Mathieu, 2026-09-23** (Dr-bobo, après `recap-20260923-02`) : deux recaps lus, DELTA commun, pas de doublon, `OK`. Briefing **non versé** : c'est une déclaration, pas une mesure lue ici. |
+| Lecture des règles par sections (v1.1.0) | **Rodée en conteneur, 2026-09-23** : la commande **telle qu'écrite dans le gabarit** extrait les deux sections visées, sous-section comprise, et s'arrête au titre de même niveau ou supérieur ; motif faux → 0 ligne. Le rodage a **trouvé un défaut** : la première version utilisait `in`, mot réservé d'awk → erreur de syntaxe, code de sortie 2 ; corrigé et rejoué. Non exercée sur un vrai projet. |
+| Archivage du journal (v1.1.0) | **Rodé en conteneur, 2026-09-23** : TODO de 6 lignes → 4 restantes + 3 archivées − 1 pointeur = CONFORME ; une ligne perdue en route → ÉCART détecté. Non exercé sur un vrai projet. |
 | Défaut cosmétique relevé | au premier briefing réel, la ligne `CONTINUITÉ` a été affichée deux fois — à surveiller, non corrigé |
 
 Là où un projet possède un script testé qui fait le même travail,
@@ -240,18 +250,20 @@ motif dans les documents : obs 22 (store `Suspension-intelligence`, un TODO de
 dépend pas de l'âge du projet. Tout ce qu'il **écrit** est un fichier nouveau,
 ou un ajout à un fichier que quelque chose archive.
 
-| Élément | État en 1.0.1 |
+| Élément | État en 1.1.0 |
 |---|---|
-| Taille des skills | environ 240 lignes chacun — **borné** |
+| Taille des skills | environ 255 lignes chacun en 1.1.0 (240 en 1.0.1) — **borné** |
 | Recaps lus par `session-prep` | ceux du jour le plus récent seulement — **borné par construction** |
 | TODO lu par `session-prep` | par `grep` sur les items ouverts, avec un contrôle positif — **borné par le nombre d'items ouverts**, pas par l'âge du fichier ; les items cochés ne sont jamais relus |
 | Recap écrit par `recap` | un fichier neuf par session — **n'alourdit aucun fichier lu** |
-| Journal alimenté par `recap` (TODO, fils) | grossit à chaque clôture — **non borné** |
-| Fichier de règles actives lu par `session-prep` | lu sans limite de taille — **non borné** |
+| Journal alimenté par `recap` (TODO, fils) | **1.1.0** : mesuré à chaque clôture (ligne 📏) ; au-delà du seuil déclaré, archivage **proposé**, jamais imposé, avec un contrôle de conservation — **borné par proposition**, si le seuil et les archives sont déclarés |
+| Fichier de règles actives lu par `session-prep` | **1.1.0** : mesuré, lu par **sections déclarées** ou sous un **plafond** de lignes, portée déclarée en 📖 — **borné** |
 
-Les deux lignes non bornées sont **à traiter en 1.0.2**, en session dédiée.
-Elles ne jouent pas dans Dr-bobo, qui n'a ni TODO, ni fils, ni gros fichier de
-règles ; elles joueraient dans un projet comme `suspension-intelligente`.
+**Limite assumée** : la borne du journal dépend de la FORME. Un projet qui
+déclare `aucun` pour le seuil ou pour les archives retombe dans le non-borné,
+et le rituel le **dit** (ligne 📏, ou signalement dans l'aperçu), sans le
+corriger à sa place. Dr-bobo (ni TODO ni fils) n'est pas concerné ; un projet
+comme `suspension-intelligente` le serait.
 
 ---
 

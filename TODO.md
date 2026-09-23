@@ -396,6 +396,9 @@ sauvegarde, pas avant :**
        vrai claim, gate code/docs — Dr-bobo n'a pas de code. **Suite** : les deux
        lectures non bornées (README du gabarit, § « Contrainte de conception »)
        → gabarit 1.0.2, en session dédiée.
+       **Suite livrée le 2026-09-23 — numérotée 1.1.0, et non 1.0.2** : c'est un
+       ajout de comportement, et la règle de versionnement le veut (+0.1.0).
+       L'annonce « 1.0.2 » ci-dessus est conservée comme trace.
 
 ## Sujets garés — ne rouvrir que sur leur condition
 
@@ -493,6 +496,21 @@ aligné. Friction 7.1, relevant du rituel de SI.
 (tri des skills et règle du gabarit), README du gabarit (marche à suivre
 complète, prompt Claude Code, usage Cowork, mise à jour des instances), et
 chantier 7 ci-dessus.
+
+**Même jour, gabarit 1.1.0 — les lectures du rituel sont bornées.** Il répond
+à l'observation de Mathieu qui a déclenché la réorganisation des skills
+(l'historique qui grossit, les skills de plus en plus lents). Trois choix de
+Mathieu :
+- le journal est **mesuré, avec un archivage proposé** au-delà d'un seuil
+  déclaré (jamais imposé ; contrôle de conservation) ;
+- les règles actives sont **lues par sections déclarées**, sinon sous un
+  plafond de lignes ;
+- la version est **1.1.0**, selon la règle pour un ajout ; l'annonce « 1.0.2 »
+  était une erreur.
+Rodé en conteneur. Le rodage a trouvé un défaut : `in`, mot réservé d'awk, dans
+la commande d'extraction. **Reste** : reporter 1.1.0 dans Dr-bobo (deux clés de
+forme nouvelles, mesurées sur le projet ou `aucun`), puis une première
+ouverture en 1.1.0.
 
 **Même jour, première instance : Dr-bobo.** Préparée en Cowork, posée en deux
 temps, parce que le pont **refuse toute écriture sous `.claude/`**. C'était
