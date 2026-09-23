@@ -66,6 +66,9 @@ skill, téléversement manuel, `description` ≤ 1024 caractères, nom du dossie
 
 1. **Il nomme un ADR, un chemin, une règle d'UN projet ?** → il reste dans ce
    projet, dans son `.claude/skills/`.
+   **Et son fond sert aussi d'autres projets ?** → le fond monte en **gabarit**
+   (`gabarits/<nom>/`), chaque projet garde son **instance** locale, nommée avec
+   un suffixe. Marche à suivre : le README du gabarit.
 2. **Il est agnostique, aucun fait de projet ?** → il vient ici.
 3. **Il vient d'Anthropic ?** → rien à faire, il est déjà partout.
 4. **Règle d'or (ADR-028) :** une seule maison-*source* par skill. Le compte et
@@ -82,6 +85,11 @@ divergence en attente.
 - **Pas d'homonyme entre niveaux.** Poser ici un nom déjà porté par un skill de
   projet efface ce dernier. Avant toute addition, comparer :
   `ls ~/.claude/SKILLS/` aux `ls .claude/skills/` de chaque dépôt actif.
+- **Un gabarit ne se pose jamais sous `.claude/skills/`**, et ses fichiers
+  s'appellent `SKILL.gabarit.md`, jamais `SKILL.md`. Double garde **par
+  construction** : le script de déploiement ne le voit pas, et aucun chargeur
+  ne lit ce nom. Ses instances portent un suffixe de projet (`recap-ah`), jamais
+  le nom nu, ce qui applique la règle précédente aux instances.
 - **`prompt-forge` ne se distribue jamais** vers `~/.claude/SKILLS/` — exclusion
   ADR-005, plus forte qu'un gel. Deux skills distincts partagent ce nom
   (App-Handyman et suspension-intelligente) ; ils ne se croisent jamais, chaque
@@ -112,6 +120,7 @@ divergence en attente.
 
 ```
 .claude/skills/<nom>/SKILL.md   ← la source, seul endroit où l'on édite
+gabarits/<nom>/                 ← fonds partagés, jamais déployés ; s'instancient dans les projets
 deploy-skills.ps1               ← le pont vers ce qui tourne
 README.md                       ← le rituel, en prose
 CLAUDE.md                       ← ce fichier

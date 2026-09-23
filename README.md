@@ -4,6 +4,8 @@ Maison git des skills Claude **transversaux** de Mathieu — ceux qui servent da
 
 Les skills **spécifiques à un projet** (recap, session-prep, tdd-enforcer, architecture-guard…) ne vivent PAS ici : leur maison est le `.claude/skills/` du repo de leur projet.
 
+**Exception, qui ne change pas la règle :** quand plusieurs projets ont besoin du même *fond* sous une *forme* différente, la maison porte un **gabarit** (`gabarits/`). Un gabarit n'est pas un skill : il ne se déploie pas et ne se charge pas. On l'**instancie** dans chaque projet, où la copie devient un skill local. Voir § « Gabarits ».
+
 ---
 
 ## Principe : une maison par skill
@@ -23,11 +25,15 @@ Les skills **spécifiques à un projet** (recap, session-prep, tdd-enforcer, arc
 ```
 claude-skills/
 ├── README.md            ← ce fichier
-└── .claude/
-    └── skills/
-        └── <nom>/
-            ├── SKILL.md     ← frontmatter: name, version, description
-            └── references/  ← fichiers d'appui (optionnel)
+├── .claude/
+│   └── skills/
+│       └── <nom>/
+│           ├── SKILL.md     ← frontmatter: name, version, description
+│           └── references/  ← fichiers d'appui (optionnel)
+└── gabarits/
+    └── <gabarit>/
+        ├── README.md             ← mode d'emploi et marche à suivre pour instancier
+        └── <skill>/SKILL.gabarit.md  ← jamais chargé : ce nom n'est pas « SKILL.md »
 ```
 
 **Pourquoi `.claude/skills/` et pas `skills/`** (décision du 2026-07-24, voir `2026-07-23-proposition-maison-skills.md` § 4 option D) : c'est le seul chemin qu'une session lit à la source via `--add-dir <clone>`. Sous `skills/`, la maison n'était qu'un entrepôt qu'il fallait recopier ; sous `.claude/skills/`, elle est directement lisible — `git pull` suffit. Le déplacement est un renommage git : l'historique de chaque skill est intact.
@@ -118,6 +124,30 @@ grep -H -A2 "^name:" .claude/skills/*/SKILL.md | grep -E "name:|version:"
    **Borne de validité — et la preuve qu'elle sert.** Le chemin du compte est un fait d'environnement, pas un contrat documenté — même statut que la borne CLI 2.1.220. Écrit ici le 2026-07-30 comme `/mnt/skills/user/`, il était **faux dès le lendemain** : une session du 31 n'avait pas de `/mnt/skills/` du tout et chargeait depuis `/root/.claude/skills/`. Un jour d'écart a suffi. C'est pourquoi la table ci-dessus ne donne pas de chemin pour le compte : la borne ne suffisait pas, il fallait retirer le chemin du geste lui-même.
 
 Piège connu : « This skill name is already in use » peut persister après suppression (réservation résiduelle côté serveur ; noms du catalogue d'exemples Anthropic réservés en permanence). Contournement : suffixe `-perso`. Le déclenchement est piloté par la `description`, pas par le nom.
+
+---
+
+## Gabarits — un fond partagé, une instance par projet
+
+Politique en vigueur : **les skills sont locaux au projet par défaut**
+(décision du 2026-07-30). Un gabarit ne la contredit pas, il la sert : le
+*fond* (la méthode) s'écrit une fois ici, et la *forme* (chemins, commandes,
+gestes) se remplit dans chaque projet.
+
+| Question | Réponse |
+|---|---|
+| Où vit la source du fond ? | `gabarits/<gabarit>/` — c'est ici qu'on améliore le fond, avec une montée de version du gabarit |
+| Où vit ce qui tourne ? | `<projet>/.claude/skills/<skill>-<suffixe>/SKILL.md` — l'**instance**, commitée dans le dépôt du projet |
+| Pourquoi pas sous `.claude/skills/` ? | `deploy-skills.ps1` y copie **tout** vers `~/.claude/SKILLS/`. Un gabarit posé là deviendrait un skill personnel actif, qui masquerait les instances du même nom |
+| Pourquoi un suffixe ? | un homonyme est effacé sans signal (ISSUE-001, run E), et le compte ne sert qu'un skill par nom |
+| Comment instancier, utiliser, mettre à jour ? | **dans le README du gabarit** — c'est la source de la marche à suivre, elle n'est pas recopiée ici |
+
+Gabarits existants : `ls gabarits/`. Instances existantes : elles portent la
+ligne « Instancié depuis le gabarit » et **se mesurent**, elles ne se listent
+pas (commande dans le README de chaque gabarit).
+
+`deploy-skills.ps1` ne touche pas `gabarits/`. Commiter un gabarit ne change
+rien à ce qui tourne ; seule une instance, dans un projet, produit un effet.
 
 ---
 

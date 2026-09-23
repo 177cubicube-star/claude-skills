@@ -370,6 +370,14 @@ sauvegarde, pas avant :**
 6. [ ] **Circuit Android** — V7-pre d'abord (plan payant + exécution de
        code au compte : la porte peut être fermée), puis V7, puis la
        routine d'empaquetage zip.
+7. [ ] **Première instance du gabarit `rituel-session`** — ouvert le
+       2026-09-23. Gabarit v1.0.0 commité (`edfd1f3`). Candidat : App-Handyman,
+       projet pilote. Marche à suivre et prompt :
+       `gabarits/rituel-session/README.md`. **Condition de clôture** (R304) :
+       les trois temps du § 5 « Premier usage » rendent leur attendu, en
+       particulier `OK` après la première clôture poussée. Tant que ce n'est pas
+       fait, les procédures en ligne du fond restent **non calibrées** sur un
+       vrai dépôt.
 
 ## Sujets garés — ne rouvrir que sur leur condition
 
@@ -416,6 +424,57 @@ rappel.
 ---
 
 ## Journal de sessions (le plus récent en haut)
+
+### 2026-09-23 — Session Cowork : `recap` et `session-prep` deviennent un gabarit
+
+**Demande.** Des équivalents génériques des deux skills de rituel de
+`suspension-intelligente`, « à adapter par projet sur la forme, non sur le
+fond ».
+
+**Premier jet écarté, et pourquoi.** Deux skills partagés, `recap-generique` et
+`session-prep-generique`, paramétrés par un `docs/SESSION-CONFIG.md` et
+proposés **directement au compte**. Écarté après la lecture de ce dépôt, pour
+trois raisons :
+- c'était le modèle du moteur partagé, abandonné le 2026-07-30 (« skills
+  locaux au projet par défaut ») ;
+- cela contournait la maison (second circuit, sans `version:`) ;
+- il y manquait les leçons des obs 21 et 23 (store `Suspension-intelligence`)
+  et des ISSUE-006 et 007.
+Mathieu a retenu la lecture **(b)** : un **gabarit** dans la maison, instancié
+et renommé dans chaque projet.
+
+**Livré.** `gabarits/rituel-session/` v1.0.0 : README, `recap/SKILL.gabarit.md`,
+`session-prep/SKILL.gabarit.md`, `template-continuite.md`. Commit **`edfd1f3`**,
+fait par une session Claude Code sur GO de Mathieu. Décisions de conception,
+chacune avec son motif dans le README du gabarit :
+- le gabarit est **hors** de `.claude/skills/`, parce que `deploy-skills.ps1`
+  déploie tout ce qui s'y trouve ;
+- ses fichiers s'appellent `SKILL.gabarit.md`, un nom qu'aucun chargeur ne lit ;
+- blocs `🔒 FOND` / `✏️ FORME` balisés, pour que l'intégrité du fond se vérifie
+  par `diff` ;
+- les instances portent un suffixe de projet, jamais le nom nu.
+
+**Mesuré avant livraison.**
+- Contrôles d'instanciation : **8/8** verdicts attendus, dans les deux sens
+  (instance en CRLF acceptée, mutation du fond détectée, modification de forme
+  seule acceptée, placeholder oublié détecté).
+- Verdict de continuité rodé sur un dépôt git jetable. Le rodage **a trouvé un
+  défaut** : le commit qui dépose un recap arrive forcément après le `HEAD`
+  qu'il grave, donc chaque clôture propre rendait GAP. Corrigé en excluant les
+  fichiers de clôture du comptage, puis re-mesuré : 5 cas conformes, 0 verrou.
+  Limite écrite dans le gabarit : une session qui n'a touché que des fichiers
+  de clôture n'est pas détectée.
+- **Non calibrés** : axes de sync, shortlist anti-sur-claim, gate code/docs.
+
+**Constaté au passage, hors périmètre, garé :** `recap` au compte en **2.1.0**,
+contre **2.2.0** dans `suspension-intelligente`. Le correctif de l'obs 21 (champ
+`HEAD` obligatoire) n'est pas au compte, alors que `session-prep` 1.3.0 est
+aligné. Friction 7.1, relevant du rituel de SI.
+
+**Même jour, docs de mise en place** : README (§ « Gabarits »), CLAUDE.md
+(tri des skills et règle du gabarit), README du gabarit (marche à suivre
+complète, prompt Claude Code, usage Cowork, mise à jour des instances), et
+chantier 7 ci-dessus.
 
 ### 2026-07-29 (soir) → 2026-07-30 (matin) — Session double Cowork + Code : récap fusionné
 
