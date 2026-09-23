@@ -1,6 +1,6 @@
 ---
 name: recap-{{SUFFIXE}}
-version: 1.0.0
+version: 1.0.1
 description: Clôture de session du projet {{PROJET}} — produit le document de continuité depuis les faits git (HEAD mesuré, rien d'inventé, VALIDÉ seulement sur accord), aperçu puis « oui » avant écriture, met à jour le TODO, affiche les gestes de clôture. À lancer sur « recap », « fin de session », « clôturer », ou quand un travail est interrompu.
 ---
 
@@ -62,10 +62,21 @@ condition de levée.
   on l'invoque tel quel et on insère sa sortie **verbatim**. On ne refait jamais
   sa logique de tête. Sinon, on applique la procédure en ligne ci-dessous, qui
   est une garde **par vigilance, non calibrée**.
-- **La date se mesure** : `TZ=<fuseau> date +%Y%m%d`, jamais `date` nu ni
-  l'en-tête de session (les conteneurs sont en UTC, donc au lendemain dès 20 h).
-  Contrôle : comparer au `%ad` du dernier commit,
-  `git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'`.
+- **La date se mesure, et la mesure se contrôle.** Prendre le premier
+  instrument **valide**, dans cet ordre :
+  1. `TZ=<fuseau> date '+%Y-%m-%d %H:%M %z'` (Linux, macOS, conteneurs) ;
+  2. `powershell.exe -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd HH:mm zzz'"`
+     (Windows, y compris depuis Git Bash ; rend le fuseau du système).
+  **Contrôle de validité** : si le fuseau déclaré n'est pas UTC et que le
+  décalage rendu vaut `+0000` / `+00:00`, l'instrument est **invalide**. Il a
+  ignoré un fuseau qu'il ne connaît pas et il est retombé en UTC **sans erreur
+  ni code de sortie** (mesuré sous Git Bash, Windows, le 2026-09-23 : `18:12 +0000`
+  pour `14:12 −04:00`). Passer alors à l'instrument suivant. Si aucun n'est
+  valide, écrire `date NON MESURÉE`, **jamais** une date supposée. Jamais `date`
+  nu ni l'en-tête de session (les conteneurs sont en UTC, donc au lendemain dès 20 h).
+  Borne de cohérence : le `%ad` du dernier commit
+  (`git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'`) ne peut pas être
+  postérieur à la date mesurée. Ce n'est pas l'heure actuelle.
 - **Un module à `aucun` est sauté**, et on le dit en une ligne dans l'aperçu.
 <!-- /FOND:regles-transverses -->
 
@@ -205,7 +216,8 @@ Rien n'a été commité par ce skill.
 <!-- 🔒 FOND:checklist -->
 ## Checklist (avant chaque écriture)
 
-- [ ] Date mesurée avec le fuseau, et comparée au dernier commit
+- [ ] Date mesurée par un instrument **valide** (décalage ≠ `+0000` si le fuseau
+      n'est pas UTC), ou `date NON MESURÉE` déclarée ; cohérente avec le dernier commit
 - [ ] Fetch réussi, ou son échec déclaré dans l'aperçu
 - [ ] NN calculé sur la réf, juste avant l'écriture
 - [ ] Champ `HEAD` présent, avec un sha **mesuré** sur la réf

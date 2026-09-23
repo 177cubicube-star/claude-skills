@@ -378,6 +378,12 @@ sauvegarde, pas avant :**
        particulier `OK` après la première clôture poussée. Tant que ce n'est pas
        fait, les procédures en ligne du fond restent **non calibrées** sur un
        vrai dépôt.
+       **Avancement 2026-09-23 :** 1re instance posée dans **Dr-bobo**
+       (`recap-drbobo`, `session-prep-drbobo`, commit Dr-bobo `4a3dbaf`, poussé).
+       Temps 1 du § 5 **fait** : `session-prep-drbobo` a chargé, n'a rien écrit
+       et a rendu un verdict juste (`INDÉTERMINÉ — aucun recap`). **Défaut trouvé** :
+       la date (voir le journal) → gabarit 1.0.1. Restent : report de 1.0.1 dans
+       l'instance, puis les temps 2 et 3 (premier recap, puis `OK`).
 
 ## Sujets garés — ne rouvrir que sur leur condition
 
@@ -475,6 +481,28 @@ aligné. Friction 7.1, relevant du rituel de SI.
 (tri des skills et règle du gabarit), README du gabarit (marche à suivre
 complète, prompt Claude Code, usage Cowork, mise à jour des instances), et
 chantier 7 ci-dessus.
+
+**Même jour, première instance : Dr-bobo.** Préparée en Cowork, posée en deux
+temps, parce que le pont **refuse toute écriture sous `.claude/`**. C'était
+pourtant consigné ici le 2026-07-24 : je l'avais lu, et je ne l'ai pas appliqué.
+Les deux `SKILL.md` sont passés par un dossier de transit, puis ont été copiés
+par une session Claude Code, avec les empreintes vérifiées (commit Dr-bobo
+`4a3dbaf`). Au passage, un `git add` lancé trop tôt a échoué en bloc sur les
+chemins encore absents : rien n'a été mis en attente de commit, rien n'a été
+commité, ce qui a été mesuré dans `.git/`. Le README du gabarit porte
+désormais cette seconde raison d'instancier depuis Claude Code.
+
+**Défaut trouvé par le premier usage réel (temps 1).** Sous **Git Bash
+(Windows)**, `TZ=America/Toronto date` ne connaît pas le fuseau et **retombe
+en UTC sans erreur**, avec un code de sortie 0 : `18:12 +0000` au lieu de
+`14:12 −04:00`. C'est l'instrument qui répond sans savoir (principe 11 c),
+exactement dans la règle censée protéger de la mauvaise date (ISSUE-007).
+Trouvé par la session Claude Code de Dr-bobo, qui n'a rien modifié : le passage
+est dans un bloc FOND. **Correction → gabarit 1.0.1** : les instruments sont
+essayés dans l'ordre (`TZ` puis PowerShell), un décalage `+0000` pour un fuseau
+non-UTC déclare l'instrument invalide, et « date NON MESURÉE » est écrit plutôt
+qu'une date supposée. Reproduit et rodé en conteneur : 3 cas conformes plus le
+défaut brut reproduit. La branche PowerShell n'est pas rodée ici.
 
 ### 2026-07-29 (soir) → 2026-07-30 (matin) — Session double Cowork + Code : récap fusionné
 

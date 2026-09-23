@@ -1,6 +1,6 @@
 ---
 name: session-prep-{{SUFFIXE}}
-version: 1.0.0
+version: 1.0.1
 description: Ouverture de session du projet {{PROJET}} — lecture seule, reconstruit l'état RÉEL sur la référence distante (recaps, ADR, TODO, sync git) et signale ce qui est déjà fait (« ne pas refaire »). À lancer AVANT tout travail sur « où en est-on », « reprendre », « début de session ».
 ---
 
@@ -46,7 +46,21 @@ l'écran.
 - **Le script d'abord** : un script déclaré s'invoque tel quel, et son verdict
   est inséré verbatim. Les procédures en ligne ci-dessous sont des gardes **par
   vigilance, non calibrées**.
-- **La date se mesure** : `TZ=<fuseau> date`, jamais `date` nu.
+- **La date se mesure, et la mesure se contrôle.** Prendre le premier
+  instrument **valide**, dans cet ordre :
+  1. `TZ=<fuseau> date '+%Y-%m-%d %H:%M %z'` (Linux, macOS, conteneurs) ;
+  2. `powershell.exe -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd HH:mm zzz'"`
+     (Windows, y compris depuis Git Bash ; rend le fuseau du système).
+  **Contrôle de validité** : si le fuseau déclaré n'est pas UTC et que le
+  décalage rendu vaut `+0000` / `+00:00`, l'instrument est **invalide**. Il a
+  ignoré un fuseau qu'il ne connaît pas et il est retombé en UTC **sans erreur
+  ni code de sortie** (mesuré sous Git Bash, Windows, le 2026-09-23 : `18:12 +0000`
+  pour `14:12 −04:00`). Passer alors à l'instrument suivant. Si aucun n'est
+  valide, écrire `date NON MESURÉE`, **jamais** une date supposée. Jamais `date`
+  nu ni l'en-tête de session (les conteneurs sont en UTC, donc au lendemain dès 20 h).
+  Borne de cohérence : le `%ad` du dernier commit
+  (`git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'`) ne peut pas être
+  postérieur à la date mesurée. Ce n'est pas l'heure actuelle.
 - **Un verdict INDÉTERMINÉ nomme la précondition qui a manqué.** Un
   « indéterminé » opaque est un détecteur qui se tait sur sa propre panne.
 - On collecte tout (étapes 1 à 5) avant d'afficher quoi que ce soit.
@@ -197,7 +211,7 @@ porte toujours sur les recaps du jour le plus récent.
 🌿 Branche <x> · vs <ref> +N/−M · main local +K non poussé(s) (si K>0) · branches de travail : …
 🧰 Working tree : <propre | N modifs — ne pas toucher> · stash : <vide | N>
 📖 Périmètre de lecture : <intégral | partiel — source, ce qui n'a PAS été lu, motif>
-🕐 Fetch : <OK | ÉCHEC — réf possiblement périmée> · date mesurée : <AAAA-MM-JJ HH:MM ±zone>
+🕐 Fetch : <OK | ÉCHEC — réf possiblement périmée> · date mesurée : <AAAA-MM-JJ HH:MM ±zone (instrument) | NON MESURÉE>
 📐 Prochain ADR libre : … · Proposés non actés : …
 📏 Règles ce cycle : <1 ligne>
 📋 Reprise : <pointeur vers la section de reprise de l'ancre>

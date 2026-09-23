@@ -1,6 +1,6 @@
 # Gabarit — rituel de session (`recap` + `session-prep`)
 
-**version du gabarit : 1.0.0**
+**version du gabarit : 1.0.1**
 
 Modèle de référence pour doter un projet de son propre couple
 clôture / ouverture de session. **Ce n'est pas un skill** : rien ici ne se
@@ -35,8 +35,12 @@ signale un besoin du gabarit, pas une adaptation locale.
 ## Marche à suivre — instancier dans un projet
 
 L'instanciation se fait **dans une session Claude Code ouverte dans le projet
-cible**, pas depuis Cowork. Le pont Cowork laisse des verrous git orphelins
-(ISSUE-006) et ne sait pas supprimer. Compter une session courte.
+cible**, pas depuis Cowork, pour deux raisons mesurées. Le pont Cowork laisse
+des verrous git orphelins (ISSUE-006) et ne sait pas supprimer. Surtout, il
+**refuse toute écriture sous `.claude/`** (« Writing to .claude is not permitted
+via remote tools », 1re instance, Dr-bobo, 2026-09-23 ; déjà consigné au journal
+du 2026-07-24). Une session Cowork peut **préparer** une instance, mais pas la
+poser. Compter une session courte.
 
 ### 0. Avant de commencer
 
@@ -71,7 +75,8 @@ CONTRAINTES
   des scripts de rituel : les déclarer dans la FORME, ne rien remplacer.
 - Noms : recap-<suffixe>, session-prep-<suffixe>. version: 1.0.0.
   Renseigner la ligne « Instancié depuis » (version du gabarit + sha de la maison).
-- Date mesurée : TZ=America/Toronto. Lectures git : --no-optional-locks.
+- Date : appliquer la règle « la date se mesure, et la mesure se contrôle » du
+  fond (instrument valide, sinon « NON MESURÉE »). Lectures git : --no-optional-locks.
 - Aucun commit sans mon GO ; git add nommé, jamais -A.
 
 LIVRABLE
@@ -198,7 +203,7 @@ retrouver pourquoi ; ils ne se recopient pas dans les instances.
 | Le recap **écrit** `HEAD : \`sha\``, mesuré sur la réf distante | obs 21, store `Suspension-intelligence` |
 | session-prep lit les recaps **sur la réf**, verdict distinct si le dernier n'y est pas | obs 23, même store |
 | TODO : motif mesuré, contrôle positif, ligne 📖 obligatoire | obs 22, même store |
-| Date mesurée par git / `TZ`, jamais par `date` nu ni l'en-tête de session | ISSUE-007, `claude-skills` |
+| Date mesurée par un instrument **contrôlé** (un `+0000` pour un fuseau non-UTC = invalide), jamais par `date` nu ni l'en-tête de session | ISSUE-007, `claude-skills` ; défaut Git Bash trouvé par la 1re instance (Dr-bobo), 2026-09-23 |
 | Lectures git en `--no-optional-locks` (pont Cowork) | ISSUE-006, `claude-skills` |
 | `fetch` en échec (403 en VM) → le déclarer, ne pas le taire | TODO `claude-skills`, 2026-07-27 |
 | DELTA « ne pas refaire » appuyé par une preuve ; recaps frères du jour | `session-prep` de `suspension-intelligente` |
@@ -211,6 +216,7 @@ retrouver pourquoi ; ils ne se recopient pas dans les instances.
 |---|---|
 | Verdict de continuité (session-prep, étape 2) | **Rodé sur dépôt jetable, 2026-09-23** : 5 cas (aucun recap, RECAP_LOCAL, OK après clôture, GAP, sans HEAD) rendent le verdict attendu, 0 verrou restant. Ce rodage a **trouvé un défaut** : sans exclure les fichiers de clôture, chaque clôture propre rendait GAP ; corrigé et re-mesuré. Jamais tourné sur un vrai dépôt. |
 | Contrôles d'instanciation (§ Instancier, étape 5) | **Rodés dans les deux sens** : instance correcte en CRLF acceptée, mutation du fond détectée, modification de forme seule acceptée, placeholder oublié détecté. |
+| Mesure de la date (v1.0.1) | **Rodée en conteneur, 2026-09-23** : fuseau connu accepté ; fuseau inconnu → repli UTC **attrapé** (le défaut réel, reproduit : `exit 0`, `+0000`) ; projet réellement en UTC **non rejeté** ; aucun instrument valide → « NON MESURÉE ». **Branche PowerShell non rodée ici** (pas de Windows) — sa validité repose sur la mesure de la 1re instance (`14:12 −04:00`). |
 | Axes de sync, shortlist anti-sur-claim, gate code/docs | **Non calibrés** — gardes par vigilance. Première instance = premier test. | Là où un projet possède un script testé qui fait le même travail,
 son bloc FORME le déclare et le fond l'invoque à la place.
 
