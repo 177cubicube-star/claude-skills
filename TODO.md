@@ -446,6 +446,75 @@ rappel.
 
 ## Journal de sessions (le plus récent en haut)
 
+### 2026-09-24 — Session Claude Code : consignation des instances App-Handyman et Pilote automatique
+
+**Contexte.** Le gabarit s'arrêtait à 1.1.1 (`2627422`, 2026-09-23 18 h 27) et à
+la seule instance Dr-bobo. Deux instances avaient été posées le même soir,
+dans d'autres dépôts, sans que la maison les enregistre. Cette session
+re-mesure et consigne, sans toucher au gabarit.
+
+**Instance App-Handyman.** `recap-ah` et `session-prep-ah` 1.0.0, gravés
+« Instancié depuis le gabarit `rituel-session` v1.1.1 — maison
+`claude-skills` @ `2627422` » (commit `405de2a`). ADR-013 Accepté (`f8433a6`,
+amende ADR-004 décisions 1 et 2). Scripts déclarés dans la FORME :
+`session-prep-ah` → `tools/recap_gap.py`, `tools/git_sync_axes.py`,
+`tools/adr_index_drift.py`, `tools/fils_actifs.py` ; `recap-ah` →
+`tools/recap_collision.py`, `tools/adr_index_drift.py`,
+`tools/claim_audit.py`. Premier `/session-prep-ah` : verdict
+`INDÉTERMINÉ — recap sans HEAD`, au format exact de sortie de
+`tools/recap_gap.py` — attribuable au script déclaré (l'appel n'est pas
+consigné dans le recap), donc **hors calibration de la procédure en ligne**.
+Premier `/recap-ah` : `docs/sessions/recap-20260923-01.md`, `HEAD : f8433a6`
+(commit `d2cad31`). Temps 3 (push puis `OK`) et temps 4 (session de code sur
+branche) du § 5 « Premier usage » : non constatés.
+
+**Instance Pilote automatique.** `recap-pa` et `session-prep-pa` 1.0.0, même
+gravure (commit `14e8b9b`). Aucun script déclaré : c'est la procédure en ligne
+du fond qui tourne. Premier `/session-prep-pa` en ouverture, lecture seule
+(`git status --porcelain` vide avant et après), aucun recap sur la réf — le
+verdict n'est **pas cité littéralement** dans le recap : non compté comme
+mesuré. Premier `/recap-pa` : `sessions/recap-20260923-01.md`,
+`HEAD : 14e8b9b` (commit `2467989`) — dépose un test délibéré du DELTA (deux
+items leurres, à vérifier au prochain `/session-prep-pa`). Temps 3 : non
+constaté.
+
+**Clé FORME « Fichiers de clôture ».** Présente dans les trois instances,
+absente du gabarit : `git log -S "Fichiers de clôture"` rend zéro résultat
+sur `gabarits/`, un commit par dépôt (Dr-bobo `4a3dbaf`, Pilote automatique
+`14e8b9b`, App-Handyman `405de2a`). Le fond du gabarit exclut déjà « les
+recaps, TODO, fils déclarés dans la forme » par sa commande — la clé répète
+donc une information déjà portée. **Décision non prise ici**, elle appartient
+à Mathieu : monter la clé au gabarit, ou préciser la phrase du fond.
+
+**Contrôle 3 b) rejoué sur les six fichiers.** FOND identique au gabarit
+`2627422` pour `recap-ah`, `session-prep-ah`, `recap-pa`, `session-prep-pa`
+(et, en contrôle, `recap-drbobo`, `session-prep-drbobo`) — aucune mutation.
+
+**Fausses modifications de fins de ligne — deux mesures, deux instruments,
+pas de contradiction.** Pont Cowork, 2026-09-24 : App-Handyman 44 fichiers
+« modifiés », Pilote automatique 5 (dont les deux `SKILL.md`),
+`diff --ignore-cr-at-eol` = 0 ligne dans les deux ; Dr-bobo 0 fichier.
+Claude Code natif (Windows), 2026-09-24, `git --no-optional-locks status
+--short` : **0 fichier modifié dans les trois dépôts**, sans même
+`--ignore-cr-at-eol`. Ces deux mesures corroborent l'hypothèse `core.autocrlf` :
+la configuration du pont diffère de celle du poste, le contenu versionné n'a pas
+bougé. Parmi les trois dépôts, seuls App-Handyman et Pilote automatique n'ont
+pas de `.gitattributes` (Suspension-intelligente non mesuré). Remède candidat en
+ISSUE-008, proposée et en attente de GO séparé : elle ne vise que les sessions
+lancées depuis le pont.
+
+**Non re-mesurable d'ici.** Le `recap` au compte claude.ai, lu en `2.1.0`
+sans la règle du champ `HEAD` (contre `2.2.0` dans `suspension-intelligente`) :
+mesure Cowork du 2026-09-24, hors de portée de cette session native. Écrite
+ici comme héritée, jamais recopiée comme mesurée deux fois.
+
+**Décisions ouvertes, non tranchées ici** (elles appartiennent à Mathieu) :
+clé « Fichiers de clôture » au gabarit ou non ; ADR-028 doit-il mentionner les
+gabarits ; redéployer `recap` 2.2.0 au compte ; condition de révision n° 2
+d'ADR-028 (« le rituel manuel produit ≥ 2 oublis mesurés — déploiement sans
+bump, ou non vérifié ») : l'écart `recap` 2.1.0 au compte contre 2.2.0 dans
+`suspension-intelligente` compte-t-il, et la condition est-elle atteinte ?
+
 ### 2026-09-23 — Session Cowork : `recap` et `session-prep` deviennent un gabarit
 
 **Demande.** Des équivalents génériques des deux skills de rituel de
@@ -1181,6 +1250,11 @@ SKILLS_POLICE listent encore ISSUE-001 comme ouverte avec « deux options
 instruites », alors qu'elle est **résolue depuis le 2026-07-27, option 2**
 (`ISSUES-LOG.md`, ISSUE-001 § 0). Elles datent d'avant `1700fc2`. Geste de la main de
 Mathieu — les instructions d'un projet Cowork ne sont pas un fichier du dépôt.
+
+**Fait le 2026-09-24, par la main de Mathieu.** Texte collé dans les
+instructions du projet SKILLS_POLICE ; vérifié depuis une session Cowork le
+même jour : elles portent désormais « État au 2026-09-24 » et
+« ISSUE-001 TRANCHÉE ».
 
 **Second passage, même session — « touche ce que tu as vu ».** Les deux éléments
 signalés sans y toucher ont été traités, et la mesure en a fait sortir deux
