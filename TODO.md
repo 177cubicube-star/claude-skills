@@ -515,6 +515,40 @@ d'ADR-028 (« le rituel manuel produit ≥ 2 oublis mesurés — déploiement sa
 bump, ou non vérifié ») : l'écart `recap` 2.1.0 au compte contre 2.2.0 dans
 `suspension-intelligente` compte-t-il, et la condition est-elle atteinte ?
 
+**Même jour, suite — registre, observations, principe, magasin.** Heures
+mesurées par `git log --date=format` (poste, −04:00).
+- **08 h 19-08 h 30, `claude-skills`.** `aa0a525` poussé après contrôle : la
+  condition n° 2 d'ADR-028 est bien dans « Décisions ouvertes » (`git show`).
+  **ISSUE-008** (fins de ligne, sessions lancées depuis le pont seulement) et
+  **ISSUE-009** (aucun outil ne mesure ni ne reporte les instances) : `688c9b7`,
+  poussé. Deux phrases du brouillon d'ISSUE-008, déduites mais écrites comme
+  observées, ont été corrigées à la relecture de Mathieu (« faux signal
+  **attendu** — déduit, non observé »).
+- **Instructions SKILLS_POLICE.** La copie de `Projects\Claude outputs\` est
+  mise à jour (trois lignes). Mathieu l'a collée dans le projet Cowork : c'est
+  une **déclaration**, non vérifiable depuis Claude Code.
+- **09 h 05, magasin d'observations, `3822af5`.** Obs 24 (récidive de l'obs 20 :
+  un comportement déduit écrit comme observé, dans les champs de cadrage
+  d'une ISSUE), obs 25 (sous Git Bash, GNU grep 3.0 rend 0 sur un emoji hors
+  BMP — `🔒 FOND:` 0 contre 9 en `LC_ALL=C` ; gawk 5.4, lui, n'est pas touché,
+  donc le contrôle 3 b) tient) et obs 26 (un verdict rendu par un script
+  déclaré ne calibre pas la procédure en ligne — matière pour le gabarit
+  1.1.2). Archivage des obs 15 à 23 (ACTIONED au 2026-07-31) dans
+  `archive/log-2026-09-24.md` ; conservation 321 = 84 + 247 − 10, reconstruction
+  identique octet pour octet. Le repérage des instances du README (motif
+  accentué) rend bien **6 fichiers sur 6** sous le même grep.
+- **09 h 20-09 h 21, magasin.** Amendement du **principe 5** (« les fichiers
+  d'autorité comptent aussi », obs Dr-bobo 3), écrit le 2026-09-23 mais jamais
+  committé, **approuvé par Mathieu** et committé : `6bbfd51`. Le store Dr-bobo,
+  jamais suivi, entre dans git : `f6db56b` ; le statut archivé de l'obs 3
+  porte désormais ce sha. **Rétractation consignée** : j'avais d'abord annoncé
+  l'obs 3 comme OPEN, en comptant les entrées 5 à 7 du `log.md` sans lire leurs
+  numéros. Elle était ACTIONED et archivée depuis le 2026-09-23.
+- **Laissé tel quel, sur décision de Mathieu** : dans le magasin,
+  `Suspension-intelligence/log.md`, `last-review-date.txt`,
+  `Suspension-intelligence/archive/log-2026-08-02.md` et `Pilote automatique/`
+  (1 fichier) restent non committés. Le magasin n'a pas de distant.
+
 ### 2026-09-23 — Session Cowork : `recap` et `session-prep` deviennent un gabarit
 
 **Demande.** Des équivalents génériques des deux skills de rituel de
