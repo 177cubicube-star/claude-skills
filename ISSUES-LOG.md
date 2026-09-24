@@ -14,6 +14,79 @@ série de `suspension-intelligente`.
 
 ---
 
+## ISSUE-009 — Reporter le gabarit `rituel-session` dans ses instances est un geste manuel, par projet, sans outil
+
+**Date :** 2026-09-24
+**Statut :** Ouverte — constatée, non corrigée
+**Contexte :** consignation des instances App-Handyman et Pilote automatique
+(journal du 2026-09-24), posées le 2026-09-23 et enregistrées par la maison
+seulement le lendemain
+**Type :** Outillage / processus du gabarit
+**Sévérité :** Faible — coût de friction qui grandit avec chaque instance, pas
+de perte
+
+**En une ligne :** chaque évolution du fond se reporte à la main dans deux
+`SKILL.md` par projet — 6 fichiers pour 3 projets aujourd'hui — et le
+contrôle 3 b) se relance projet par projet ; rien ne signale une instance
+en retard.
+
+**Mesuré le 2026-09-24 :** le contrôle 3 b) a dû être rejoué fichier par
+fichier sur les six fichiers (trois instances) — FOND identique au gabarit
+`2627422`. Que la maison ne tienne pas de liste des instances est voulu : le
+README du gabarit les fait **mesurer, pas lister** (§ « Mettre à jour une
+instance », étape 1). Le défaut est ailleurs : **aucun outil n'exécute cette
+mesure**. Le repérage, le contrôle 3 a), le contrôle 3 b) et le report des
+blocs FOND restent des gestes manuels, répétés projet par projet.
+
+**Remède proposé, TO VALIDATE (R604) :** un script qui repère les instances
+(`grep -l "Instancié depuis le gabarit"`), lance 3 a) et 3 b) sur chacune et
+rend un rapport. Non écrit, non rodé.
+
+---
+
+## ISSUE-008 — Depuis le pont Cowork, App-Handyman et Pilote automatique affichent des fichiers « modifiés » par les seules fins de ligne
+
+**Date :** 2026-09-24
+**Statut :** Ouverte — constatée, non corrigée
+**Contexte :** dépôts des instances du gabarit `rituel-session` lus depuis le
+pont Cowork le 2026-09-24 (`git status`), re-mesurés le même jour en Claude
+Code natif
+**Type :** Outillage / pont Cowork
+**Sévérité :** Faible — aucune perte, mais un faux signal **attendu** sur la
+ligne 🧰 d'un `session-prep` lancé depuis le pont — déduit, non observé : la
+ligne 🧰 lit `git status --porcelain` (fond, étape 1)
+**Portée :** sessions lancées depuis le pont Cowork seulement
+
+**En une ligne :** le pont voit 44 fichiers modifiés dans App-Handyman et 5
+dans Pilote automatique ; le poste natif en voit 0 dans les deux.
+
+**Deux mesures, datées avec leur instrument** (fichiers modifiés, non suivis
+exclus) :
+
+| Instrument | App-Handyman | Pilote automatique | Dr-bobo |
+|---|---|---|---|
+| Pont Cowork, 2026-09-24, `git status` | 44 | 5 (dont les deux `SKILL.md`) | 0 |
+| Pont Cowork, 2026-09-24, `diff --ignore-cr-at-eol` | 0 ligne | 0 ligne | 0 ligne |
+| Claude Code natif (Windows), 2026-09-24, `git --no-optional-locks status --short` | 0 | 0 | 0 |
+
+Les non suivis sont exclus du décompte : le pont voyait dans Dr-bobo un
+fichier non suivi (`.claude/settings.local.json`), sans rapport avec les fins
+de ligne.
+
+Hypothèse corroborée par les deux mesures : `core.autocrlf` diffère entre le
+pont et le poste. Parmi les trois dépôts, seul Dr-bobo a un `.gitattributes`
+(Suspension-intelligente non mesuré). Cousine d'ISSUE-004 : un instrument qui
+compare des octets rapporte des fins de ligne comme une dérive de contenu.
+
+**Remède proposé, TO VALIDATE (R604) :** un `.gitattributes` dans App-Handyman
+et Pilote automatique, sur le modèle de Dr-bobo. Poser ce fichier sur un dépôt
+existant demande en général une **renormalisation**
+(`git add --renormalize .`). Elle produit un commit de fins de ligne seul, à
+mesurer avant : dans App-Handyman, on parle de dizaines de fichiers (44 vus
+depuis le pont). C'est une décision de projet, pas de la maison.
+
+---
+
 ## ISSUE-007 — Les dates écrites par une session Cowork sont celles d'UTC : tout travail fait après 20 h locale est daté du lendemain
 
 **Date :** 2026-07-29
