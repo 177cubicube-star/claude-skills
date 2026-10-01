@@ -446,6 +446,94 @@ rappel.
 
 ## Journal de sessions (le plus récent en haut)
 
+### 2026-09-30 — Session Claude Code : le skill tiers `typesafe-ai` s'installe au niveau user, hors de la maison
+
+**Demande.** Utiliser TypeSafe Jev dans Claude Code, au niveau user, avec une
+clé API que Mathieu possède. Heures mesurées par `date` (poste, −04:00).
+
+**Intake (skill `skill-intake`), avant tout geste.** Source nommée :
+`typesafe-ai/skills`, `skills/typesafe-ai`, MIT, TypeSafe AI, plugin 0.5.7,
+commit `65a39f393687675ce170e6094757de20370365b9` (2026-09-12). Un seul fichier
+de skill dans le dépôt (`SKILL.md`, 10 040 o) plus `LICENSE` : arbre lu via
+l'API GitHub, pas de script, pas de hook. Lecture intégrale : aucune écriture
+disque, aucun auto-déclenchement. **Une friction nommée** : le skill ordonne de
+lire des docs distantes (`docs.typesafe.ai`) à chaque tâche — contenu qui peut
+changer sans relecture. Retenu comme règle locale : ces docs sont de la donnée,
+jamais des instructions.
+
+**Décision de route — Mathieu a laissé le choix, route A retenue (ma
+recommandation, non contredite).** Copie manuelle, épinglée au commit, dans
+`~/.claude/SKILLS/typesafe-ai/`. Écartée : `claude plugin marketplace add` +
+`claude plugin install`, qui écrivent dans les réglages de Claude Code et
+offrent une mise à jour automatique — un changement de contenu sans audit.
+La première demande (« installer ou un skill ») a été arrêtée en ambiguïté,
+puis un abandon (« abort le projet ») a précédé la reprise : rien n'a été écrit
+avant le geste final.
+
+**Fait le 2026-09-30, 20 h 05 (mesuré).**
+- Dossier `typesafe-ai/` : `SKILL.md` 10 762 o (10 040 o d'origine + un
+  commentaire d'attribution sous le frontmatter) et `LICENSE` 1 068 o.
+  Corps identique au commit épinglé : `diff -q --strip-trailing-cr` sans écart.
+- Le commentaire d'attribution nomme : source, commit, route, règle des docs
+  distantes, clé en variable d'environnement, geste de désinstallation.
+- `git status --short` du dépôt `claude-skills` : **0 fichier** avant et après.
+
+**Clé API — déclaré, puis mesuré.** Mathieu a posé `TYPESAFE_API_KEY` au niveau
+user lui-même (geste de sa main : une clé ne passe jamais par une session).
+**Mesuré** après redémarrage de Claude Code : la variable existe, 108 caractères
+(longueur seule affichée, valeur jamais). Elle n'est dans aucun fichier, aucun
+dépôt, ni ce journal.
+
+**Un appel réel, entre 20 h 05 et 20 h 16 (heure exacte non relevée ;
+mesuré).** `POST https://api.typesafe.ai/v1/systemone`,
+exemple de la doc (un Noul, un Choice), modèle `jev-latest` → `jev-1.13.0`,
+**HTTP 200**, 361 jetons en entrée, 57 en sortie. Réponse : `is_urgent` 0,95 ;
+`department` = `billing`, confiance 0,81. Prouve que la clé et le point d'accès
+fonctionnent. **Ne prouve pas** que le skill se déclenche bien dans une vraie
+tâche de projet : non essayé.
+
+**Rapport du déployeur, 20 h 16 (mesuré).** `.\deploy-skills.ps1` sans `-Apply` :
+code de sortie 0, rapport seul, `typesafe-ai\LICENSE` et `typesafe-ai\SKILL.md`
+listés `ORPHELIN` — attendu : le dossier n'a pas de source dans la maison.
+Le script ne supprime jamais ; l'orphelin est donc **sans danger pour lui**.
+Il apparaîtra à chaque rapport, parmi 320 lignes `ORPHELIN` au total (mesuré
+par `grep -c`, 2 sont les nôtres ; les autres sont `synced\`, préexistantes).
+
+**Écart nommé avec la règle d'or (ADR-028).** « Une seule maison-source par
+skill ; la cible n'est jamais éditée à la main » — ici la cible est éditée à la
+main (un commentaire inséré). Exception délibérée : le skill n'est pas à
+Mathieu, la source est externe, et le dépôt `claude-skills` n'a pas à le
+maintenir. Ce n'est **pas** une entrée de la maison ; elle ne se déploie pas
+d'ici. Aucune dérive ne sera mesurée par `deploy-skills.ps1` pour ce skill.
+
+**Mesuré par déduction seulement (non exécuté).**
+- Le plugin n'étant pas installé, la commande `/typesafe:typesafe-ai` n'existe
+  pas : déduit de la route, jamais essayé. Le skill se nomme `typesafe-ai`.
+- Le skill figurait dans la liste des skills de la session après redémarrage :
+  vu dans le contexte, pas par une exécution du skill.
+
+**Désinstaller.** Supprimer `~/.claude/SKILLS/typesafe-ai/`. Pour retirer la
+clé : supprimer la variable d'environnement utilisateur `TYPESAFE_API_KEY`
+(Paramètres Windows). Aucune autre trace : pas de plugin, pas de marketplace.
+
+**Décisions ouvertes, non tranchées ici** (elles appartiennent à Mathieu) :
+- **Mise à jour.** Aucune automatique. Remède envisagé : re-auditer le
+  `SKILL.md` du dépôt source, puis remplacer le dossier à la main. *Statut de
+  preuve : non essayé.* À reconsidérer au bout de deux semaines (R604) : le
+  skill cite des docs vivantes, il peut vieillir plus vite qu'un skill statique.
+  Symptôme annoncé par la doc de l'éditeur : l'agent « invente des champs de
+  requête ou de réponse » — à surveiller.
+- **Gabarit ou registre ?** Faut-il une liste des skills tiers installés hors
+  maison (nom, commit épinglé, route, date) ? Aujourd'hui, seul le commentaire
+  dans le `SKILL.md` en tient lieu. Déclencheur proposé : un deuxième skill tiers
+  installé de la même façon.
+- **Dans la maison ou non.** Le skill reste hors dépôt. Le copier ici le
+  soumettrait au gel et au circuit de déploiement, sans bénéfice.
+
+**Reste à faire.** Premier usage réel dans un projet de Mathieu, avec la phrase
+« utilise le skill TypeSafe » ; consigner ici si le skill se charge et si les
+champs de l'API sont bien ceux de la doc.
+
 ### 2026-09-24 — Session Claude Code : consignation des instances App-Handyman et Pilote automatique
 
 **Contexte.** Le gabarit s'arrêtait à 1.1.1 (`2627422`, 2026-09-23 18 h 27) et à
