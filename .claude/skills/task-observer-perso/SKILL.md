@@ -1,6 +1,6 @@
 ---
 name: task-observer-perso
-version: 1.7.0
+version: 1.7.1
 description: >
   Monitors task execution for skill improvement opportunities. Use this skill
   during ANY multi-step task, agentic workflow, or substantive work session where
@@ -216,16 +216,38 @@ one: the `**Date:**` field, the archive filename `log-YYYY-MM-DD.md`, and
 
 ```bash
 git log -1 --format=%ad --date=format:'%Y-%m-%d %H:%M %z'   # in a repo — git stamps with the machine's zone
-TZ=America/Toronto date '+%Y-%m-%d %H:%M %z'                # outside one
+TZ=America/Toronto date '+%Y-%m-%d %H:%M %z'                # outside one, POSIX shell
 ```
 
-The defect is **asymmetric by tool**, so no single check covers it (measured
-2026-07-29): from Cowork the container and bridge run UTC, so **past 20:00 local
-the announced date is tomorrow's**; from Claude Code the local clock is right but
-**frozen at session open**, so past midnight it is yesterday's. A wrong date never
-contradicts itself — it becomes the store's reference chronology, and the *next*
-correct measure is what will look wrong. Cross-cutting principle 3, amendment
-obs 15.
+```powershell
+Get-Date -Format 'yyyy-MM-dd HH:mm K'                        # outside one, Windows
+```
+
+**The defect is not attributable to a named tool — attribute it to a
+verifiable property instead.** Two symptoms have been measured so far, and
+neither belongs permanently to the tool where it was first seen:
+
+- A date **ahead** of local time — the container/bridge runs UTC, so past
+  20:00 local the announced date is tomorrow's (measured 2026-07-29, from
+  Cowork).
+- A date that **does not advance** across a long session, most visibly
+  **past midnight** — the local clock is right but frozen at session open
+  (measured 2026-07-29, from Claude Code).
+
+A rule that names the faulty tool breaks the moment the defect moves tool:
+measured 2026-09-03 (Log `Dr-bobo`, Observation 2), `TZ=America/Toronto date`
+run via a Bash tool **ignored `TZ`** and returned `2026-09-04 02:25 +0000` —
+the UTC-offset symptom this section once attributed to Cowork occurred under
+Claude Code instead.
+
+**Read the property, not the tool:** a date measurement is suspect whenever
+(a) it does not return a non-zero UTC offset on a machine known to sit in a
+non-UTC zone, or (b) it comes from the session's opening context rather than
+from a command run at the moment of writing — past midnight, that context
+gives yesterday's date. Cross-check with a second command (POSIX `date` vs.
+PowerShell `Get-Date`) when in doubt. A wrong date never contradicts itself —
+it becomes the store's reference chronology, and the *next* correct measure
+is what will look wrong. Cross-cutting principle 3, amendment obs 15.
 
 **Numbering (mandatory pre-check):** before assigning a number, read the
 actual log file and take max+1 — never trust session memory:
