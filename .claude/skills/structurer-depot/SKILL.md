@@ -1,6 +1,6 @@
 ---
 name: structurer-depot
-version: 1.0.0
+version: 1.0.1
 description: Analyse un dépôt (documents, code ou mixte) et recommande sa structure — en lecture seule par défaut. Mesure l'état réel par commandes, classe le dépôt, diagnostique orphelins, doublons, noms trompeurs, paires à synchroniser et éléments manquants, puis propose un tableau « actuel → proposé » sans rien déplacer. Option sur demande : créer seulement le squelette de gouvernance manquant (CLAUDE.md, README, dossiers) après aperçu et GO. Use when the user asks to analyse, audit, structure or reorganise a repo, or asks "qu'est-ce qui manque dans ce dépôt".
 ---
 
@@ -65,6 +65,14 @@ Chaque constat porte une étiquette : **CONFIRMED** (une commande l'établit),
 doublons (noms voisins, versions `-v2`, `-final`, `copie`) · fichiers non
 suivis · noms trompeurs (le nom ne dit pas le contenu : lire le titre interne)
 · absence de README / CLAUDE.md / `.gitignore`.
+
+**Un « aucun » ne se conclut qu'avec un contrôle positif.** Avant d'écrire
+« aucun orphelin », « aucun doublon » ou « aucun test », essayer la même
+commande sur un cas où la réponse est connue (un fichier qu'on sait référencé,
+un nom qu'on sait présent). Si la commande rend aussi zéro sur ce cas, elle ne
+sait pas répondre : le constat devient `TO VALIDATE`, jamais « aucun ».
+Noter l'outil et son environnement à côté du résultat : la même commande peut
+rendre zéro dans un environnement et un résultat dans un autre.
 
 **Documentaire, en plus :** paires source ↔ dérivé (ex. `.md` et son `.html`)
 à garder synchronisées · documents jamais référencés par un autre
