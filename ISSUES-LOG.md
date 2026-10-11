@@ -14,6 +14,58 @@ série de `suspension-intelligente`.
 
 ---
 
+## ISSUE-010 — Sous Windows, `rea-agents setup` ne peut pas enregistrer la forme épinglée : il écrit un chemin dans le cache `_npx`
+
+**Date :** 2026-10-10
+**Statut :** Ouverte — contournée par un enregistrement manuel ; défaut amont non corrigé
+**Contexte :** installation de REA (`rea-agents` 6.3.0, serveur MCP de rétro-ingénierie)
+dans Claude Code sous Windows, après un audit `skill-intake`
+**Type :** Outillage tiers / serveur MCP
+**Sévérité :** Moyenne — l'outil officiel produit une config qui cassera sans
+prévenir à la première purge du cache npm
+
+**En une ligne :** sous Windows, `setup` enregistre
+`node.exe …\npm-cache\_npx\<hash>\…\rea.mjs mcp` au lieu de la forme épinglée
+`cmd.exe /d /c npx -y rea-agents@6.3.0 mcp`, quelle que soit la version demandée.
+
+**Mesuré le 2026-10-10 :** trois `--dry-run` (`@latest`, `@6.3.0`, puis
+`@6.3.0` avec `$env:npm_command = "exec"` posé à la main) donnent tous la
+forme cache, avec des hash différents (`af752b…`, `ec0ab2…`).
+
+**Cause, lue dans le source 6.3.0 :** `dist/process/snapshotEnvironment.js`
+met en MAJUSCULES toutes les clés d'environnement, **sous Windows seulement** ;
+`dist/application/SetupHost.js` lit ensuite `environment.npm_command` en
+minuscules. La condition `=== "exec"` est donc toujours fausse sous Windows.
+
+**Contournement appliqué (décision de Mathieu, 2026-10-10) :**
+
+    claude.cmd mcp add --scope user rea -- cmd /c npx -y rea-agents@6.3.0 mcp
+
+- `claude.cmd` et non `claude` : le shim `claude.ps1` absorbe le `--`
+  (mesuré : `error: unknown option '-y'`, rien d'enregistré).
+- Vérifié : `claude mcp get rea` donne portée user et « Connected » ; `/mcp`
+  confirme la connexion après redémarrage.
+- Route minimale, `skill-intake` étape 5 : MCP seul. Pas de skill (il écrirait
+  dans `~/.claude/skills`, cible gouvernée — ADR-028), ni Hopper, ni Ghidra (reporté).
+
+**Pièges à connaître :**
+- `doctor` déclare l'entrée `stale` et conseille de relancer `setup`. C'est un
+  faux positif du même défaut : **ne jamais relancer `setup`**, il remettrait la
+  forme cache.
+- `--skill false` est ignoré ; seul `--no-skill` exclut le skill (mesuré au dry-run).
+- `ConvertFrom-Json` refuse `~/.claude.json` : deux clés de projet ne diffèrent
+  que par la casse (`C:/…` et `c:/…`). Lire ce fichier avec Node.
+
+**Changer de version :** `claude.cmd mcp remove --scope user rea`, puis le
+même `add` avec la nouvelle version.
+**Annuler :** `claude.cmd mcp remove --scope user rea`.
+
+**Remède amont proposé :** lire la clé sans tenir compte de la casse dans
+`SetupHost.js`. Issue rédigée pour `morluto/rea` le 2026-10-10, non déposée.
+Fermer cette ISSUE quand une version corrigée produit la forme épinglée au dry-run.
+
+---
+
 ## ISSUE-009 — Reporter le gabarit `rituel-session` dans ses instances est un geste manuel, par projet, sans outil
 
 **Date :** 2026-09-24
